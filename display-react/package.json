@@ -12,7 +12,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build:ts": "tsc && vite build",
     "preview": "vite preview",
     "linting": "eslint 'src/**/*.ts' --ignore-path ../.gitignore --fix && lit-analyzer"
   },
