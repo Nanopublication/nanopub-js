@@ -1,0 +1,173 @@
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>@nanopub/display | nanopub-js</title><meta name="description" content="Documentation for nanopub-js"/><script type="module" src="/nanopub-js/nanopub-display.min.js"></script><link rel="icon" href="https://raw.githubusercontent.com/Nanopublication/nanopub-website/9fee248bac306dcff7b1b0fb3d645ef6d5b62ba7/static/img/icon.png"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script async src="../assets/search.js" id="search-script"></script><link rel="stylesheet" href="../assets/pages.css"/></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container">
+<div class="table-cell" id="tsd-search" data-base="..">
+<div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
+<div class="field">
+<div id="tsd-toolbar-links"><a href="/nanopub-display/pages/CONTRIBUTING.html">✒️ Contribute</a><a href="https://github.com/vemonet/nanopub-display">🛸 GitHub</a></div></div>
+<ul class="results">
+<li class="state loading">Preparing search index...</li>
+<li class="state failure">The search index is not available</li></ul><a href="../index.html" class="title">nanopub-js</a></div>
+<div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
+<div class="container container-main">
+<div class="col-8 col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb">
+<li><a href="../modules.html">nanopub-js</a></li>
+<li><a href="_nanopub_display.html">@nanopub/display</a></li></ul>
+<h1>Module @nanopub/display</h1></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/Nanopublication/nanopub-js/blob/be0d753/nanopub-display/src/index.ts#L1">nanopub-display/src/index.ts:1</a></li></ul></aside>
+<section class="tsd-panel-group">
+<section class="tsd-panel tsd-typography">
+<a href="#🧬-web-components-to-display-nanopublications" id="🧬-web-components-to-display-nanopublications" style="color: inherit; text-decoration: none;">
+  <h1>🧬 Web Components to display Nanopublications</h1>
+</a>
+<p><code>@nanopub/display</code> is a library of standard web components to easily display <a href="https://nanopub.net">Nanopublications</a> in applications built using any web framework (pure HTML, React, Angular, Vue, Svelte).</p>
+<p>If you want to improve this library, please refer to the <a href="/pages/CONTRIBUTING.html">contribute page</a> which details how to use the library in development.</p>
+
+<a href="#🏷️-as-easy-as-html" id="🏷️-as-easy-as-html" style="color: inherit; text-decoration: none;">
+  <h2>🏷️ As easy as HTML</h2>
+</a>
+<p><code>&lt;nanopub-display&gt;</code> and <code>&lt;nanopub-status&gt;</code> are just HTML elements, you can use them anywhere you can use HTML:</p>
+<pre><code class="language-html"><span class="hl-0">&lt;</span><span class="hl-1">html</span><span class="hl-2"> </span><span class="hl-3">lang</span><span class="hl-2">=</span><span class="hl-4">&quot;en&quot;</span><span class="hl-0">&gt;</span><br/><span class="hl-2">  </span><span class="hl-0">&lt;</span><span class="hl-1">head</span><span class="hl-0">&gt;</span><br/><span class="hl-2">    </span><span class="hl-0">&lt;</span><span class="hl-1">script</span><span class="hl-5"> </span><span class="hl-3">type</span><span class="hl-5">=</span><span class="hl-4">&quot;module&quot;</span><span class="hl-5"> </span><span class="hl-3">src</span><span class="hl-5">=</span><span class="hl-4">&quot;https://unpkg.com/@nanopub/display?module&quot;</span><span class="hl-0">&gt;&lt;/</span><span class="hl-1">script</span><span class="hl-0">&gt;</span><br/><span class="hl-2">  </span><span class="hl-0">&lt;/</span><span class="hl-1">head</span><span class="hl-0">&gt;</span><br/><br/><span class="hl-2">  </span><span class="hl-0">&lt;</span><span class="hl-1">body</span><span class="hl-0">&gt;</span><br/><span class="hl-2">    </span><span class="hl-0">&lt;</span><span class="hl-1">div</span><span class="hl-2"> </span><span class="hl-3">style</span><span class="hl-2">=</span><span class="hl-4">&quot;min-height: 100vh; width: 100%;&quot;</span><span class="hl-0">&gt;</span><br/><span class="hl-2">      </span><span class="hl-0">&lt;</span><span class="hl-1">div</span><span class="hl-0">&gt;</span><br/><span class="hl-2">        </span><span class="hl-0">&lt;</span><span class="hl-1">nanopub-status</span><span class="hl-2"> </span><span class="hl-3">url</span><span class="hl-2">=</span><span class="hl-4">&quot;https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU&quot;</span><span class="hl-2"> </span><span class="hl-0">/&gt;</span><br/><span class="hl-2">      </span><span class="hl-0">&lt;/</span><span class="hl-1">div</span><span class="hl-0">&gt;</span><br/><span class="hl-2">      </span><span class="hl-0">&lt;</span><span class="hl-1">nanopub-display</span><span class="hl-2"> </span><span class="hl-3">url</span><span class="hl-2">=</span><span class="hl-4">&quot;https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU&quot;</span><span class="hl-2"> </span><span class="hl-0">/&gt;</span><br/><span class="hl-2">    </span><span class="hl-0">&lt;/</span><span class="hl-1">div</span><span class="hl-0">&gt;</span><br/><span class="hl-2">  </span><span class="hl-0">&lt;/</span><span class="hl-1">body</span><span class="hl-0">&gt;</span><br/><span class="hl-0">&lt;/</span><span class="hl-1">html</span><span class="hl-0">&gt;</span>
+</code></pre>
+<blockquote>
+<p><code>&lt;nanopub-display&gt;</code> enables developers and users to control which graphs from the nanopublication are displayed.</p>
+</blockquote>
+<div>
+  <nanopub-status url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />
+</div>
+<nanopub-display url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU"></nanopub-display>
+
+
+<a href="#💫-declarative-rendering" id="💫-declarative-rendering" style="color: inherit; text-decoration: none;">
+  <h2>💫 Declarative rendering</h2>
+</a>
+<p><code>@nanopub/display</code> can be used with popular declarative rendering libraries like <strong>React</strong>, <strong>Angular</strong>, <strong>Vue</strong>, Svelte, and lit-html</p>
+<pre><code class="language-js"><span class="hl-6">import</span><span class="hl-2"> {</span><span class="hl-7">html</span><span class="hl-2">, </span><span class="hl-7">render</span><span class="hl-2">} </span><span class="hl-6">from</span><span class="hl-2"> </span><span class="hl-8">&#39;lit-html&#39;</span><br/><span class="hl-6">import</span><span class="hl-2"> </span><span class="hl-8">&#39;@nanopub/display&#39;</span><br/><br/><span class="hl-9">const</span><span class="hl-2"> </span><span class="hl-10">np</span><span class="hl-2"> = </span><span class="hl-8">&#39;https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU&#39;</span><br/><br/><span class="hl-11">render</span><span class="hl-2">(</span><br/><span class="hl-2">  </span><span class="hl-11">html</span><span class="hl-8">`</span><br/><span class="hl-8">    &lt;h4&gt;This is a &amp;lt;nanopub-display&amp;gt;&lt;/h4&gt;</span><br/><span class="hl-8">    &lt;nanopub-display url=</span><span class="hl-9">${</span><span class="hl-7">np</span><span class="hl-9">}</span><span class="hl-8"> /&gt;</span><br/><span class="hl-8">  `</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-7">document</span><span class="hl-2">.</span><span class="hl-7">body</span><br/><span class="hl-2">)</span>
+</code></pre>
+
+<a href="#🧶-cytoscape-configuration" id="🧶-cytoscape-configuration" style="color: inherit; text-decoration: none;">
+  <h2>🧶 Cytoscape configuration</h2>
+</a>
+<p><code>@nanopub/display</code> can also be used to generate a cytoscape configuration to nicely display your nanopublication with <a href="https://js.cytoscape.org">CytoscapeJS</a>.</p>
+<p>⚠️ Cytoscape is not imported by <code>@nanopub/display</code>, you will need to make sure to install the following packages first:</p>
+<pre><code class="language-bash"><span class="hl-2">npm </span><span class="hl-8">i</span><span class="hl-2"> </span><span class="hl-8">--save</span><span class="hl-2"> </span><span class="hl-8">cytoscape</span><span class="hl-2"> </span><span class="hl-8">cytoscape-cose-bilkent</span><span class="hl-2"> </span><span class="hl-8">cytoscape-popper</span><br/><span class="hl-12"># or</span><br/><span class="hl-2">yarn </span><span class="hl-8">add</span><span class="hl-2"> </span><span class="hl-8">cytoscape</span><span class="hl-2"> </span><span class="hl-8">cytoscape-cose-bilkent</span><span class="hl-2"> </span><span class="hl-8">cytoscape-popper</span>
+</code></pre>
+<p>The code below shows how to easily generate the cytoscape configuration, please refer to the <a href="https://js.cytoscape.org/#getting-started">cytoscape documentation</a> to see how to setup your cytoscape container.</p>
+<pre><code class="language-ts"><span class="hl-6">import</span><span class="hl-2"> {</span><span class="hl-7">cyGetConfig</span><span class="hl-2">, </span><span class="hl-7">cyShowNodeOnClick</span><span class="hl-2">, </span><span class="hl-7">cyHighlightConnectedEdges</span><span class="hl-2">} </span><span class="hl-6">from</span><span class="hl-2"> </span><span class="hl-8">&#39;@nanopub/display&#39;</span><span class="hl-2">;</span><br/><span class="hl-6">import</span><span class="hl-2"> </span><span class="hl-7">cytoscape</span><span class="hl-2">, { </span><span class="hl-7">Core</span><span class="hl-2"> } </span><span class="hl-6">from</span><span class="hl-2"> </span><span class="hl-8">&#39;cytoscape&#39;</span><span class="hl-2">;</span><br/><span class="hl-6">import</span><span class="hl-2"> </span><span class="hl-7">popper</span><span class="hl-2"> </span><span class="hl-6">from</span><span class="hl-2"> </span><span class="hl-8">&#39;cytoscape-popper&#39;</span><span class="hl-2">;</span><br/><span class="hl-6">import</span><span class="hl-2"> </span><span class="hl-7">COSEBilkent</span><span class="hl-2"> </span><span class="hl-6">from</span><span class="hl-2"> </span><span class="hl-8">&#39;cytoscape-cose-bilkent&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-12">// Get the cytoscape div container, and nanopub RDF</span><br/><span class="hl-9">const</span><span class="hl-2"> </span><span class="hl-10">cyContainer</span><span class="hl-2">?: </span><span class="hl-13">HTMLDivElement</span><span class="hl-2">;</span><br/><span class="hl-9">const</span><span class="hl-2"> </span><span class="hl-10">nanopubTrigRdfString</span><span class="hl-2">?: </span><span class="hl-13">string</span><span class="hl-2">;</span><br/><br/><span class="hl-12">// Generate the cytoscape config for a given nanopub RDF</span><br/><span class="hl-9">const</span><span class="hl-2"> </span><span class="hl-10">cytoscapeConfig</span><span class="hl-2"> = </span><span class="hl-11">cyGetConfig</span><span class="hl-2">(</span><span class="hl-7">nanopubTrigRdfString</span><span class="hl-2">),</span><br/><br/><span class="hl-12">// Provide the generated config and cytoscape container to the cytoscape builder</span><br/><span class="hl-10">const</span><span class="hl-2"> cy = </span><span class="hl-11">cytoscape</span><span class="hl-2">({</span><br/><span class="hl-2">    ...</span><span class="hl-7">cytoscapeConfig</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-7">container:</span><span class="hl-2"> </span><span class="hl-7">cyContainer</span><br/><span class="hl-2">})</span><br/><br/><span class="hl-12">// Hightlight connected and show a card with the content of the node on click</span><br/><span class="hl-7">cy</span><span class="hl-2">.</span><span class="hl-11">on</span><span class="hl-2">(</span><span class="hl-8">&#39;tap&#39;</span><span class="hl-2">, </span><span class="hl-8">&quot;node&quot;</span><span class="hl-2">, (</span><span class="hl-7">e</span><span class="hl-2">: </span><span class="hl-13">any</span><span class="hl-2">) </span><span class="hl-9">=&gt;</span><span class="hl-2"> </span><span class="hl-11">cytoscapeHighlightConnectedEdges</span><span class="hl-2">(</span><span class="hl-7">e</span><span class="hl-2">, </span><span class="hl-7">cy</span><span class="hl-2">))</span><br/><span class="hl-7">cy</span><span class="hl-2">.</span><span class="hl-11">on</span><span class="hl-2">(</span><span class="hl-8">&#39;tap&#39;</span><span class="hl-2">, </span><span class="hl-8">&#39;node&#39;</span><span class="hl-2">, </span><span class="hl-7">cytoscapeShowNodeOnClick</span><span class="hl-2">);</span>
+</code></pre>
+
+<a href="#📥️-install" id="📥️-install" style="color: inherit; text-decoration: none;">
+  <h1>📥️ Install</h1>
+</a>
+<p><code>&lt;nanopub-display&gt;</code> is distributed on npm, so you can install it in your project, or use it via npm CDNs like <a href="https://unpkg.com">unpkg.com</a>.</p>
+
+<a href="#📦️-install-with-a-package-manager" id="📦️-install-with-a-package-manager" style="color: inherit; text-decoration: none;">
+  <h2>📦️ Install with a package manager</h2>
+</a>
+<p>The most convenient way to install a package in your project, using either <code>npm</code> or <code>yarn</code>:</p>
+<pre><code class="language-bash"><span class="hl-2">npm </span><span class="hl-8">i</span><span class="hl-2"> </span><span class="hl-8">--save</span><span class="hl-2"> </span><span class="hl-8">@nanopub/display</span><br/><span class="hl-12"># or</span><br/><span class="hl-2">yarn </span><span class="hl-8">add</span><span class="hl-2"> </span><span class="hl-8">@nanopub/display</span>
+</code></pre>
+
+<a href="#⚛️-define-types-for-react-apps" id="⚛️-define-types-for-react-apps" style="color: inherit; text-decoration: none;">
+  <h3>⚛️ Define types for React apps</h3>
+</a>
+<p>To fix JSX types, for example when used in a React app, you will need to add this declaration to one of your project <code>.d.ts</code> file:</p>
+<pre><code class="language-ts"><span class="hl-9">declare</span><span class="hl-2"> </span><span class="hl-9">namespace</span><span class="hl-2"> </span><span class="hl-13">JSX</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-9">interface</span><span class="hl-2"> </span><span class="hl-13">NanopubDisplay</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-7">url</span><span class="hl-2">?: </span><span class="hl-13">string</span><br/><span class="hl-2">    </span><span class="hl-7">rdf</span><span class="hl-2">?: </span><span class="hl-13">string</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">  </span><span class="hl-9">interface</span><span class="hl-2"> </span><span class="hl-13">NanopubStatus</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-7">url</span><span class="hl-2">?: </span><span class="hl-13">string</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">  </span><span class="hl-9">interface</span><span class="hl-2"> </span><span class="hl-13">IntrinsicElements</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-8">&#39;nanopub-display&#39;</span><span class="hl-2">: </span><span class="hl-13">NanopubDisplay</span><br/><span class="hl-2">    </span><span class="hl-8">&#39;nanopub-status&#39;</span><span class="hl-2">: </span><span class="hl-13">NanopubStatus</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">}</span>
+</code></pre>
+
+<a href="#🌐-import-from-a-cdn" id="🌐-import-from-a-cdn" style="color: inherit; text-decoration: none;">
+  <h2>🌐 Import from a CDN</h2>
+</a>
+<p>npm CDNs like <a href="https://unpkg.com">unpkg.com</a> or <a href="https://www.jsdelivr.com">jsdelivr.com</a> can directly serve files that have been published to npm. This works great for standard JavaScript modules that the browser can load natively, or minified bundles.</p>
+<p>For this element to work from unpkg.com specifically, you need to include the <code>?module</code> query parameter, which tells unpkg.com to rewrite &quot;bare&quot; module specifiers to full URLs.</p>
+
+<a href="#🛩️-import-module" id="🛩️-import-module" style="color: inherit; text-decoration: none;">
+  <h3>🛩️ Import Module</h3>
+</a>
+<p>In HTML:</p>
+<pre><code class="language-html"><span class="hl-0">&lt;</span><span class="hl-1">script</span><span class="hl-5"> </span><span class="hl-3">type</span><span class="hl-5">=</span><span class="hl-4">&quot;module&quot;</span><span class="hl-5"> </span><span class="hl-3">src</span><span class="hl-5">=</span><span class="hl-4">&quot;https://unpkg.com/@nanopub/display?module&quot;</span><span class="hl-0">&gt;&lt;/</span><span class="hl-1">script</span><span class="hl-0">&gt;</span>
+</code></pre>
+<p>In JavaScript:</p>
+<pre><code class="language-js"><span class="hl-6">import</span><span class="hl-2"> {</span><span class="hl-7">NanopubDisplay</span><span class="hl-2">} </span><span class="hl-6">from</span><span class="hl-2"> </span><span class="hl-8">&#39;https://unpkg.com/@nanopub/display?module&#39;</span>
+</code></pre>
+
+<a href="#🚛-import-bundle" id="🚛-import-bundle" style="color: inherit; text-decoration: none;">
+  <h3>🚛 Import Bundle</h3>
+</a>
+<p>We also distribute Nanopub Display as a minified bundle with all dependencies pre-included (~60kB).</p>
+<p>Import the latest version:</p>
+<pre><code class="language-html"><span class="hl-0">&lt;</span><span class="hl-1">script</span><span class="hl-5"> </span><span class="hl-3">type</span><span class="hl-5">=</span><span class="hl-4">&quot;module&quot;</span><span class="hl-5"> </span><span class="hl-3">src</span><span class="hl-5">=</span><span class="hl-4">&quot;https://cdn.jsdelivr.net/npm/@nanopub/display/dist/nanopub-display.min.js&quot;</span><span class="hl-0">&gt;&lt;/</span><span class="hl-1">script</span><span class="hl-0">&gt;</span>
+</code></pre>
+<p>In production we recommend to use a specific version:</p>
+<pre><code class="language-html"><span class="hl-0">&lt;</span><span class="hl-1">script</span><span class="hl-5"> </span><span class="hl-3">type</span><span class="hl-5">=</span><span class="hl-4">&quot;module&quot;</span><span class="hl-5"> </span><span class="hl-3">src</span><span class="hl-5">=</span><span class="hl-4">&quot;https://cdn.jsdelivr.net/npm/@nanopub/display@0.0.1/dist/nanopub-display.min.js&quot;</span><span class="hl-0">&gt;&lt;/</span><span class="hl-1">script</span><span class="hl-0">&gt;</span>
+</code></pre>
+</section></section>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<h3 class="tsd-index-heading uppercase">Index</h3>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Classes</h3>
+<div class="tsd-index-list"><a href="../classes/_nanopub_display.NanopubDisplay.html" class="tsd-index-link tsd-kind-class tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-128-path"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)" id="icon-128-text"></path></svg><span>Nanopub<wbr/>Display</span></a>
+<a href="../classes/_nanopub_display.NanopubStatus.html" class="tsd-index-link tsd-kind-class tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg><span>Nanopub<wbr/>Status</span></a>
+<a href="../classes/_nanopub_display.NanopubStatusIcon.html" class="tsd-index-link tsd-kind-class tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg><span>Nanopub<wbr/>Status<wbr/>Icon</span></a>
+<a href="../classes/_nanopub_display.NanopubWriter.html" class="tsd-index-link tsd-kind-class tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg><span>Nanopub<wbr/>Writer</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Variables</h3>
+<div class="tsd-index-list"><a href="../variables/_nanopub_display.cyLayouts.html" class="tsd-index-link tsd-kind-variable tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-variable)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-32-path"></rect><path d="M11.106 16L8.85 7.24H9.966L11.454 13.192C11.558 13.608 11.646 13.996 11.718 14.356C11.79 14.708 11.842 14.976 11.874 15.16C11.906 14.976 11.954 14.708 12.018 14.356C12.09 13.996 12.178 13.608 12.282 13.192L13.758 7.24H14.85L12.582 16H11.106Z" fill="var(--color-text)" id="icon-32-text"></path></svg><span>cy<wbr/>Layouts</span></a>
+<a href="../variables/_nanopub_display.cyStyle.html" class="tsd-index-link tsd-kind-variable tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-32-path"></use><use href="#icon-32-text"></use></svg><span>cy<wbr/>Style</span></a>
+<a href="../variables/_nanopub_display.grlcNpApiUrls.html" class="tsd-index-link tsd-kind-variable tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-32-path"></use><use href="#icon-32-text"></use></svg><span>grlc<wbr/>Np<wbr/>Api<wbr/>Urls</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Functions</h3>
+<div class="tsd-index-list"><a href="../functions/_nanopub_display.cyGetConfig.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-function)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-64-path"></rect><path d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z" fill="var(--color-text)" id="icon-64-text"></path></svg><span>cy<wbr/>Get<wbr/>Config</span></a>
+<a href="../functions/_nanopub_display.cyGetElemsForNanopub.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>cy<wbr/>Get<wbr/>Elems<wbr/>For<wbr/>Nanopub</span></a>
+<a href="../functions/_nanopub_display.cyHighlightConnectedEdges.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>cy<wbr/>Highlight<wbr/>Connected<wbr/>Edges</span></a>
+<a href="../functions/_nanopub_display.cyShowNodeOnClick.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>cy<wbr/>Show<wbr/>Node<wbr/>On<wbr/>Click</span></a>
+<a href="../functions/_nanopub_display.displayLink.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>display<wbr/>Link</span></a>
+<a href="../functions/_nanopub_display.replacePrefix.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-module"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>replace<wbr/>Prefix</span></a>
+</div></section></section></section></div>
+<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+<div class="tsd-navigation settings">
+<details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility">
+<h4 class="uppercase">Member Visibility</h4><form>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></form></div>
+<div class="tsd-theme-toggle">
+<h4 class="uppercase">Theme</h4><select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<nav class="tsd-navigation primary">
+<details class="tsd-index-accordion" open><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Modules</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li class="current"><a href="../modules.html">nanopub-<wbr/>js</a>
+<ul>
+
+<li class="current selected tsd-kind-module"><a href="_nanopub_display.html">@nanopub/display</a></li>
+<li class="tsd-kind-module"><a href="_nanopub_utils.html">@nanopub/utils</a></li></ul></li></ul></div></details></nav>
+<nav class="tsd-navigation secondary menu-sticky">
+<ul>
+<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_nanopub_display.NanopubDisplay.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>Nanopub<wbr/>Display</a></li>
+<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_nanopub_display.NanopubStatus.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>Nanopub<wbr/>Status</a></li>
+<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_nanopub_display.NanopubStatusIcon.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>Nanopub<wbr/>Status<wbr/>Icon</a></li>
+<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/_nanopub_display.NanopubWriter.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>Nanopub<wbr/>Writer</a></li>
+<li class="tsd-kind-variable tsd-parent-kind-module"><a href="../variables/_nanopub_display.cyLayouts.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-32-path"></use><use href="#icon-32-text"></use></svg>cy<wbr/>Layouts</a></li>
+<li class="tsd-kind-variable tsd-parent-kind-module"><a href="../variables/_nanopub_display.cyStyle.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-32-path"></use><use href="#icon-32-text"></use></svg>cy<wbr/>Style</a></li>
+<li class="tsd-kind-variable tsd-parent-kind-module"><a href="../variables/_nanopub_display.grlcNpApiUrls.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-32-path"></use><use href="#icon-32-text"></use></svg>grlc<wbr/>Np<wbr/>Api<wbr/>Urls</a></li>
+<li class="tsd-kind-function tsd-parent-kind-module"><a href="../functions/_nanopub_display.cyGetConfig.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>cy<wbr/>Get<wbr/>Config</a></li>
+<li class="tsd-kind-function tsd-parent-kind-module"><a href="../functions/_nanopub_display.cyGetElemsForNanopub.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>cy<wbr/>Get<wbr/>Elems<wbr/>For<wbr/>Nanopub</a></li>
+<li class="tsd-kind-function tsd-parent-kind-module"><a href="../functions/_nanopub_display.cyHighlightConnectedEdges.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>cy<wbr/>Highlight<wbr/>Connected<wbr/>Edges</a></li>
+<li class="tsd-kind-function tsd-parent-kind-module"><a href="../functions/_nanopub_display.cyShowNodeOnClick.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>cy<wbr/>Show<wbr/>Node<wbr/>On<wbr/>Click</a></li>
+<li class="tsd-kind-function tsd-parent-kind-module"><a href="../functions/_nanopub_display.displayLink.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>display<wbr/>Link</a></li>
+<li class="tsd-kind-function tsd-parent-kind-module"><a href="../functions/_nanopub_display.replacePrefix.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>replace<wbr/>Prefix</a></li></ul></nav></div></div>
+<div class="container tsd-generator">
+<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
+<div class="overlay"></div><script src="../assets/main.js"></script></body></html>

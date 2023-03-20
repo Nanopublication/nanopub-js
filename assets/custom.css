@@ -1,0 +1,18 @@
+h1 {
+    margin-top: 44px;
+}
+
+h2 {
+    margin-top: 36px;
+}
+
+h3 {
+    margin-top: 24px;
+}
+
+/* a { color: #1565c0; text-decoration: none; }
+a:hover { color: #cc9900; }
+a:hover .svgColor {
+  filter: invert(49%) sepia(95%) saturate(462%) hue-rotate(8deg) brightness(100%) contrast(101%);
+} */
+/* Convert color hex to svg filter: https://codepen.io/sosuke/pen/Pjoqqp */

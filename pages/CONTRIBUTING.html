@@ -1,0 +1,128 @@
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Contributing | nanopub-js</title><meta name="description" content="Documentation for nanopub-js"/><script type="module" src="/nanopub-js/nanopub-display.min.js"></script><link rel="icon" href="https://raw.githubusercontent.com/Nanopublication/nanopub-website/9fee248bac306dcff7b1b0fb3d645ef6d5b62ba7/static/img/icon.png"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script async src="../assets/search.js" id="search-script"></script><link rel="stylesheet" href="../assets/pages.css"/></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container">
+<div class="table-cell" id="tsd-search" data-base="..">
+<div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
+<div class="field">
+<div id="tsd-toolbar-links"><a href="/nanopub-display/pages/CONTRIBUTING.html">✒️ Contribute</a><a href="https://github.com/vemonet/nanopub-display">🛸 GitHub</a></div></div>
+<ul class="results">
+<li class="state loading">Preparing search index...</li>
+<li class="state failure">The search index is not available</li></ul><a href="../index.html" class="title">nanopub-js</a></div>
+<div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
+<div class="container container-main">
+<div class="col-8 col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb">
+<li><a href="../modules.html">nanopub-js</a></li>
+<li><a href="CONTRIBUTING.html">Contributing</a></li></ul>
+<h1> Contributing</h1></div>
+<div class="tsd-panel tsd-typography"><p><a href="https://github.com/vemonet/nanopub-display/actions/workflows/build.yml"><img src="https://github.com/vemonet/nanopub-display/actions/workflows/build.yml/badge.svg" alt="Run tests and update docs"></a></p>
+<p>This document contains details on the workflow used to develop the component if you want to improve it, and contribute.</p>
+
+<a href="#📥️-install-for-development" id="📥️-install-for-development" style="color: inherit; text-decoration: none;">
+  <h2>📥️ Install for development</h2>
+</a>
+<p>Clone the repository:</p>
+<pre><code class="language-bash"><span class="hl-2">git </span><span class="hl-8">clone</span><span class="hl-2"> </span><span class="hl-8">https://github.com/vemonet/nanopub-display</span><br/><span class="hl-11">cd</span><span class="hl-2"> </span><span class="hl-8">nanopub-display</span>
+</code></pre>
+<p>Install dependencies:</p>
+<pre><code class="language-bash"><span class="hl-2">yarn</span>
+</code></pre>
+<blockquote>
+<p>If you use VS Code, we highly recommend the <a href="https://marketplace.visualstudio.com/items?itemName=runem.lit-plugin">lit-plugin extension</a>, which enables some extremely useful features for lit-html templates.</p>
+</blockquote>
+
+<a href="#🧑💻-development" id="🧑💻-development" style="color: inherit; text-decoration: none;">
+  <h2>🧑‍💻 Development</h2>
+</a>
+<p>Start the component in development mode, it will automatically reload when the code is changed:</p>
+<pre><code class="language-bash"><span class="hl-2">yarn </span><span class="hl-8">dev</span>
+</code></pre>
+
+<a href="#📦️-build" id="📦️-build" style="color: inherit; text-decoration: none;">
+  <h2>📦️ Build</h2>
+</a>
+<p>To build the JavaScript version of your component:</p>
+<pre><code class="language-bash"><span class="hl-2">yarn </span><span class="hl-8">build</span>
+</code></pre>
+<blockquote>
+<p>This sample uses the TypeScript compiler and <a href="https://rollupjs.org">rollup</a> to produce JavaScript that runs in modern browsers.</p>
+</blockquote>
+
+<a href="#☑️-testing" id="☑️-testing" style="color: inherit; text-decoration: none;">
+  <h2>☑️ Testing</h2>
+</a>
+<p>Tests can be run with the <code>test</code> script:</p>
+<pre><code class="language-bash"><span class="hl-2">yarn </span><span class="hl-8">test</span>
+</code></pre>
+<p>Alternatively the <code>test:prod</code> command will run your tests in Lit&#39;s production mode.</p>
+<blockquote>
+<p>This project uses modern-web.dev&#39;s <a href="https://www.npmjs.com/package/@web/test-runner">@web/test-runner</a> for testing. See the <a href="https://modern-web.dev/docs/test-runner/overview">modern-web.dev testing documentation</a> for more information.</p>
+</blockquote>
+
+<a href="#✒️-formatting" id="✒️-formatting" style="color: inherit; text-decoration: none;">
+  <h2>✒️ Formatting</h2>
+</a>
+<p><a href="https://prettier.io/">Prettier</a> is used for code formatting:</p>
+<pre><code class="language-bash"><span class="hl-2">yarn </span><span class="hl-8">fmt</span>
+</code></pre>
+<blockquote>
+<p>You can change the configuration in the <code>package.json</code>. Prettier has not been configured to run when committing files, but this can be added with Husky and <code>pretty-quick</code>. See the <a href="https://prettier.io/">prettier.io</a> site for instructions.</p>
+</blockquote>
+
+<a href="#✅-linting" id="✅-linting" style="color: inherit; text-decoration: none;">
+  <h2>✅ Linting</h2>
+</a>
+<p>To check if the project does not break any linting rule run:</p>
+<pre><code class="language-bash"><span class="hl-2">yarn </span><span class="hl-8">lint</span>
+</code></pre>
+<blockquote>
+<p>Linting of TypeScript files is provided by <a href="eslint.org">ESLint</a> and <a href="https://github.com/typescript-eslint/typescript-eslint">TypeScript ESLint</a>. In addition, <a href="https://www.npmjs.com/package/lit-analyzer">lit-analyzer</a> is used to type-check and lint lit-html templates with the same engine and rules as lit-plugin.</p>
+</blockquote>
+
+<a href="#📖-documentation-website" id="📖-documentation-website" style="color: inherit; text-decoration: none;">
+  <h2>📖 Documentation website</h2>
+</a>
+<p>To build and run the documentation website, run:</p>
+<pre><code class="language-bash"><span class="hl-2">yarn </span><span class="hl-8">docs</span>
+</code></pre>
+<p>To build the website for deployment, run:</p>
+<pre><code class="language-bash"><span class="hl-2">yarn </span><span class="hl-8">docs:build</span>
+</code></pre>
+
+<a href="#ℹ️-more-information" id="ℹ️-more-information" style="color: inherit; text-decoration: none;">
+  <h2>ℹ️ More information</h2>
+</a>
+<p>🔨 Built with <a href="https://lit.dev/">Lit</a> and <a href="https://github.com/rdfjs/N3.js">N3.js</a></p>
+<p>Vite TS starter: <a href="https://github.com/vitejs/vite/tree/main/packages/create-vite/template-lit-ts">https://github.com/vitejs/vite/tree/main/packages/create-vite/template-lit-ts</a></p>
+<p>Official lit TS starter: <a href="https://github.com/lit/lit-element-starter-ts">https://github.com/lit/lit-element-starter-ts</a></p>
+<p>RDFJS components: <a href="https://github.com/zazuko/rdfjs-elements">https://github.com/zazuko/rdfjs-elements</a></p>
+<p>Lit element React integration: <a href="https://github.com/lit/lit/tree/main/packages/labs/react">https://github.com/lit/lit/tree/main/packages/labs/react</a></p>
+</div></div>
+<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+<div class="tsd-navigation settings">
+<details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility">
+<h4 class="uppercase">Member Visibility</h4><form>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></form></div>
+<div class="tsd-theme-toggle">
+<h4 class="uppercase">Theme</h4><select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<nav class="tsd-navigation primary">
+<details class="tsd-index-accordion" open><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Modules</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li class="current"><a href="../modules.html">nanopub-<wbr/>js</a>
+<ul>
+
+<li class="tsd-kind-module"><a href="../modules/_nanopub_display.html">@nanopub/display</a></li>
+<li class="tsd-kind-module"><a href="../modules/_nanopub_utils.html">@nanopub/utils</a></li></ul></li></ul></div></details></nav>
+<nav class="tsd-navigation secondary menu-sticky"></nav></div></div>
+<div class="container tsd-generator">
+<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
+<div class="overlay"></div><script src="../assets/main.js"></script></body></html>
