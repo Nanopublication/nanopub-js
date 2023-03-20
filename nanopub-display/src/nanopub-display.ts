@@ -295,7 +295,9 @@ export class NanopubDisplay extends LitElement {
   _openDisplayOptions() {
     this.showDisplayOptions = !this.showDisplayOptions
     if (window && this.showDisplayOptions) {
-      window.addEventListener('click', this._handleClickOut)
+      setTimeout(() => {
+        window.addEventListener('click', this._handleClickOut)
+      }, 0)
     }
   }
 
@@ -446,22 +448,31 @@ declare global {
 //   }
 // }
 
-// TODO: export those interfaces so they can be imported in .d.ts files easily?
-declare namespace JSX {
-  interface NanopubDisplay {
-    /**
-     * The URL
-     */
-    url?: string
-    /**
-     * The RDF
-     */
-    rdf?: string
-  }
-  interface IntrinsicElements {
+// From official lit example: https://github.com/lit/lit/blob/main/examples/nextjs/src/simple-greeter.ts
+declare global {
+  interface HTMLElementTagNameMap {
     'nanopub-display': NanopubDisplay
   }
+
+  namespace JSX {
+    interface IntrinsicElements {
+      'nanopub-display':
+        | React.DetailedHTMLProps<React.HTMLAttributes<NanopubDisplay>, NanopubDisplay>
+        | Partial<NanopubDisplay>
+    }
+  }
 }
+
+// TODO: export those interfaces so they can be imported in .d.ts files easily?
+// declare namespace JSX {
+//   interface NanopubDisplay {
+//     url?: string
+//     rdf?: string
+//   }
+//   interface IntrinsicElements {
+//     'nanopub-display': NanopubDisplay
+//   }
+// }
 // export {LocalJSX as JSX};
 
 // declare module "@stencil/core" {

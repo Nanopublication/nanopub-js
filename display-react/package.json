@@ -17,9 +17,10 @@
     "linting": "eslint 'src/**/*.ts' --ignore-path ../.gitignore --fix && lit-analyzer"
   },
   "dependencies": {
+    "@lit-labs/react": "^1.1.1",
+    "@nanopub/display": "*",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@nanopub/display": "*"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

@@ -1,12 +1,16 @@
 import * as React from 'react'
-import ReactDOM from 'react-dom'
-import '@nanopub/display'
+import { createRoot } from 'react-dom/client';
+import {NanopubDisplayReact} from './NanopubDisplay'
+// import '@nanopub/display'
+// import '../../nanopub-display/src/index'
 
 export default function App() {
     return <div>
       <h1>Nanopub Display React development</h1>
-      <nanopub-display url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />
+      <NanopubDisplayReact url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />
+      {/* <nanopub-display url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" /> */}
     </div>
 }
 
-ReactDOM.render(<App />, document.querySelector('#root'))
+const root = createRoot(document.getElementById('root') as Element);
+root.render(<App />);
