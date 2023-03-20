@@ -1,5 +1,7 @@
 # 🧬 Web Components to display Nanopublications
 
+[![Run tests and update docs](https://github.com/Nanopublication/nanopub-js/actions/workflows/build.yml/badge.svg)](https://github.com/Nanopublication/nanopub-js/actions/workflows/build.yml)
+
 `@nanopub/display` is a library of standard web components to easily display [Nanopublications](https://nanopub.net) in applications built using any web framework (pure HTML, React, Angular, Vue, Svelte).
 
 If you want to improve this library, please refer to the [contribute page](/pages/CONTRIBUTING.html) which details how to use the library in development.
