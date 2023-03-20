@@ -30,6 +30,7 @@
   "workspaces": [
     "nanopub-display",
     "nanopub-utils",
+    "display-react",
     "eslint-config-custom"
   ],
   "engines": {

@@ -180,7 +180,7 @@ export class NanopubWriter extends Writer {
     let singleDone =
       done &&
       ((error: any, result: any) => {
-        ;(singleDone = null), done(error, result)
+        (singleDone = null), done(error, result)
       })
     if (this._endStream) {
       try {

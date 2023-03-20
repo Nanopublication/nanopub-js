@@ -11,7 +11,7 @@ env:
 jobs:
 
   tests:
-    uses: vemonet/rdflib-endpoint/.github/workflows/test.yml@main
+    uses: Nanopublication/nanopub-js/.github/workflows/build.yml@main
     secrets: inherit
 
   publish:

@@ -14,7 +14,7 @@ module.exports = {
   },
   navigationLinks: {
     '✒️ Contribute': '/nanopub-display/pages/CONTRIBUTING.html',
-    '🛸 GitHub': 'https://github.com/vemonet/nanopub-display'
+    '🛸 GitHub': 'https://github.com/Nanopublication/nanopub-js'
   },
   customCss: 'docs/style.css',
   // https://knodescommunity.github.io/typedoc-plugins/_knodes_typedoc_plugin_pages/pages/pages-tree.html

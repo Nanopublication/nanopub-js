@@ -1,4 +1,4 @@
-[![Run tests and update docs](https://github.com/vemonet/nanopub-display/actions/workflows/build.yml/badge.svg)](https://github.com/vemonet/nanopub-display/actions/workflows/build.yml)
+[![Run tests and update docs](https://github.com/Nanopublication/nanopub-js/actions/workflows/build.yml/badge.svg)](https://github.com/Nanopublication/nanopub-js/actions/workflows/build.yml)
 
 This document contains details on the workflow used to develop the component if you want to improve it, and contribute.
 
@@ -7,7 +7,7 @@ This document contains details on the workflow used to develop the component if 
 Clone the repository:
 
 ```bash
-git clone https://github.com/vemonet/nanopub-display
+git clone https://github.com/Nanopublication/nanopub-js
 cd nanopub-display
 ```
 
