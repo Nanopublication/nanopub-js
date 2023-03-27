@@ -1,6 +1,6 @@
 {
   "name": "@nanopub/utils",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A JavaScript library for retrieving and querying nanopublications.",
   "main": "src/index.ts",
   "typings": "build/dist/index.d.ts",
@@ -24,6 +24,7 @@
     "node-json2html": "^2.2.3"
   },
   "devDependencies": {
+    "@jest/globals": "^29.5.0",
     "@types/jest": "^29.4.3",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
