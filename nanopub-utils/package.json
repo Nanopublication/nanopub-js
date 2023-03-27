@@ -1,6 +1,6 @@
 {
   "name": "@nanopub/utils",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "A JavaScript library for retrieving and querying nanopublications.",
   "main": "src/index.ts",
   "typings": "build/dist/index.d.ts",
