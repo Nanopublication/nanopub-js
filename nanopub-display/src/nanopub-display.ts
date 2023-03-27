@@ -6,6 +6,7 @@ import {styleMap} from 'lit/directives/style-map.js'
 
 import {Parser, Quad} from 'n3'
 import {NanopubWriter} from './n3-writer'
+import {Nanopub} from '@nanopub/utils'
 import './nanopub-status-icon'
 
 const npColor = {
@@ -207,6 +208,10 @@ export class NanopubDisplay extends LitElement {
    */
   override async connectedCallback() {
     super.connectedCallback()
+
+    // const np = new Nanopub({url: this.url})
+    const np = await Nanopub.fetch(this.url)
+    console.log(np)
 
     if (!this.url && !this.rdf) {
       this.error = `⚠️ No nanopublication has been provided, use the "url" or "rdf"

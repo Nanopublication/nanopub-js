@@ -46,6 +46,7 @@
     "lit"
   ],
   "dependencies": {
+    "@nanopub/utils": "*",
     "lit": "^2.2.4",
     "n3": "^1.16.3"
   },
