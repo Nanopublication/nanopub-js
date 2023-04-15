@@ -2,7 +2,9 @@
 
 This document contains details on the workflow used to develop the component if you want to improve it, and contribute.
 
-## Introduction
+If you have a question or a suggestion, you are encouraged to share it in the [GitHub issues](https://github.com/Nanopublication/nanopub-js/issues), after checking if it has already been mentioned.
+
+## ℹ️ Introduction
 
 This repository contains multiple libraries (aka. "monorepo"), we use `nx` to manage the different libraries as whole.
 
@@ -89,7 +91,16 @@ To build the website for deployment, run:
 yarn docs:build
 ```
 
-## ℹ️ More information
+## 🧹 Clean
+
+To completely reset the caches of the different packages (requires to reinstall the workspace with `yarn`):
+
+```bash
+yarn clean
+yarn
+```
+
+## 🔗 More information
 
 🔨 Built with [Lit](https://lit.dev/) and [N3.js](https://github.com/rdfjs/N3.js)
 
