@@ -1,4 +1,4 @@
-import {legacyPlugin} from '@web/dev-server-legacy'
+// import {legacyPlugin} from '@web/dev-server-legacy'
 import {playwrightLauncher} from '@web/test-runner-playwright'
 import {esbuildPlugin} from '@web/dev-server-esbuild'
 

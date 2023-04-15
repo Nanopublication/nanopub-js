@@ -7,12 +7,13 @@
   "module": "build/dist/index.js",
   "repository": "https://github.com/knowledgepixels/nanopub-utils",
   "license": "MIT",
-  "keywords": [],
   "scripts": {
     "dev": "tsc -w",
     "dev:html": "vite",
-    "test": "jest",
-    "build": "tsc",
+    "test": "yarn test:build && jest",
+    "test:build": "tsc && BUNDLE=true rollup -c",
+    "build:tsc": "tsc",
+    "build": "vite build",
     "watch:build": "tsc -w",
     "lint": "eslint src --ext .ts --fix",
     "docs": "yarn docs:build && vite ./build/docs",
@@ -21,6 +22,9 @@
     "version": "standard-version",
     "reset-hard": "git clean -dfx && git reset --hard && yarn",
     "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish"
+  },
+  "dependencies": {
+    "n3": "^1.16.3"
   },
   "devDependencies": {
     "@jest/globals": "^29.5.0",
@@ -38,5 +42,10 @@
     "ts-node": "^9.0.0",
     "typescript": "^4.0.2",
     "vite": "^4.1.4"
-  }
+  },
+  "keywords": [
+    "nanopublications",
+    "rdf",
+    "typescript"
+  ]
 }

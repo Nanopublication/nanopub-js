@@ -49,7 +49,7 @@ export default defineConfig({
       rollupPlugins,
       // No external for testing, everything needs to be bundled
       // eslint-disable-next-line no-undef
-      external: process.env.BUNDLE ? [] : [/^lit/, /^n3/]
+      external: process.env.BUNDLE ? [] : [/^lit/, /^@nanopub/, /^n3/]
     }
   },
   optimizeDeps: {

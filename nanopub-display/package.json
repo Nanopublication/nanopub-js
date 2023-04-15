@@ -31,7 +31,7 @@
     "docs:build": "rimraf docs-dist && yarn build && typedoc && bash ./docs/fix_docs.sh",
     "docs": "yarn docs:build && vite ./docs-dist --base /nanopub-display/",
     "docs:fix": "find . -type f -exec sed -i 's///g' {} +",
-    "test": "yarn test:build && wtr",
+    "test:dev": "yarn test:build && wtr",
     "test:build": "tsc && BUNDLE=true rollup -c",
     "test:prod": "yarn test && MODE=prod wtr",
     "test:all": "yarn test:dev && yarn test:prod",
@@ -39,13 +39,6 @@
     "publish": "yarn build && yarn npm publish",
     "clean": "rimraf build && rimraf node_modules"
   },
-  "keywords": [
-    "nanopublications",
-    "web-components",
-    "lit-element",
-    "typescript",
-    "lit"
-  ],
   "dependencies": {
     "@nanopub/utils": "*",
     "lit": "^2.2.4",
@@ -79,5 +72,13 @@
     "typescript": "^4.9.5",
     "vite": "^4.1.4",
     "vite-plugin-dts": "^2.1.0"
-  }
+  },
+  "keywords": [
+    "nanopublications",
+    "rdf",
+    "web-components",
+    "lit-element",
+    "typescript",
+    "lit"
+  ]
 }

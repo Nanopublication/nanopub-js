@@ -34,7 +34,7 @@ export default [
     ...rollupConf,
     output: [
       {
-        file: 'dist/nanopub-display.js',
+        file: 'dist/nanopub-utils.js',
         format: 'esm'
         // format: 'umd',
         // name: '[name].js'
@@ -49,11 +49,11 @@ export default [
     external: [],
     output: [
       {
-        file: 'dist/nanopub-display.bundle.js',
+        file: 'dist/nanopub-utils.bundle.js',
         format: 'esm'
       },
       {
-        file: 'dist/nanopub-display.min.js',
+        file: 'dist/nanopub-utils.min.js',
         format: 'umd',
         name: '[name].min.js',
         // globals: { lit: 'lit', n3: 'n3' },
