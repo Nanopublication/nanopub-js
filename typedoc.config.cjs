@@ -13,7 +13,7 @@ module.exports = {
     external: true
   },
   navigationLinks: {
-    '✒️ Contribute': '/nanopub-display/pages/CONTRIBUTING.html',
+    '✒️ Contribute': '/nanopub-js/pages/CONTRIBUTING.html',
     '🛸 GitHub': 'https://github.com/Nanopublication/nanopub-js'
   },
   customCss: 'docs/style.css',
