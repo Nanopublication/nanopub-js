@@ -23,10 +23,10 @@ export class Nanopub {
   }
   // An object optimized to display the content of the Nanopub
   displayNp = {
-    head: {},
-    assertion: {},
-    provenance: {},
-    pubinfo: {}
+    head: new Map(),
+    assertion: new Map(),
+    provenance: new Map(),
+    pubinfo: new Map()
   }
 
   static async fetch(url: string) {
@@ -46,11 +46,11 @@ export class Nanopub {
     this.rdfString = rdfString
     this.store = store
     this.error = error
-    // TODO: don't store the RDF string in the Nanopub object?
+    // TODO: should we really store the RDF string in the Nanopub object?
 
     if (this.error) return
     if (!this.rdfString && this.store.size < 1) {
-      this.error = `⚠️ No nanopublication has been provided, use the "url" or "rdf"
+      this.error = `⚠️ No nanopublication has been provided, use the "url" or "rdfString"
         attribute to provide the URL, or RDF in the TRiG format, of the nanopublication.`
       return
     }
@@ -115,10 +115,8 @@ export class Nanopub {
       if (!this.url) this.url = quad.subject.toString()
       this.graphsId.head = this.getCurie(quad.graph.value, 'sub')
     }
-    console.log('gpgp', this.url)
     // Extract assertion, prov and pubinfo graphs URI
     for (const quad of this.store.match(namedNode(this.url), null, null)) {
-      console.log(quad)
       if (quad.predicate.value === 'http://www.nanopub.org/nschema#hasAssertion') {
         this.graphsId.assertion = this.getCurie(quad.object.value, 'sub')
       }
@@ -129,54 +127,62 @@ export class Nanopub {
         this.graphsId.pubinfo = this.getCurie(quad.object.value, 'sub')
     }
 
-    // Generate the np object, more optimized for visually displayinh the nanopub
+    const predOrder = ['a', 'rdfs:label', 'rdfs:comment', 'rdf:subject', 'rdf:predicate', 'rdf:object']
+    // Generate the displayNp object, more optimized for visually displaying the nanopub
     for (const graph of Object.keys(this.graphsId)) {
-      for (const quad of this.store.match(null, null, null, namedNode(this.getUri(this.displayNp[`${graph}_uri`])))) {
-        console.log(`${graph} graph`, quad)
+      for (const quad of this.store.match(null, null, null, namedNode(this.getUri(this.graphsId[graph])))) {
+        // console.log(`${graph} graph`, quad)
         const subject = this.getCurie(quad.subject.value)
         const pred = this.getCurie(quad.predicate.value)
 
-        if (!this.displayNp[graph][subject]) this.displayNp[graph][subject] = {}
+        if (!this.displayNp[graph].has(subject)) this.displayNp[graph].set(subject, new Map())
 
-        if (!this.displayNp[graph][subject][pred]) {
-          this.displayNp[graph][subject][pred] = []
-          // if (pred === 'rdf:type') {
-          // this.np.assertion[subject] = {
-          //   a: [],
-          //   ...this.np.assertion[subject]
-          // }
-          // }
+        if (!this.displayNp[graph].get(subject).has(pred)) {
+          this.displayNp[graph].get(subject).set(pred, [])
         }
 
-        this.displayNp[graph][subject][pred].push({
-          value: this.getCurie(quad.object.value),
-          type: quad.object.termType
-        })
+        this.displayNp[graph]
+          .get(subject)
+          .get(pred)
+          .push({
+            value: this.getCurie(quad.object.value),
+            type: quad.object.termType
+          })
       }
-      // TODO: use a Map() to order the triples
-      // const orderPredicates = ['a', 'rdfs:label', 'rdf:subject', 'rdf:predicate', 'rdf:object', 'rdfs:seeAlso'].reverse()
-      // Object.keys(this.np.assertion).map(subj => {})
-      // Order triples per predicates
-      // console.log(orderPredicates)
-      // for (const subject of Object.keys(this.np[graph])) {
-      //   for (const predicate of orderPredicates) {
-      //     this.orderTriples(graph, subject, predicate)
-      //   }
-      // }
-    }
-    // console.log(this.np)
-  }
+      // Order subjects in graph, put sub:* in first
+      this.displayNp[graph] = new Map(
+        [...this.displayNp[graph].entries()].sort((a, b) => {
+          if (a[0].startsWith('sub:') && !b[0].startsWith('sub:')) {
+            return -1
+          } else if (!a[0].startsWith('sub:') && b[0].startsWith('sub:')) {
+            return 1
+          } else {
+            return a[0].localeCompare(b[0]) // None in predOrder list
+          }
+        })
+      )
 
-  // private orderTriples(graph: string, subject: string, predicate: string) {
-  //   console.log('ORDERING', graph, subject, predicate)
-  //   console.log(this.np)
-  //   if (this.np[graph][subject][predicate]) {
-  //     const predValue = this.np[graph][subject][predicate]
-  //     delete this.np[graph][subject][predicate]
-  //     this.np[graph][subject] = {
-  //       [predicate]: predValue,
-  //       ...this.np[graph][subject]
-  //     }
-  //   }
-  // }
+      // Order predicates for each subject
+      for (const [subj, preds] of this.displayNp[graph].entries()) {
+        this.displayNp[graph].set(
+          subj,
+          new Map(
+            [...preds.entries()].sort((a, b) => {
+              if (predOrder.indexOf(a[0]) !== -1 && predOrder.indexOf(b[0]) !== -1) {
+                return predOrder.indexOf(a[0]) - predOrder.indexOf(b[0]) // The 2 are in predOrder list
+              } else if (predOrder.indexOf(a[0]) !== -1 && predOrder.indexOf(b[0]) === -1) {
+                return -1 // b not in predOrder list
+              } else if (predOrder.indexOf(a[0]) === -1 && predOrder.indexOf(b[0]) !== -1) {
+                return 1 // a not in predOrder list
+              } else {
+                return a[0].localeCompare(b[0]) // None in predOrder list
+              }
+            })
+          )
+        )
+      }
+
+      console.log(graph, 'ORDERED', this.displayNp[graph])
+    }
+  }
 }
