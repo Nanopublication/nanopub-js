@@ -2,13 +2,19 @@
 
 This document contains details on the workflow used to develop the component if you want to improve it, and contribute.
 
+## Introduction
+
+This repository contains multiple libraries (aka. "monorepo"), we use `nx` to manage the different libraries as whole.
+
+We recommend to run the `yarn` commands directly from the root of the project to start all libraries at the same time, and make sure libraries dependencies are updated properly (e.g. display depends on utils). You can also run the commands directly in the folder of a specific library if you just want to work with this one.
+
 ## 📥️ Install for development
 
 Clone the repository:
 
 ```bash
 git clone https://github.com/Nanopublication/nanopub-js
-cd nanopub-display
+cd nanopub-js
 ```
 
 Install dependencies:

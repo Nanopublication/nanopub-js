@@ -36,7 +36,8 @@
     "test:prod": "yarn test && MODE=prod wtr",
     "test:all": "yarn test:dev && yarn test:prod",
     "lint": "eslint 'src/**/*.ts' --ignore-path ../.gitignore --fix && lit-analyzer",
-    "publish": "yarn build && yarn npm publish"
+    "publish": "yarn build && yarn npm publish",
+    "clean": "rimraf build && rimraf node_modules"
   },
   "keywords": [
     "nanopublications",

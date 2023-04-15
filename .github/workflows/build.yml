@@ -3,10 +3,9 @@ on:
   workflow_dispatch:
   workflow_call:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-
   CodeQL-Analysis:
     name: CodeQL analysis
     runs-on: ubuntu-latest
@@ -33,7 +32,6 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
 
-
   tests:
     runs-on: ubuntu-latest
     strategy:
@@ -41,29 +39,28 @@ jobs:
         node-version: [18]
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup Node ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install dependencies
-      run: |
-        yarn
+      - name: Install dependencies
+        run: |
+          yarn
 
-    - name: Run eslint
-      run: |
-        yarn lint
+      - name: Run eslint
+        run: |
+          yarn lint
 
-    - name: Run tests
-      run: |
-        yarn test
+      - name: Run tests
+        run: |
+          yarn test
 
-    - name: Build the component
-      run: |
-        yarn build
-
+      - name: Build the component
+        run: |
+          yarn build
 
   deploy:
     runs-on: ubuntu-latest
@@ -73,31 +70,30 @@ jobs:
       id-token: write
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-    - name: Install dependencies
-      run: |
-        yarn
+      - name: Install dependencies
+        run: |
+          yarn
 
-    - name: Build docs
-      run: |
-        yarn docs:build
+      - name: Build docs
+        run: |
+          yarn docs:build
 
-    - name: Setup Pages
-      uses: actions/configure-pages@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
 
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v1
-      with:
-        path: './docs-dist'
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: './docs-dist'
 
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v1
-
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
 
     # # Docs: https://github.com/peaceiris/actions-gh-pages
     # - name: Deploy to GitHub Pages

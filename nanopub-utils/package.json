@@ -17,6 +17,7 @@
     "lint": "eslint src --ext .ts --fix",
     "docs": "yarn docs:build && vite ./build/docs",
     "docs:build": "rimraf build/docs && typedoc src/ --exclude **/*.spec.ts --out build/docs",
+    "clean": "rimraf build && rimraf node_modules",
     "version": "standard-version",
     "reset-hard": "git clean -dfx && git reset --hard && yarn",
     "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish"
