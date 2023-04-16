@@ -5,8 +5,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import dts from 'vite-plugin-dts'
 import typescript from '@rollup/plugin-typescript'
 
-// NOTE: vite build not used, we use rollup directly (vite don't properly generate JS files for all TS files, missing tests)
-// https://www.npmjs.com/package/@rollup/plugin-typescript
+// NOTE: vite build not used at the moment, we use tsc directly
 
 // https://vitejs.dev/config/
 export default defineConfig({

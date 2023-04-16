@@ -5,7 +5,7 @@
     "target": "esnext",
     "lib": ["es2017", "dom"],
     "rootDir": "./src",
-    "outDir": "./build/dist",
+    "outDir": "./dist",
     //"module": "commonjs",
 
     "strict": true /* Enable all strict type-checking options. */,

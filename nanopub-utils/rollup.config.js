@@ -5,6 +5,8 @@ import commonjs from '@rollup/plugin-commonjs'
 import {terser} from 'rollup-plugin-terser'
 // import minifyHTML from 'rollup-plugin-minify-html-literals';
 
+// NOT USED yet: we only use tsc to build utils at the moment
+
 const rollupConf = {
   input: 'dist/index.js',
   plugins: [

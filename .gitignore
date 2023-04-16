@@ -1,6 +1,7 @@
 node_modules/
 dist/
 docs-dist/
+tsconfig.tsbuildinfo
 /lib/
 /test/
 *.lock
