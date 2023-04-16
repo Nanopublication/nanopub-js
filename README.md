@@ -20,14 +20,14 @@ If you want to improve those libraries, please refer to the [**contribute page**
 
 - Use modern tools
 
-- - Web components (Lit element)
+  - Web components (Lit element)
   - TypeScript
   - Vite, ESBuild, ESLint, Prettier
   - Comprehensive documentation with typedoc
 
 - Separated libraries depending on the developer's needs:
 
-- - Do you need to sign and publish?
+  - Do you need to sign and publish?
   - Just query the Nanopub network?
   - Or display the content of nanopubs?
 
@@ -39,30 +39,23 @@ If you want to improve those libraries, please refer to the [**contribute page**
 
 You are encouraged to let us know in the [GitHub issues](https://github.com/Nanopublication/nanopub-js/issues), if you have any preference or advices regarding the choice of web component framework!
 
-🔥 **Lit element** from Google (current choice)
+- 🔥 **Lit element** from Google (current choice)
 
-​	✅ Most popular and mature
+  - ✅ Most popular and mature
+  - ⚠️ Visual components library not updated yet
 
-​	⚠️ Visual components library not updated yet
+- ⚡️ **Fast element** from Microsoft
 
-⚡️ **Fast element** from Microsoft
+  - ✅ Visual components library up-to-date and following standard guidelines
+  - ✅ Working on a standard design system
+  - ⚠️ Syntax a bit more verbose than Lit (personal opinion)
 
-​	✅ Visual components library up-to-date and following standard guidelines 
+- ✒️ **Stencil** from Ionics
 
-​	✅ Working on a standard design system
+  - ✅ Similar to Lit and Fast
+  - ✅ Good documentation
 
-​	⚠️ Syntax a bit more verbose than Lit (personal opinion)
-
-✒️ **Stencil** from Ionics
-
-​	✅ Similar to Lit and Fast
-
-​	✅ Good documentation
-
-🔗 **Svelte**
-
-​	⚠️ New approach to web development
-
-​	✅ Loved by developers
-
-​	✅ Ranks better in benchmarks
+- 🔗 **Svelte**
+  - ⚠️ New approach to web development
+  - ✅ Loved by developers
+  - ✅ Ranks better in benchmarks

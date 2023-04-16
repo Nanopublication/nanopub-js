@@ -2,8 +2,8 @@
 
 `@nanopub/display` is a library of standard web components to easily display [Nanopublications](https://nanopub.net) in applications built using any web framework (pure HTML, React, Angular, Vue, Svelte):
 
-* `<nanopub-display>` displays a nanopublication content nicely, and enable users to hide specific graphs
-* `<nanopub-status>` displays the status of a nanopublication (has it been supersed?)
+- `<nanopub-display>` displays a nanopublication content nicely, and enable users to hide specific graphs
+- `<nanopub-status>` displays the status of a nanopublication (has it been supersed?)
 
 If you want to improve this library, please refer to the [contribute page](/pages/CONTRIBUTING.html) which details how to use the library in development.
 

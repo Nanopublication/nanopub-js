@@ -87,16 +87,16 @@ export const getLatestNp = callback => {
     })
 }
 
-export const isTrustyUri = (uri : string) => {
+export const isTrustyUri = (uri: string) => {
   return /.*[^A-Za-z0-9_\-](RA[A-Za-z0-9_\-]{43})/.test(uri)
 }
 
-export const getArtifactCode = (uri : string) => {
+export const getArtifactCode = (uri: string) => {
   if (isTrustyUri(uri)) return uri.replace(/^.*[^A-Za-z0-9_\-](RA[A-Za-z0-9_\-]{43})$/, '$1')
   return null
 }
 
-export const getShortCode = (uri : string) => {
+export const getShortCode = (uri: string) => {
   const ac = getArtifactCode(uri)
   if (ac == null) return null
   return ac.substring(0, 10)

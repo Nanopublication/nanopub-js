@@ -1,113 +1,117 @@
-import {attr, html, css, customElement, observable, when, FASTElement} from '@microsoft/fast-element';
-import {Parser, Quad} from 'n3';
+import {attr, html, css, customElement, observable, when, FASTElement} from '@microsoft/fast-element'
+import {Parser, Quad} from 'n3'
 
-import {NanopubWriter} from './n3-writer';
+import {NanopubWriter} from './n3-writer'
 
 const template = html<NanopubDisplay>`
-  <div
-    class="nanopub"
-  >
-    ${when(x => x.prefixes, () => {
-      return html` @prefix ${Object.keys(x => x.prefixes)[0]} <<a
-          href="${x => x.prefixes[Object.keys(x => x.prefixes)[0]]}"
-          target="_blank"
-          rel="noopener noreferrer"
-          >${x => x.prefixes[Object.keys(x => x.prefixes)[0]]}</a
-        >> .
-        ${x => !x.disableDisplayButton
-          ? html`<div class="display-checklist" tabindex="100">
-              <span
-                class="anchor-display-checklist"
-                @click="${() => x => x._openDisplayOptions()}"
-                @touchstart="${() => x => x._openDisplayOptions()}"
-              >
-                ${displayIcon} ${x => x.showDisplayOptions ? html`Select the sections to display` : html``}
-              </span>
-              ${x => x.showDisplayOptions
-                ? html`<div class="display-checklist-wrapper">
-                    <ul class="items" id="display-checklist-items">
-                      <li id="displayPrefixes" @click=${(e: any) => x => x._switchDisplay(e.target.id)}>
-                        <label
-                          ><input
-                            type="checkbox"
-                            value="displayPrefixes"
-                            .checked=${x => x.displayPrefixes}
-                            @click=${(e: any) => x => x._switchDisplay(e.target.value)}
-                          />
-                          Display prefixes
-                        </label>
-                      </li>
-                      <li id="displayHead" @click=${(e: any) => x => x._switchDisplay(e.target.id)}>
-                        <label
-                          ><input
-                            type="checkbox"
-                            value="displayHead"
-                            .checked=${x => x.displayHead}
-                            @click=${(e: any) => x => x._switchDisplay(e.target.value)}
-                          />
-                          Display Head graph
-                        </label>
-                      </li>
-                      <li id="displayAssertion" @click=${(e: any) => x => x._switchDisplay(e.target.id)}>
-                        <label
-                          ><input
-                            type="checkbox"
-                            value="displayAssertion"
-                            .checked=${x => x.displayAssertion}
-                            @click=${(e: any) => x => x._switchDisplay(e.target.value)}
-                          />
-                          Display Assertion graph
-                        </label>
-                      </li>
-                      <li id="displayProvenance" @click=${(e: any) => x => x._switchDisplay(e.target.id)}>
-                        <label
-                          ><input
-                            type="checkbox"
-                            value="displayProvenance"
-                            .checked=${x => x.displayProvenance}
-                            @click=${(e: any) => x => x._switchDisplay(e.target.value)}
-                          />
-                          Display Provenance graph
-                        </label>
-                      </li>
-                      <li id="displayPubinfo" @click=${(e: any) => x => x._switchDisplay(e.target.id)}>
-                        <label
-                          ><input
-                            type="checkbox"
-                            value="displayPubinfo"
-                            .checked=${x => x.displayPubinfo}
-                            @click=${(e: any) => x => x._switchDisplay(e.target.value)}
-                          />
-                          Display PubInfo graph
-                        </label>
-                      </li>
-                    </ul>
-                  </div>`
-                : html``}
-            </div>`
-          : html``}
-        ${x => !x.disableDisplayStatus && x.url
-          ? html`<nanopub-status-icon url=${x => x.url} style="margin-right: 14px; margin-top: 1px;" />`
-          : html``}
-        <br />
+  <div class="nanopub">
+    ${when(
+      x => x.prefixes,
+      () => {
+        return html` @prefix ${Object.keys(x => x.prefixes)[0]} <<a
+            href="${x => x.prefixes[Object.keys(x => x.prefixes)[0]]}"
+            target="_blank"
+            rel="noopener noreferrer"
+            >${x => x.prefixes[Object.keys(x => x.prefixes)[0]]}</a
+          >> .
+          ${x =>
+            !x.disableDisplayButton
+              ? html`<div class="display-checklist" tabindex="100">
+                  <span
+                    class="anchor-display-checklist"
+                    @click="${() => x => x._openDisplayOptions()}"
+                    @touchstart="${() => x => x._openDisplayOptions()}"
+                  >
+                    ${displayIcon} ${x => (x.showDisplayOptions ? html`Select the sections to display` : html``)}
+                  </span>
+                  ${x =>
+                    x.showDisplayOptions
+                      ? html`<div class="display-checklist-wrapper">
+                          <ul class="items" id="display-checklist-items">
+                            <li id="displayPrefixes" @click=${(e: any) => x => x._switchDisplay(e.target.id)}>
+                              <label
+                                ><input
+                                  type="checkbox"
+                                  value="displayPrefixes"
+                                  .checked=${x => x.displayPrefixes}
+                                  @click=${(e: any) => x => x._switchDisplay(e.target.value)}
+                                />
+                                Display prefixes
+                              </label>
+                            </li>
+                            <li id="displayHead" @click=${(e: any) => x => x._switchDisplay(e.target.id)}>
+                              <label
+                                ><input
+                                  type="checkbox"
+                                  value="displayHead"
+                                  .checked=${x => x.displayHead}
+                                  @click=${(e: any) => x => x._switchDisplay(e.target.value)}
+                                />
+                                Display Head graph
+                              </label>
+                            </li>
+                            <li id="displayAssertion" @click=${(e: any) => x => x._switchDisplay(e.target.id)}>
+                              <label
+                                ><input
+                                  type="checkbox"
+                                  value="displayAssertion"
+                                  .checked=${x => x.displayAssertion}
+                                  @click=${(e: any) => x => x._switchDisplay(e.target.value)}
+                                />
+                                Display Assertion graph
+                              </label>
+                            </li>
+                            <li id="displayProvenance" @click=${(e: any) => x => x._switchDisplay(e.target.id)}>
+                              <label
+                                ><input
+                                  type="checkbox"
+                                  value="displayProvenance"
+                                  .checked=${x => x.displayProvenance}
+                                  @click=${(e: any) => x => x._switchDisplay(e.target.value)}
+                                />
+                                Display Provenance graph
+                              </label>
+                            </li>
+                            <li id="displayPubinfo" @click=${(e: any) => x => x._switchDisplay(e.target.id)}>
+                              <label
+                                ><input
+                                  type="checkbox"
+                                  value="displayPubinfo"
+                                  .checked=${x => x.displayPubinfo}
+                                  @click=${(e: any) => x => x._switchDisplay(e.target.value)}
+                                />
+                                Display PubInfo graph
+                              </label>
+                            </li>
+                          </ul>
+                        </div>`
+                      : html``}
+                </div>`
+              : html``}
+          ${x =>
+            !x.disableDisplayStatus && x.url
+              ? html`<nanopub-status-icon url=${x => x.url} style="margin-right: 14px; margin-top: 1px;" />`
+              : html``}
+          <br />
 
-        <div id="nanopub-prefixes">
-          ${Object.keys(x => x.prefixes).map((prefix, i) => {
-            if (i === 0) {
-              return html``
-            }
-            return html`
-              @prefix ${prefix} <<a href="${x => x.prefixes[prefix]}" target="_blank" rel="noopener noreferrer"
-                >${x => x.prefixes[prefix]}</a
-              >> .
-              <br />
-            `
-          })}
-        </div>`
-    })}
-    ${x => x.html_rdf ? html`${x => x.html_rdf}` : x => x.error ? html`${x => x.error}` : html`Loading...`}
+          <div id="nanopub-prefixes">
+            ${Object.keys(x => x.prefixes).map((prefix, i) => {
+              if (i === 0) {
+                return html``
+              }
+              return html`
+                @prefix ${prefix} <<a href="${x => x.prefixes[prefix]}" target="_blank" rel="noopener noreferrer"
+                  >${x => x.prefixes[prefix]}</a
+                >> .
+                <br />
+              `
+            })}
+          </div>`
+      }
+    )}
+    ${x => (x.html_rdf ? html`${x => x.html_rdf}` : x => (x.error ? html`${x => x.error}` : html`Loading...`))}
   </div>
-`;
+`
 
 const npColor = {
   head: css`#e8e8e8`,
@@ -117,7 +121,6 @@ const npColor = {
   error: css`#f88b80`,
   grey: css`#d1d1d1`
 }
-
 
 const styles = css`
   :host {
@@ -209,7 +212,7 @@ const styles = css`
   input[type='checkbox'] {
     cursor: pointer;
   }
-`;
+`
 
 @customElement({
   name: 'nanopub-display',
@@ -218,48 +221,48 @@ const styles = css`
   // shadowOptions: { delegatesFocus: true, mode: 'open' },
 })
 export class NanopubDisplay extends FASTElement {
-  @attr url = '';
-  @attr rdf = '';
+  @attr url = ''
+  @attr rdf = ''
 
-  @attr  disableDisplayStatus = false
+  @attr disableDisplayStatus = false
   /**
    * Display the prefixes section, or not
    */
-  @attr  displayPrefixes = false
+  @attr displayPrefixes = false
   /**
    * Display the Head graph section, or not
    */
-  @attr  displayHead = false
+  @attr displayHead = false
   /**
    * Display the PubInfo graph section, or not
    */
-  @attr  displayPubinfo = true
+  @attr displayPubinfo = true
   /**
    * Display the Provenance graph section, or not
    */
-  @attr  displayProvenance = true
+  @attr displayProvenance = true
   /**
    * Display the Assertion graph section, or not
    */
-  @attr  displayAssertion = true
+  @attr displayAssertion = true
 
   /**
    * Hide the PubInfo graph by default
    */
-  @attr  hidePubinfo = false
+  @attr hidePubinfo = false
   /**
    * Hide the Provenance graph by default
    */
-  @attr  hideProvenance = false
+  @attr hideProvenance = false
   /**
    * Hide the Assertion graph by default
    */
-  @attr  hideAssertion = false
+  @attr hideAssertion = false
 
   /**
    * Disable the button to change which sections of the nanopub are displayed
    */
-  @attr  disableDisplayButton = false
+  @attr disableDisplayButton = false
 
   /**
    * Boolean to know if the window to change which sections of the nanopub are displayed is opened
@@ -280,7 +283,7 @@ export class NanopubDisplay extends FASTElement {
   @observable error?: string
 
   async connectedCallback() {
-    super.connectedCallback();
+    super.connectedCallback()
 
     if (!this.url && !this.rdf) {
       this.error = `⚠️ No nanopublication has been provided, use the "url" or "rdf"
@@ -344,7 +347,6 @@ export class NanopubDisplay extends FASTElement {
     }
   }
 
-
   /**
    * Apply display described in the state to a nanopub section in the HTML
    */
@@ -388,7 +390,6 @@ export class NanopubDisplay extends FASTElement {
       window.removeEventListener('click', this._handleClickOut)
     }
   }
-
 }
 
 const displayIcon = html`<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 -80 1000 1000">

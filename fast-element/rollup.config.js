@@ -1,11 +1,11 @@
 // https://github.com/microsoft/fast/blob/master/packages/web-components/fast-element/rollup.config.js
-import filesize from 'rollup-plugin-filesize';
-import {terser} from 'rollup-plugin-terser';
-import typescript from '@rollup/plugin-typescript';
-import {nodeResolve} from '@rollup/plugin-node-resolve';
-import nodeGlobals from 'rollup-plugin-node-globals';
-import commonjs from '@rollup/plugin-commonjs';
-import nodeBuiltins from 'rollup-plugin-node-builtins';
+import filesize from 'rollup-plugin-filesize'
+import {terser} from 'rollup-plugin-terser'
+import typescript from '@rollup/plugin-typescript'
+import {nodeResolve} from '@rollup/plugin-node-resolve'
+import nodeGlobals from 'rollup-plugin-node-globals'
+import commonjs from '@rollup/plugin-commonjs'
+import nodeBuiltins from 'rollup-plugin-node-builtins'
 
 const plugins = [
   typescript({
@@ -22,7 +22,7 @@ const plugins = [
     showMinifiedSize: false,
     showBrotliSize: true
   })
-];
+]
 
 export default [
   {
@@ -51,4 +51,4 @@ export default [
   //         // dts(),
   //     ],
   // },
-];
+]

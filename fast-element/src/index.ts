@@ -1,2 +1,2 @@
-export * from './nanopub-display';
-export type {JSX} from './custom-elements';
+export * from './nanopub-display'
+export type {JSX} from './custom-elements'

@@ -1,11 +1,11 @@
-import {defineConfig} from 'vite';
-import dts from 'vite-plugin-dts';
-import {ViteMinifyPlugin} from 'vite-plugin-minify';
-import filesize from 'rollup-plugin-filesize';
-import {terser} from 'rollup-plugin-terser';
-import typescript from '@rollup/plugin-typescript';
-import {nodeResolve} from '@rollup/plugin-node-resolve';
-import nodeGlobals from 'rollup-plugin-node-globals';
+import {defineConfig} from 'vite'
+import dts from 'vite-plugin-dts'
+import {ViteMinifyPlugin} from 'vite-plugin-minify'
+import filesize from 'rollup-plugin-filesize'
+import {terser} from 'rollup-plugin-terser'
+import typescript from '@rollup/plugin-typescript'
+import {nodeResolve} from '@rollup/plugin-node-resolve'
+import nodeGlobals from 'rollup-plugin-node-globals'
 
 // import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
 // import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
@@ -25,7 +25,7 @@ const plugins = [
     showMinifiedSize: false,
     showBrotliSize: true
   })
-];
+]
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -89,4 +89,4 @@ export default defineConfig({
   // define: {
   //     global: {},
   // },
-});
+})
