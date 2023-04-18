@@ -44,7 +44,6 @@
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.6.3",
-    "@nanopub/utils": "file:../nanopub-utils",
     "@open-wc/testing": "^3.1.5",
     "@playwright/test": "^1.32.3",
     "@rollup/plugin-commonjs": "^24.0.1",
