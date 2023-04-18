@@ -4,9 +4,20 @@
     <meta charset="utf-8" />
     <title>Nanopub Display</title>
     <link rel="icon" type="image/svg+xml" href="https://vitejs.dev/logo.svg" />
+
+    <!-- Import local for dev: -->
     <script type="module" src="../src/lib/nanopub-utils.ts"></script>
-    <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/nanopub-utils/dist/nanopub-utils.min.js"></script> -->
-    <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/nanopub-utils@0.0.1/dist/nanopub-utils.min.js"></script> -->
+
+    <!-- Import the latest bundled and minified: -->
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@nanopub/utils/dist/index.min.js"></script> -->
+
+    <!-- Import a specific version: -->
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@nanopub/utils@1.0.4/dist/index.min.js"></script> -->
+
+    <!-- Import ESM module: -->
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@nanopub/utils/dist/index.js"></script> -->
+    <!-- <script type="module" src="https://unpkg.com/@nanopub/utils?module"></script> -->
+    <!-- https://unpkg.com/@nanopub/utils?module -->
   </head>
 
   <!-- url="https://purl.org/np/RAnZpSHgsLMH4mlgjGg9z6eN6dVI8BuudYX3jeyYKY1Fg" -->
@@ -18,7 +29,7 @@
   </body>
 
   <script type="module">
-    import {getUpdateStatus, Nanopub} from './src/index.ts'
+    import {getUpdateStatus, Nanopub} from '@nanopub/utils'
     const status = getUpdateStatus('npUpdate', 'https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
     console.log(status)
     const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
