@@ -38,7 +38,7 @@
     "clean": "rimraf build && rimraf node_modules"
   },
   "dependencies": {
-    "@nanopub/utils": "workspace:^",
+    "@nanopub/utils": "workspace:^1.0.4",
     "lit": "^2.2.4",
     "n3": "^1.16.3"
   },
