@@ -25,7 +25,10 @@ jobs:
         # token: ${{ secrets.GH_TOKEN }}
 
     - name: Install package dependencies
-      run: yarn
+      run: |
+        corepack enable
+        corepack prepare yarn@stable --activate
+        yarn
 
     - name: Build
       run: yarn build

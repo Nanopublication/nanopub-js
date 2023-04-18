@@ -48,6 +48,8 @@ jobs:
 
       - name: Install dependencies
         run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
           yarn
 
       - name: Run eslint
@@ -77,6 +79,8 @@ jobs:
 
       - name: Install dependencies
         run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
           yarn
 
       - name: Build docs
