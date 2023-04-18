@@ -1,25 +1,19 @@
 import summary from 'rollup-plugin-summary'
-import resolve from '@rollup/plugin-node-resolve'
-import replace from '@rollup/plugin-replace'
+import {nodeResolve} from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
+import typescript from '@rollup/plugin-typescript'
 import {terser} from 'rollup-plugin-terser'
 // import minifyHTML from 'rollup-plugin-minify-html-literals';
 
 // NOT USED yet: we only use tsc to build utils at the moment
 
 const rollupConf = {
-  input: 'dist/index.js',
+  input: 'src/index.ts',
   plugins: [
-    replace({
-      preventAssignment: true,
-      'Reflect.decorate': 'undefined'
-      // exclude: 'node_modules/**',
-      // ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
-    }),
+    typescript(),
     commonjs(), // https://github.com/rollup/plugins/tree/master/packages/commonjs
-    // Resolve bare module specifiers to relative paths
-    resolve({preferBuiltins: true, browser: true, jsnext: true, main: true}),
-    // minifyHTML(), // Minify HTML template literals
+    // Resolve bare module specifiers to relative paths:
+    nodeResolve({preferBuiltins: true, browser: true, jsnext: true, main: true}),
     summary()
   ],
   onwarn(warning) {
@@ -29,21 +23,19 @@ const rollupConf = {
   }
 }
 
-// https://lit.dev/docs/tools/production/
 // Config used for testing, 3 outputs: a normal with external dependencies, one with all dependencies bundled, and one bundled and minified
 export default [
   {
     ...rollupConf,
     output: [
       {
-        file: 'dist/nanopub-utils.js',
+        file: 'dist/index.js',
         format: 'esm'
-        // format: 'umd',
         // name: '[name].js'
       }
     ],
-    // No external for testing, everything needs to be bundled
-    external: process.env.BUNDLE ? [] : [/^lit/, /^@nanopub/, /^n3/]
+    // Dependencies not bundled
+    external: [/^n3/]
   },
   {
     ...rollupConf,
@@ -51,21 +43,16 @@ export default [
     external: [],
     output: [
       {
-        file: 'dist/nanopub-utils.bundle.js',
+        file: 'dist/index.bundle.js',
         format: 'esm'
       },
       {
-        file: 'dist/nanopub-utils.min.js',
+        file: 'dist/index.min.js',
         format: 'umd',
         name: '[name].min.js',
-        // globals: { lit: 'lit', n3: 'n3' },
-        // format: "esm", // NOTE: apparently esm is not supported by firefox web workers, use UMD?
+        globals: { n3: 'n3' },
         plugins: [
-          terser({
-            // warnings: true,
-            // ecma: 2020,
-            // module: true,
-          })
+          terser({})
         ]
       }
     ]

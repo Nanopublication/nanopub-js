@@ -10,7 +10,7 @@ This project is composed of multiple libraries that are still in development:
 
 - [x] `@nanopub/display`: Web components to help display the content of a nanopub, includes utilities to automatically generate CytoscapeJS configuration to visualize nanopubs as a network.
 
-- [ ] `@nanopub/publish`: Utility to sign and publish nanopubs directly in the browser (not started yet).
+- [ ] `@nanopub/publish`: Utility to sign and publish nanopubs directly in the browser (not started yet, the name might change).
 
 If you want to improve those libraries, please refer to the [**contribute page**](/pages/CONTRIBUTING.html) which details how to use the library in development.
 
@@ -59,3 +59,8 @@ You are encouraged to let us know in the [GitHub issues](https://github.com/Nano
   - ⚠️ New approach to web development
   - ✅ Loved by developers
   - ✅ Ranks better in benchmarks
+
+## ☑️ To do
+
+- [ ] Improve resolution of dependencies at build time (issue with resolving `@nanopub/utils` string_decoder v4 dependency when running tests in browser)
+- [ ] Add testing for web components (using the Web Test Runner or Cypress)

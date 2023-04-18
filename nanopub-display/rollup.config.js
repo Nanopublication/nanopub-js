@@ -41,7 +41,7 @@ export default [
       }
     ],
     // No external for testing, everything needs to be bundled
-    external: process.env.BUNDLE ? [] : [/^lit/, /^@nanopub/, /^n3/]
+    external: process.env.BUNDLE ? [] : [/^lit/, /^@nanopub\/utils/, /^n3/]
   },
   {
     ...rollupConf,

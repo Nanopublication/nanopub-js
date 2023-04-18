@@ -1,6 +1,6 @@
 {
   "name": "@nanopub/utils",
-  "version": "1.0.4",
+  "version": "1.0.3",
   "description": "A JavaScript library for retrieving and querying nanopublications.",
   "author": {
     "name": "Tobias Kuhn",
@@ -9,27 +9,39 @@
   },
   "repository": "https://github.com/Nanopublication/nanopub-js",
   "license": "MIT",
+  "type": "module",
   "main": "src/index.ts",
   "typings": "dist/index.d.ts",
   "module": "dist/index.js",
+  "unpkg": "dist/index.min.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "dev": "tsc -w",
-    "dev:html": "vite",
+    "dev": "vite",
     "test": "jest",
-    "build": "tsc",
+    "build": "rollup -c",
     "build:vite": "vite build",
-    "build:rollup": "tsc && BUNDLE=true rollup -c",
+    "build:tsc": "tsc",
     "lint": "eslint src --ext .ts --fix",
     "clean": "rimraf build && rimraf node_modules",
     "version": "standard-version",
     "reset-hard": "git clean -dfx && git reset --hard && yarn",
-    "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish"
+    "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish",
+    "publish": "yarn build && yarn npm publish"
   },
   "dependencies": {
     "n3": "^1.16.3"
   },
   "devDependencies": {
     "@jest/globals": "^29.5.0",
+    "@rollup/plugin-commonjs": "^24.1.0",
+    "@rollup/plugin-node-resolve": "^15.0.2",
+    "@rollup/plugin-typescript": "^11.1.0",
     "@types/jest": "^29.4.3",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
@@ -39,6 +51,9 @@
     "node-json2html": "^2.2.3",
     "prettier": "^2.1.1",
     "rimraf": "^4.4.0",
+    "rollup": "^3.20.5",
+    "rollup-plugin-summary": "^2.0.0",
+    "rollup-plugin-terser": "^7.0.2",
     "standard-version": "^9.0.0",
     "ts-jest": "^29.0.5",
     "ts-node": "^9.0.0",

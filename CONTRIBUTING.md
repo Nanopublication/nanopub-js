@@ -8,7 +8,11 @@ If you have a question or a suggestion, you are encouraged to share it in the [G
 
 This repository contains multiple libraries (aka. "monorepo"), we use `nx` to manage the different libraries as whole.
 
-We recommend to run the `yarn` commands directly from the root of the project to start all libraries at the same time, and make sure libraries dependencies are updated properly (e.g. display depends on utils). You can also run the commands directly in the folder of a specific library if you just want to work with this one.
+We recommend to **run the `yarn` commands directly from the root of the project** to run them for all libraries at the same time, and make sure libraries dependencies are updating properly (e.g. `display` depends on `utils`). 
+
+You can also run the commands directly in the folder of a specific library if you just want to work with this one.
+
+Checkout the `scripts` in each `package.json` to better understand which commands can be run in their respective folder.
 
 ## 📥️ Install for development
 
@@ -34,6 +38,12 @@ Start the component in development mode, it will automatically reload when the c
 ```bash
 yarn dev
 ```
+
+🛠️ Access the development page of `nanopub-utils` on http://localhost:3000
+
+🧬 Access the development page of `nanopub-display` on http://localhost:3001
+
+⚛️ Access the development page of `display-react` on http://localhost:3002 (to test `@nanopub/display` optimized for ReactJS)
 
 ## 📦️ Build
 
@@ -98,6 +108,16 @@ To completely reset the caches of the different packages (requires to reinstall 
 ```bash
 yarn clean
 yarn
+```
+
+## 📬️ Publish
+
+`@nanopub/display` depends on `@nanopub/utils`, so you will probably want to publish the 2 if you made changes in `utils` that are used in `display`
+
+You can run `yarn publish` from the root to publish all libraries:
+
+```bash
+yarn publish
 ```
 
 ## 🔗 More information

@@ -4,19 +4,24 @@
     <meta charset="utf-8" />
     <title>Nanopub Display</title>
     <link rel="icon" type="image/svg+xml" href="https://vitejs.dev/logo.svg" />
-    <!-- <script type="module" src="../src/lib/nanopub-utils.ts"></script> -->
+    <script type="module" src="../src/lib/nanopub-utils.ts"></script>
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/nanopub-utils/dist/nanopub-utils.min.js"></script> -->
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/nanopub-utils@0.0.1/dist/nanopub-utils.min.js"></script> -->
   </head>
 
   <!-- url="https://purl.org/np/RAnZpSHgsLMH4mlgjGg9z6eN6dVI8BuudYX3jeyYKY1Fg" -->
   <!-- url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" -->
   <body>
     <div style="min-height: 100vh; width: 100%">
-      <div id="npUpdate" />
+      <h1>Check the console</h1>
     </div>
   </body>
 
   <script type="module">
-    import {getUpdateStatus} from './src/index.ts'
-    getUpdateStatus('npUpdate', 'https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+    import {getUpdateStatus, Nanopub} from './src/index.ts'
+    const status = getUpdateStatus('npUpdate', 'https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+    console.log(status)
+    const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+    console.log('Parsed nanopub:', np)
   </script>
 </html>

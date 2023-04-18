@@ -1,6 +1,9 @@
 // import {legacyPlugin} from '@web/dev-server-legacy'
 import {playwrightLauncher} from '@web/test-runner-playwright'
 import {esbuildPlugin} from '@web/dev-server-esbuild'
+import {default as rollupCommonjs} from '@rollup/plugin-commonjs'
+import {fromRollup} from '@web/dev-server-rollup'
+const commonjs = fromRollup(rollupCommonjs)
 
 const mode = process.env.MODE || 'dev'
 if (!['dev', 'prod'].includes(mode)) {
@@ -85,22 +88,34 @@ try {
 // https://modern-web.dev/docs/test-runner/cli-and-configuration/
 export default {
   rootDir: './dist',
-  files: ['./dist/test/*_test.js'],
+  // files: ['./dist/test/*_test.js'],
   // rootDir: './src',
-  // files: ['./src/test/*_test.ts'],
+  files: ['./src/test/*_test.ts'],
+  // files: ['src/**/*.test.ts'],
   nodeResolve: true,
   // nodeResolve: {exportConditions: mode === 'dev' ? ['development'] : []},
-  preserveSymlinks: true,
-  browsers: commandLineBrowsers ?? Object.values(browsers),
-  testFramework: {
-    // https://mochajs.org/api/mocha
-    config: {
-      ui: 'tdd',
-      timeout: '60000'
-    }
-  },
+  // preserveSymlinks: true,
+  // browsers: commandLineBrowsers ?? Object.values(browsers),
+  // testFramework: {
+  //   // https://mochajs.org/api/mocha
+  //   config: {
+  //     ui: 'tdd',
+  //     timeout: '60000'
+  //   }
+  // },
   plugins: [
-    esbuildPlugin({ts: true, target: 'es2020', sourceMap: true})
+    commonjs({
+      include: [
+        // Allows @testing-library/react-hooks to be consumed as an ES module
+        'node_modules/@testing-library/**/*',
+        'node_modules/react-dom/**/*',
+        'node_modules/object-assign/**/*',
+        'node_modules/scheduler/**/*',
+        'node_modules/prop-types/**/*'
+      ]
+    }),
+    esbuildPlugin({ts: true})
+    // esbuildPlugin({ts: true, target: 'es2020', sourceMap: true})
     // Detect browsers without modules (e.g. IE11) and transform to SystemJS
     // (https://modern-web.dev/docs/dev-server/plugins/legacy/).
     // legacyPlugin({
