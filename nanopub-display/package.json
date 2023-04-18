@@ -1,6 +1,6 @@
 {
   "name": "@nanopub/display",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A web component to display Nanopublications",
   "author": {
     "name": "Vincent Emonet",
@@ -34,11 +34,11 @@
     "test:prod": "yarn test && MODE=prod wtr",
     "test:all": "yarn test:dev && yarn test:prod",
     "lint": "eslint 'src/**/*.ts' --ignore-path ../.gitignore --fix && lit-analyzer",
-    "publish": "yarn build && yarn npm publish",
+    "publish": "yarn build && npm publish",
     "clean": "rimraf build && rimraf node_modules"
   },
   "dependencies": {
-    "@nanopub/utils": "*",
+    "@nanopub/utils": "workspace:^",
     "lit": "^2.2.4",
     "n3": "^1.16.3"
   },

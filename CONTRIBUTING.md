@@ -26,6 +26,7 @@ cd nanopub-js
 Install dependencies:
 
 ```bash
+yarn plugin import workspace-tools
 yarn
 ```
 
@@ -113,6 +114,12 @@ yarn
 ## 📬️ Publish
 
 `@nanopub/display` depends on `@nanopub/utils`, so you will probably want to publish the 2 if you made changes in `utils` that are used in `display`
+
+First make sure you are logged in with your NPM account:
+
+```bash
+npm login
+```
 
 You can run `yarn publish` from the root to publish all libraries:
 
