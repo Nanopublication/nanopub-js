@@ -461,9 +461,9 @@ declare global {
 
   namespace JSX {
     interface IntrinsicElements {
-      'nanopub-display':
-        | React.DetailedHTMLProps<React.HTMLAttributes<NanopubDisplay>, NanopubDisplay>
-        | Partial<NanopubDisplay>
+      'nanopub-display': NanopubDisplay
+        // | React.DetailedHTMLProps<React.HTMLAttributes<NanopubDisplay>, NanopubDisplay>
+        // | Partial<NanopubDisplay>
     }
   }
 }
