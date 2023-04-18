@@ -8,7 +8,7 @@ If you have a question or a suggestion, you are encouraged to share it in the [G
 
 This repository contains multiple libraries (aka. "monorepo"), we use `nx` to manage the different libraries as whole.
 
-We recommend to **run the `yarn` commands directly from the root of the project** to run them for all libraries at the same time, and make sure libraries dependencies are updating properly (e.g. `display` depends on `utils`). 
+We recommend to **run the `yarn` commands directly from the root of the project** to run them for all libraries at the same time, and make sure libraries dependencies are updating properly (e.g. `display` depends on `utils`).
 
 You can also run the commands directly in the folder of a specific library if you just want to work with this one.
 

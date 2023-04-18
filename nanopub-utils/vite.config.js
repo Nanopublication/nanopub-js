@@ -27,50 +27,51 @@ export default defineConfig({
     sourcemap: true,
     cssCodeSplit: true,
 
-    rollupOptions: [{
-      // input: 'src/index.ts',
-      output: [
-        {
-          entryFileNames: '[name].bundle.js',
-          format: 'esm'
-        },
-        {
-          entryFileNames: '[name].min.js',
-          name: '[name].min.js',
-          format: 'umd',
-          globals: {
-            n3: 'n3',
+    rollupOptions: [
+      {
+        // input: 'src/index.ts',
+        output: [
+          {
+            entryFileNames: '[name].bundle.js',
+            format: 'esm'
           },
-          plugins: [
-            terser({
-              // ecma: 2020,
-              // module: true,
-              // warnings: true
-            })
-          ]
-        }
-      ],
-      rollupPlugins,
-      // Adding env BUNDLE=true will bundle all dependencies in the final JS
-      // https://vitejs.dev/guide/build.html#library-mode
-      // external: process.env.BUNDLE ? [] : [/^n3/]
-      external: []
-    },
-    {
-      // input: 'src/index.ts',
-      output: [
-        {
-          entryFileNames: '[name].js',
-          format: 'esm'
-        },
-      ],
-      rollupPlugins,
-      // Adding env BUNDLE=true will bundle all dependencies in the final JS
-      // https://vitejs.dev/guide/build.html#library-mode
-      external: process.env.BUNDLE ? [] : [/^n3/]
-      // external: []
-    }
-  ]
+          {
+            entryFileNames: '[name].min.js',
+            name: '[name].min.js',
+            format: 'umd',
+            globals: {
+              n3: 'n3'
+            },
+            plugins: [
+              terser({
+                // ecma: 2020,
+                // module: true,
+                // warnings: true
+              })
+            ]
+          }
+        ],
+        rollupPlugins,
+        // Adding env BUNDLE=true will bundle all dependencies in the final JS
+        // https://vitejs.dev/guide/build.html#library-mode
+        // external: process.env.BUNDLE ? [] : [/^n3/]
+        external: []
+      },
+      {
+        // input: 'src/index.ts',
+        output: [
+          {
+            entryFileNames: '[name].js',
+            format: 'esm'
+          }
+        ],
+        rollupPlugins,
+        // Adding env BUNDLE=true will bundle all dependencies in the final JS
+        // https://vitejs.dev/guide/build.html#library-mode
+        external: process.env.BUNDLE ? [] : [/^n3/]
+        // external: []
+      }
+    ]
   },
   optimizeDeps: {
     include: ['n3']

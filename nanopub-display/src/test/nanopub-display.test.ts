@@ -53,7 +53,7 @@ test.describe('custom element adds "NEWLYADDED" when clicked', async () => {
     // Assert that the text "NEWLYADDED" is added to the page when the button is clicked
     // expect(textMatches).toBe(true)
   })
-}) 
+})
 
 // TEST WITH PLAYWRIGHT FROM EXAMPLE REPO
 
