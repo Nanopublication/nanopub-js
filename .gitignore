@@ -8,7 +8,7 @@ tsconfig.tsbuildinfo
 # Ignore yarn v3 files
 .yarn/
 .pnp*.[cm]js
-.yarnrc.yml
+# .yarnrc.yml
 pnpm-lock.yaml
 
 # Logs
