@@ -1,6 +1,6 @@
 {
   "name": "@nanopub/utils",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A JavaScript library for retrieving and querying nanopublications.",
   "author": {
     "name": "Tobias Kuhn",
@@ -29,10 +29,8 @@
     "build:tsc": "tsc",
     "lint": "eslint src --ext .ts --fix",
     "clean": "rimraf build && rimraf node_modules",
-    "version": "standard-version",
-    "reset-hard": "git clean -dfx && git reset --hard && yarn",
-    "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish",
-    "publish": "yarn build && yarn npm publish"
+    "prepare-release": "standard-version && pnpm build",
+    "publish": "standard-version && pnpm build && npm publish"
   },
   "dependencies": {
     "n3": "^1.16.3"
