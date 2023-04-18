@@ -121,7 +121,7 @@ First make sure you are logged in with your NPM account:
 npm login
 ```
 
-You can run `yarn publish` from the root to publish all libraries:
+You can run `yarn publish` from the root to build and publish all libraries:
 
 ```bash
 yarn publish
