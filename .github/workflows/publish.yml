@@ -28,7 +28,7 @@ jobs:
       run: |
         corepack enable
         corepack prepare yarn@stable --activate
-        yarn
+        YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn
 
     - name: Build
       run: yarn build
