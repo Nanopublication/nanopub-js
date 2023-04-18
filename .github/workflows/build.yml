@@ -50,7 +50,9 @@ jobs:
         run: |
           corepack enable
           corepack prepare yarn@stable --activate
-          YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn
+          yarn plugin import workspace-tools
+          yarn --version
+          YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
 
       - name: Run eslint
         run: |
@@ -81,7 +83,8 @@ jobs:
         run: |
           corepack enable
           corepack prepare yarn@stable --activate
-          YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn
+          yarn plugin import workspace-tools
+          YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
 
       - name: Build docs
         run: |
