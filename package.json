@@ -8,11 +8,11 @@
     "build": "nx run-many --target=build --parallel=false --output-style=stream",
     "test": "nx run-many --target=test --parallel=false",
     "publish": "yarn build && yarn workspaces foreach --no-private npm publish --access public",
-    "clean": "nx run-many --target=clean && rimraf .yarn && rimraf node_modules",
+    "clean": "nx run-many --target=clean && rimraf .yarn/cache && rimraf node_modules",
     "fmt": "prettier \"**/*.{ts,tsx,js,cjs,json,md,html}\" --ignore-path .gitignore --write",
     "lint": "nx run-many --target=lint",
     "docs": "yarn docs:build && vite ./docs-dist --base /nanopub-display/",
-    "docs:build": "rimraf docs-dist && yarn build && typedoc --plugin @knodes/typedoc-plugin-pages && bash ./docs/fix_docs.sh",
+    "docs:build": "rimraf docs-dist && yarn build && typedoc && bash ./docs/fix_docs.sh",
     "reset": "nx reset"
   },
   "devDependencies": {
@@ -25,7 +25,7 @@
     "nx": "15.8.6",
     "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
-    "typedoc": "^0.23.26",
+    "typedoc": "0.23.28",
     "typescript": "^4.9.5",
     "vite": "^4.1.4"
   },

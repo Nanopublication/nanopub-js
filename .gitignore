@@ -6,9 +6,10 @@ tsconfig.tsbuildinfo
 /test/
 *.lock
 # Ignore yarn v3 files
-.yarn/
-.pnp*.[cm]js
 # .yarnrc.yml
+.yarn/*
+!.yarn/plugins
+.pnp.*
 pnpm-lock.yaml
 
 # Logs

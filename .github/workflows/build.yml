@@ -51,7 +51,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          corepack enable
           corepack prepare yarn@stable --activate
           yarn
 
@@ -82,7 +81,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          corepack enable
           corepack prepare yarn@stable --activate
           yarn
 
