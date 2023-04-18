@@ -53,10 +53,6 @@ jobs:
           yarn plugin import workspace-tools
           yarn --version
           YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
-          cd nanopub-utils
-          YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
-          cd ../nanopub-display
-          YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
 
       - name: Run eslint
         run: |
@@ -88,10 +84,6 @@ jobs:
           corepack enable
           corepack prepare yarn@stable --activate
           yarn plugin import workspace-tools
-          YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
-          cd nanopub-utils
-          YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
-          cd ../nanopub-display
           YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
 
       - name: Build docs
