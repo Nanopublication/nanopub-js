@@ -22,7 +22,7 @@ module.exports = {
     source: '.',
     pages: [
       {
-        title: 'Contributing',
+        name: 'Contributing',
         source: 'CONTRIBUTING.md'
       }
     ]

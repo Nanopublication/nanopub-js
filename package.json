@@ -12,7 +12,7 @@
     "fmt": "prettier \"**/*.{ts,tsx,js,cjs,json,md,html}\" --ignore-path .gitignore --write",
     "lint": "nx run-many --target=lint",
     "docs": "yarn docs:build && vite ./docs-dist --base /nanopub-display/",
-    "docs:build": "rimraf docs-dist && yarn build && typedoc && bash ./docs/fix_docs.sh",
+    "docs:build": "rimraf docs-dist && yarn build && typedoc --plugin @knodes/typedoc-plugin-pages && bash ./docs/fix_docs.sh",
     "reset": "nx reset"
   },
   "devDependencies": {
