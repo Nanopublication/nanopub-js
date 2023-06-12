@@ -2,6 +2,7 @@ import summary from 'rollup-plugin-summary'
 import resolve from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
 import commonjs from '@rollup/plugin-commonjs'
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 import {terser} from 'rollup-plugin-terser'
 // import minifyHTML from 'rollup-plugin-minify-html-literals';
 
@@ -17,6 +18,7 @@ const rollupConf = {
     commonjs(), // https://github.com/rollup/plugins/tree/master/packages/commonjs
     // Resolve bare module specifiers to relative paths
     resolve({preferBuiltins: true, browser: true, jsnext: true, main: true}),
+    nodePolyfills(),
     // minifyHTML(), // Minify HTML template literals
     summary()
   ],

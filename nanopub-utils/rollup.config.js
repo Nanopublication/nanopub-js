@@ -2,10 +2,10 @@ import summary from 'rollup-plugin-summary'
 import {nodeResolve} from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 import {terser} from 'rollup-plugin-terser'
 // import minifyHTML from 'rollup-plugin-minify-html-literals';
 
-// NOT USED yet: we only use tsc to build utils at the moment
 
 const rollupConf = {
   input: 'src/index.ts',
@@ -14,6 +14,7 @@ const rollupConf = {
     commonjs(), // https://github.com/rollup/plugins/tree/master/packages/commonjs
     // Resolve bare module specifiers to relative paths:
     nodeResolve({preferBuiltins: true, browser: true, jsnext: true, main: true}),
+    nodePolyfills(),
     summary()
   ],
   onwarn(warning) {

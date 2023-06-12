@@ -35,6 +35,7 @@ If you want to improve this library, please refer to the [contribute page](/page
 </div>
 <nanopub-display url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU"></nanopub-display>
 
+
 ## 💫 Declarative rendering
 
 `@nanopub/display` can be used with popular declarative rendering libraries like **React**, **Angular**, **Vue**, Svelte, and lit-html
