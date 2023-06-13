@@ -63,10 +63,12 @@ yarn add @nanopub/utils
 pnpm add @nanopub/utils
 ```
 
-Then import it:
+Then import it in your JavaScript/TypeScript:
 
 ```typescript
 import {Nanopub} from '@nanopub/utils'
+
+const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
 ```
 
 ## 🌐 Import from a CDN

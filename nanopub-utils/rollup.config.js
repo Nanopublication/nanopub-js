@@ -9,18 +9,13 @@ import {terser} from 'rollup-plugin-terser'
 const rollupConf = {
   input: 'src/index.ts',
   plugins: [
-    typescript(),
+    typescript({sourceMap: true}),
     commonjs(), // https://github.com/rollup/plugins/tree/master/packages/commonjs
     // Resolve bare module specifiers to relative paths:
     nodeResolve({preferBuiltins: true, browser: true, jsnext: true, main: true}),
     nodePolyfills(),
     summary()
   ],
-  onwarn(warning) {
-    if (warning.code !== 'THIS_IS_UNDEFINED') {
-      console.error(`(!) ${warning.message}`)
-    }
-  }
 }
 
 // Config used for testing, 3 outputs: a normal with external dependencies, one with all dependencies bundled, and one bundled and minified
