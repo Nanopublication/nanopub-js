@@ -4,7 +4,6 @@ import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import {terser} from 'rollup-plugin-terser'
-// import minifyHTML from 'rollup-plugin-minify-html-literals';
 
 
 const rollupConf = {
@@ -32,7 +31,6 @@ export default [
       {
         file: 'dist/index.js',
         format: 'esm'
-        // name: '[name].js'
       }
     ],
     // Dependencies not bundled
@@ -52,7 +50,7 @@ export default [
         format: 'umd',
         name: 'NP',
         globals: {n3: 'n3'},
-        plugins: [terser({})]
+        plugins: [terser({})] // Minify
       }
     ]
   }

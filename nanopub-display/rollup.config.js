@@ -57,7 +57,7 @@ export default [
       {
         file: 'dist/nanopub-display.min.js',
         format: 'umd',
-        name: '[name].min.js',
+        name: 'NPDISPLAY',
         // globals: { lit: 'lit', n3: 'n3' },
         // format: "esm", // NOTE: apparently esm is not supported by firefox web workers, use UMD?
         plugins: [
