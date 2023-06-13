@@ -7,7 +7,7 @@ You can easily import `@nanopub/utils` from a npm CDN and use it in your HTML pa
 ```html
 <html lang="en">
   <head>
-    <script type="module" src="https://unpkg.com/@nanopub/utils?module"></script>
+    <script type="module" src="https://unpkg.com/@nanopub/utils"></script>
   </head>
     
   <body>
@@ -15,7 +15,7 @@ You can easily import `@nanopub/utils` from a npm CDN and use it in your HTML pa
   </body>
   
   <script type="module">
-    import {getUpdateStatus, Nanopub} from '@nanopub/utils'
+    const {getUpdateStatus, Nanopub} = NP
 
     const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
     console.log('Parsed nanopub:', np)
@@ -63,31 +63,21 @@ yarn add @nanopub/utils
 pnpm add @nanopub/utils
 ```
 
+Then import it:
+
+```typescript
+import {Nanopub} from '@nanopub/utils'
+```
+
 ## 🌐 Import from a CDN
 
 npm CDNs like [unpkg.com](https://unpkg.com) or [jsdelivr.com](https://www.jsdelivr.com) can directly serve files that have been published to npm. This works great for standard JavaScript modules that the browser can load natively, or minified bundles.
 
-For this element to work from unpkg.com specifically, you need to include the `?module` query parameter, which tells unpkg.com to rewrite "bare" module specifiers to full URLs.
-
-### 🛩️ Import Module
-
-In HTML:
-
 ```html
-<script type="module" src="https://unpkg.com/@nanopub/utils?module"></script>
+<script type="module" src="https://unpkg.com/@nanopub/utils"></script>
 ```
 
-In JavaScript:
-
-```js
-import {NanopubDisplay} from 'https://unpkg.com/@nanopub/utils?module'
-```
-
-### 🚛 Import Bundle
-
-We also distribute Nanopub Display as a minified bundle with all dependencies pre-included (~60kB).
-
-Import the latest version:
+We also distribute Nanopub Display as a minified bundle with all dependencies pre-included, to import the latest version:
 
 ```html
 <script type="module" src="https://cdn.jsdelivr.net/npm/@nanopub/utils/dist/index.min.js"></script>
@@ -96,5 +86,5 @@ Import the latest version:
 In production we recommend to use a specific version:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@nanopub/utils@0.0.1/dist/index.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@nanopub/utils@1.0.6/dist/index.min.js"></script>
 ```

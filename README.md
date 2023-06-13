@@ -4,17 +4,25 @@
 
 `nanopub-js` is a set of libraries to easily work with [Nanopublications](https://nanopub.net) in the browser with JavaScript. Packages are published under the `@nanopub` organization on [npm](https://www.npmjs.com)
 
-This project is composed of multiple libraries that are still in development:
+This project is composed of multiple libraries that are still in development, if you want to improve those libraries, please refer to the [**contribute page**](/pages/CONTRIBUTING.html) which details how to use the library in development.
 
-- [x] `@nanopub/utils`: Provide utilities to help fetch and load nanopubs, automatically extracting relevant information (e.g. URIs used for the different graphs)
+## [🛠️ `@nanopub/utils`](/modules/_nanopub_utils.html)
 
-- [x] `@nanopub/display`: Web components to help display the content of a nanopub, includes utilities to automatically generate CytoscapeJS configuration to visualize nanopubs as a network.
+Provide utilities to help fetch and load nanopubs, automatically extracting relevant information (e.g. URIs used for the different graphs)
 
-- [ ] `@nanopub/publish`: Utility to sign and publish nanopubs directly in the browser (not started yet, the name might change).
+## [🧬 `@nanopub/display`](/modules/_nanopub_display.html)
 
-If you want to improve those libraries, please refer to the [**contribute page**](/pages/CONTRIBUTING.html) which details how to use the library in development.
+Web components to help display the content of a nanopub, includes utilities to automatically generate CytoscapeJS configuration to visualize nanopubs as a network.
 
-## 🧶 Design approach
+## 📋️ Notes
+
+To do:
+
+- [ ] Improve resolution of dependencies at build time (issue with resolving `@nanopub/utils` string_decoder v4 dependency when running tests in browser)
+- [ ] Add testing for web components (using the Web Test Runner or Cypress)
+- [ ] Develop `@nanopub/publish` to sign and publish nanopubs directly in the browser.
+
+### 🧶 Design approach
 
 - Care for web standards
 
@@ -35,7 +43,7 @@ If you want to improve those libraries, please refer to the [**contribute page**
 
 - Limit the amount of dependencies, without reinventing the wheel
 
-## 🛠️ Which framework to choose for Web Components?
+### 🛠️ Which framework to choose for Web Components?
 
 You are encouraged to let us know in the [GitHub issues](https://github.com/Nanopublication/nanopub-js/issues), if you have any preference or advices regarding the choice of web component framework!
 
@@ -59,8 +67,3 @@ You are encouraged to let us know in the [GitHub issues](https://github.com/Nano
   - ⚠️ New approach to web development
   - ✅ Loved by developers
   - ✅ Ranks better in benchmarks
-
-## ☑️ To do
-
-- [ ] Improve resolution of dependencies at build time (issue with resolving `@nanopub/utils` string_decoder v4 dependency when running tests in browser)
-- [ ] Add testing for web components (using the Web Test Runner or Cypress)
