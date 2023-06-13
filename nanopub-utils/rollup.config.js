@@ -50,7 +50,7 @@ export default [
       {
         file: 'dist/index.min.js',
         format: 'umd',
-        name: '[name].min.js',
+        name: 'NP',
         globals: {n3: 'n3'},
         plugins: [terser({})]
       }
