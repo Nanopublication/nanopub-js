@@ -1,12 +1,14 @@
 import {Parser, Quad, Store, DataFactory} from 'n3'
 const {namedNode} = DataFactory
 
-// Create the Nanopub from a URL:
-// const np = await Nanopub.fetch('https://purl.org/np/RA')
-// Create the Nanopub from a RDF TRiG string:
-// const np = new Nanopub({rdfString: 'ADD RDF TRIG'})
-
 export class Nanopub {
+  /**
+   * Create a Nanopub
+   * - Fetch from URL: `const np = await Nanopub.fetch('https://purl.org/np/RA')`
+   * - Create from a string: `const np = new Nanopub({rdfString: 'ADD RDF TRIG'})`
+   * - Or provide a RDF/JS store: `const np = new Nanopub({store: rdfjsStore})`
+   */
+
   url: string
   rdfString: string
   store: Store
@@ -182,7 +184,7 @@ export class Nanopub {
         )
       }
 
-      console.log(graph, 'ORDERED', this.displayNp[graph])
+      // console.log(graph, 'ORDERED', this.displayNp[graph])
     }
   }
 }
