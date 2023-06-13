@@ -4,13 +4,13 @@
 
 `nanopub-js` is a set of libraries to easily work with [Nanopublications](https://nanopub.net) in the browser with JavaScript. Packages are published under the `@nanopub` organization on [npm](https://www.npmjs.com)
 
-This project is composed of multiple libraries that are still in development, if you want to improve those libraries, please refer to the [**contribute page**](/pages/CONTRIBUTING.html) which details how to use the library in development.
+This project is composed of multiple libraries that are still in development, if you want to improve those libraries, please refer to the [contribute page](/pages/CONTRIBUTING.html) which details how to use the library in development.
 
-## [🛠️ `@nanopub/utils`](/modules/_nanopub_utils.html)
+## [🛠️ @nanopub/utils](https://nanopublication.github.io/nanopub-js/modules/_nanopub_utils.html)
 
 Provide utilities to help fetch and load nanopubs, automatically extracting relevant information (e.g. URIs used for the different graphs)
 
-## [🧬 `@nanopub/display`](/modules/_nanopub_display.html)
+## [🧬 @nanopub/display](https://nanopublication.github.io/nanopub-js/modules/_nanopub_display.html)
 
 Web components to help display the content of a nanopub, includes utilities to automatically generate CytoscapeJS configuration to visualize nanopubs as a network.
 
