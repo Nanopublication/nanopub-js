@@ -32,7 +32,7 @@ You can instantiate the `Nanopub` object using various approaches:
 
   ```typescript
   import {Nanopub} from '@nanopub/utils'
-  
+
   const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
   ```
 
@@ -40,7 +40,7 @@ You can instantiate the `Nanopub` object using various approaches:
 
   ```typescript
   import {Nanopub} from '@nanopub/utils'
-  
+
   const np = await Nanopub.parse('ADD NP RDF')
   ```
 
@@ -49,10 +49,10 @@ You can instantiate the `Nanopub` object using various approaches:
   ```typescript
   import {Nanopub} from '@nanopub/utils'
   import {Parser, Store} from 'n3'
-  
+
   const parser = new Parser()
   const store = new Store(parser.parse('ADD NP RDF'))
-  
+
   const np = await Nanopub.parse(store)
   ```
 
@@ -99,5 +99,5 @@ We also distribute Nanopub Display as a minified bundle with all dependencies pr
 In production we recommend to use a specific version:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@nanopub/utils@1.0.6/dist/index.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@nanopub/utils@1.0.7/dist/index.min.js"></script>
 ```

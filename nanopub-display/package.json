@@ -1,6 +1,6 @@
 {
   "name": "@nanopub/display",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A web component to display Nanopublications",
   "author": {
     "name": "Vincent Emonet",
