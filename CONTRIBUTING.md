@@ -114,17 +114,23 @@ yarn
 
 `@nanopub/display` depends on `@nanopub/utils`, so you will probably want to publish the 2 if you made changes in `utils` that are used in `display`
 
-Login with your NPM account:
+The first time you might need to login with your NPM account:
 
 ```bash
 npm login
 ```
 
-Run `yarn publish` from the root to build and publish all libraries:
+To publish a new version of each package to NPM:
 
-```bash
-yarn publish
-```
+1. Edit the `package.json` files for each package to update them to the new version.
+
+2. Run `yarn publish` from the root to build and publish all libraries:
+
+   ```bash
+   yarn publish
+   ```
+
+> You can also run `publish` from a specific package folder to only publish this package
 
 ## 🔗 More information
 

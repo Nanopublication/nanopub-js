@@ -11,7 +11,7 @@ You can easily import `@nanopub/utils` from a npm CDN and use it in your HTML pa
   </head>
 
   <body>
-      <h1>Check the console</h1>
+    <h1>Check the console</h1>
   </body>
 
   <script type="module">
@@ -28,18 +28,19 @@ You can easily import `@nanopub/utils` from a npm CDN and use it in your HTML pa
 
 You can instantiate the `Nanopub` object using various approaches:
 
-* Fetch from a URI:
+- Fetch from a URI:
 
   ```typescript
   const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+  ```
 
-* Create the Nanopub from a RDF TRiG string:
+- Create the Nanopub from a RDF TRiG string:
 
   ```typescript
   const np = new Nanopub({rdfString: 'ADD NP RDF TRIG'})
   ```
 
-* Create the Nanopub by providing an already parsed RDF/JS store:
+- Create the Nanopub by providing an already parsed RDF/JS store:
 
   ```typescript
   const np = new Nanopub({rdfString: 'ADD NP RDF TRIG'})

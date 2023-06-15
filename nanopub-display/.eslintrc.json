@@ -3,6 +3,7 @@
   "extends": ["custom", "plugin:lit/recommended"],
   "plugins": ["lit"],
   "rules": {
-    "lit/no-invalid-html": "off"
+    "lit/no-invalid-html": "off",
+    "@typescript-eslint/no-extra-semi": "off"
   }
 }
