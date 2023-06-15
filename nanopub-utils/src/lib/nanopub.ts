@@ -1,12 +1,12 @@
-import {Parser, Quad, Store, DataFactory} from 'n3'
+import {Parser, Store, Quad, Writer, DataFactory} from 'n3'
 const {namedNode} = DataFactory
 
 export class Nanopub {
   /**
    * Create a Nanopub
    * - Fetch from URL: `const np = await Nanopub.fetch('https://purl.org/np/RA')`
-   * - Create from a string: `const np = new Nanopub({rdfString: 'ADD RDF TRIG'})`
-   * - Or provide a RDF/JS store: `const np = new Nanopub({store: rdfjsStore})`
+   * - Create from a string: `const np = await Nanopub.parse('ADD NP RDF')`
+   * - Or provide a RDF/JS store: `const np = await Nanopub.parse(store)`
    */
 
   url: string
@@ -15,7 +15,16 @@ export class Nanopub {
   error?: string
 
   // The prefixes of the Nanopub, used to resolve CURIEs
-  prefixes = {}
+  prefixes = {
+    rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+    rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+    dc: 'http://purl.org/dc/elements/1.1/',
+    dcterms: 'http://purl.org/dc/terms/',
+    prov: 'http://www.w3.org/ns/prov#',
+    npx: 'http://purl.org/nanopub/x/',
+    nschema: 'http://www.nanopub.org/nschema#',
+    orcid: 'https://orcid.org/'
+  }
   // The CURIE or URI used for each graph
   graphsId = {
     head: '',
@@ -43,11 +52,24 @@ export class Nanopub {
     }
   }
 
-  public constructor({url = '', rdfString = '', store = new Store(), error = ''}) {
+  static async parse(rdf: string | Store, prefixes = null) {
+    try {
+      if (typeof rdf === 'string') {
+        return new Nanopub({rdfString: rdf})
+      } else {
+        return new Nanopub({store: rdf, prefixes: prefixes})
+      }
+    } catch (error) {
+      return new Nanopub({error: `⚠️ Issue parsing the nanopublication RDF: ${error}`})
+    }
+  }
+
+  public constructor({url = '', rdfString = '', store = new Store(), prefixes = null, error = ''}) {
     this.url = url
     this.rdfString = rdfString
     this.store = store
     this.error = error
+    if (prefixes) this.prefixes = prefixes
     // TODO: should we really store the RDF string in the Nanopub object?
 
     if (this.error) return
@@ -57,11 +79,24 @@ export class Nanopub {
       return
     }
 
-    if (this.url.startsWith('https://purl.org/np/'))
-      this.url = this.url.replace('https://purl.org/np/', 'http://purl.org/np/')
+    // Store already provided, but we need to serialize RDF string
+    if (!this.rdfString && this.store) {
+      const writer = new Writer({prefixes: this.prefixes})
+      writer.addQuads(this.store.getQuads(null, null, null, null))
+      writer.end((error, result) => {
+        if (error) {
+          this.error = error.message
+          return
+        }
+        this.rdfString = result
+      })
+    }
+    if (this.store) {
+      this.extractNanopubInfos()
+    }
 
-    // Parse the RDF with n3.js
-    if (!this.error && this.rdfString) {
+    // Store not provided, we parse the RDF string with n3.js
+    if (this.rdfString && this.store.size < 1) {
       const parser = new Parser()
 
       parser.parse(this.rdfString, (error: any, quad: Quad, prefixes: any): any => {
@@ -114,7 +149,7 @@ export class Nanopub {
       namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
       namedNode('http://www.nanopub.org/nschema#Nanopublication')
     )) {
-      if (!this.url) this.url = quad.subject.toString()
+      if (!this.url) this.url = quad.subject.value.toString()
       this.graphsId.head = this.getCurie(quad.graph.value, 'sub')
     }
     // Extract assertion, prov and pubinfo graphs URI
