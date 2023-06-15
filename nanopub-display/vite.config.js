@@ -20,8 +20,6 @@ export default defineConfig({
       entry: 'src/nanopub-display.ts',
       name: 'nanopub-rdf',
       dir: 'dist'
-      // formats: ["esm"],
-      // fileName: (format) => `nanopub-rdf.${format}.js`,
     },
     minify: true,
     sourcemap: true,
@@ -37,13 +35,7 @@ export default defineConfig({
         {
           entryFileNames: '[name].min.js',
           format: 'esm',
-          plugins: [
-            terser({
-              ecma: 2020,
-              module: true,
-              warnings: true
-            })
-          ]
+          plugins: [terser({})]
         }
       ],
       rollupPlugins,

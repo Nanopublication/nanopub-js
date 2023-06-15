@@ -2,9 +2,8 @@ import summary from 'rollup-plugin-summary'
 import {nodeResolve} from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
-import nodePolyfills from 'rollup-plugin-polyfill-node';
+import nodePolyfills from 'rollup-plugin-polyfill-node'
 import {terser} from 'rollup-plugin-terser'
-
 
 const rollupConf = {
   input: 'src/index.ts',
@@ -15,7 +14,7 @@ const rollupConf = {
     nodeResolve({preferBuiltins: true, browser: true, jsnext: true, main: true}),
     nodePolyfills(),
     summary()
-  ],
+  ]
 }
 
 // Config used for testing, 3 outputs: a normal with external dependencies, one with all dependencies bundled, and one bundled and minified
@@ -37,13 +36,13 @@ export default [
     external: [],
     output: [
       {
-        file: 'dist/index.bundle.js',
+        file: 'dist/index.esm.js',
         format: 'esm'
       },
       {
         file: 'dist/index.min.js',
         format: 'umd',
-        name: 'NP',
+        name: 'NanopubUtils',
         globals: {n3: 'n3'},
         plugins: [terser({})] // Minify
       }

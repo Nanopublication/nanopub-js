@@ -9,13 +9,13 @@ You can easily import `@nanopub/utils` from a npm CDN and use it in your HTML pa
   <head>
     <script type="module" src="https://unpkg.com/@nanopub/utils"></script>
   </head>
-    
+
   <body>
       <h1>Check the console</h1>
   </body>
-  
+
   <script type="module">
-    const {getUpdateStatus, Nanopub} = NP
+    const {getUpdateStatus, Nanopub} = NanopubUtils
 
     const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
     console.log('Parsed nanopub:', np)
