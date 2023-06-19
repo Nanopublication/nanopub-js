@@ -18,9 +18,8 @@ Web components to help display the content of a nanopub, includes utilities to a
 
 To do:
 
-- [ ] Improve resolution of dependencies at build time (issue with resolving `@nanopub/utils` string_decoder v4 dependency when running tests in browser)
 - [ ] Add testing for web components (using the Web Test Runner or Cypress)
-- [ ] Develop `@nanopub/publish` to sign and publish nanopubs directly in the browser.
+- [ ] Develop `@nanopub/publish` to sign and publish nanopubs directly in the browser. ℹ️ We plan to work on it during the 2023 EU Biohackathon (30 oct - 3 nov) to build it with rust and web assembly.
 
 ### 🧶 Design approach
 
@@ -31,7 +30,7 @@ To do:
   - Web components (Lit element)
   - TypeScript
   - Vite, ESBuild, ESLint, Prettier
-  - Comprehensive documentation with typedoc
+  - Comprehensive documentation generated with typedoc
 
 - Separated libraries depending on the developer's needs:
 
@@ -45,25 +44,20 @@ To do:
 
 ### 🛠️ Which framework to choose for Web Components?
 
-You are encouraged to let us know in the [GitHub issues](https://github.com/Nanopublication/nanopub-js/issues), if you have any preference or advices regarding the choice of web component framework!
+We are still not fully set on which framework to use to develop the web components. You are encouraged to let us know in the [GitHub issues](https://github.com/Nanopublication/nanopub-js/issues), if you have any preference or advices regarding the choice of web component framework!
 
 - 🔥 **Lit element** from Google (current choice)
 
   - ✅ Most popular and mature
   - ⚠️ Visual components library not updated yet
-
 - ⚡️ **Fast element** from Microsoft
 
   - ✅ Visual components library up-to-date and following standard guidelines
   - ✅ Working on a standard design system
   - ⚠️ Syntax a bit more verbose than Lit (personal opinion)
-
-- ✒️ **Stencil** from Ionics
-
-  - ✅ Similar to Lit and Fast
-  - ✅ Good documentation
-
 - 🔗 **Svelte**
   - ⚠️ New approach to web development
-  - ✅ Loved by developers
-  - ✅ Ranks better in benchmarks
+  - ✅ Performant and developer friendly
+- **🧊 SolidJS**
+  - ✅ Performant and developer friendly
+  - ✅ Does not introduce significant language changes or new type of files
