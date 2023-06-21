@@ -1,55 +1,36 @@
-// import json2html from 'node-json2html';
-
 export const grlcNpApiUrls = [
   'https://grlc.nps.petapico.org/api/local/local/',
-  'https://grlc.services.np.trustyuri.net/api/local/local/'
+  'https://grlc.services.np.trustyuri.net/api/local/local/',
+  'http://grlc.nanopubs.lod.labs.vu.nl/api/local/local/',
+  'http://grlc.np.dumontierlab.com/api/local/local/'
 ]
 
-export const getUpdateStatus = (npUri: string) => {
-  // document.getElementById(elementId)!.innerHTML = '<em>Checking for updates...</em>';
+// TODO: handle when https://purl.org is used instead of http://purl.org?
+export const getUpdateStatus = async (npUri: string) => {
   const shuffledApiUrls = [...grlcNpApiUrls].sort(() => 0.5 - Math.random())
   return getUpdateStatusX(npUri, shuffledApiUrls)
 }
 
-const getUpdateStatusX = (npUri: string, apiUrls) => {
+/**
+ * Get update status for a nanopub URI in one of the APIs
+ */
+const getUpdateStatusX = async (npUri: string, apiUrls: any) => {
   if (apiUrls.length == 0) {
-    // const h: HTMLElement = document.getElementById(elementId) as HTMLInputElement;
-    // h.innerHTML = '<em>An error has occurred while checking for updates.</en>';
-    return {error: 'error'}
+    return {error: 'An error has occurred while checking for updates.'}
   }
   const apiUrl = apiUrls.shift()
   const requestUrl = apiUrl + '/get_latest_version?np=' + npUri
-  const r = new XMLHttpRequest()
-  r.open('GET', requestUrl, true)
-  r.setRequestHeader('Accept', 'application/json')
-  r.responseType = 'json'
-  r.onload = function () {
-    if (r.status == 200) {
-      const bindings = r.response['results']['bindings']
-      return bindings
-      // if (bindings.length == 1 && bindings[0]['latest']['value'] === npUri) {
-      //   h = 'This is the latest version.';
-      // } else if (bindings.length == 0) {
-      //   h = 'This nanopublication has been <strong>retracted</strong>.';
-      // } else {
-      //   h = 'This nanopublication has a <strong>newer version</strong>: ';
-      //   if (bindings.length > 1) {
-      //     h = 'This nanopublication has <strong>newer versions</strong>: ';
-      //   }
-      //   for (const b of bindings) {
-      //     const l = b['latest']['value'];
-      //     h += ' <code><a href="' + l + '">' + l + '</a></code>';
-      //   }
-      // }
-      // document.getElementById(elementId)!.innerHTML = h;
-    } else {
-      return getUpdateStatusX(npUri, apiUrls)
-    }
-  }
-  r.onerror = function () {
+  try {
+    const response = await fetch(requestUrl, {
+      headers: {
+        Accept: 'application/json'
+      }
+    })
+    const r = await response.json()
+    return r['results']['bindings']
+  } catch (error) {
     return getUpdateStatusX(npUri, apiUrls)
   }
-  return r.send()
 }
 
 export const getJson = (url: string, callback: any) => {

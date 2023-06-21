@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Nanopub Display</title>
+    <title>Nanopub Utils dev</title>
     <link rel="icon" type="image/svg+xml" href="https://vitejs.dev/logo.svg" />
 
     <!-- Import local for dev: -->
@@ -21,9 +21,16 @@
 
   <script type="module">
     import {getUpdateStatus, Nanopub} from '@nanopub/utils'
-    const status = getUpdateStatus('npUpdate', 'https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
-    console.log(status)
+
+    // Use await
+    const status = await getUpdateStatus('http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+    console.log("Awaited status", status)
+
+    // Or a then callback
+    getUpdateStatus('http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+      .then(status => console.log("Then status", status))
+
     const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
-    console.log('Parsed nanopub:', np)
+    console.log('Parsed nanopub', np)
   </script>
 </html>
