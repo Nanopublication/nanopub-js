@@ -6,7 +6,7 @@
     <link rel="icon" type="image/svg+xml" href="https://vitejs.dev/logo.svg" />
 
     <!-- Import local for dev: -->
-    <script type="module" src="../src/lib/nanopub-utils.ts"></script>
+    <script type="module" src="./src/index.ts"></script>
 
     <!-- Import the latest bundled and minified: -->
     <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@nanopub/utils/dist/index.min.js"></script> -->
@@ -31,6 +31,17 @@
       .then(status => console.log("Then status", status))
 
     const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
-    console.log('Parsed nanopub', np)
+    console.log('Parsed nanopub', np.uri)
+    // Browse the nanopub RDF using the RDF/JS store:
+    for (const quad of np.store.match(null, null, null)) {
+      console.log("One of the np subjects:", quad.subject.value.toString())
+      break
+    }
+
+    // Iterate over the nanopub prefixes
+    for (const [prefix, namespace] of Object.entries(np.prefixes)) {
+      console.log("A prefix:", prefix, namespace)
+      break
+    }
   </script>
 </html>

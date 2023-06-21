@@ -21,7 +21,7 @@ test('np from store', async () => {
 })
 
 const checkValid = (np: Nanopub, testUrl = npTestUrl) => {
-  expect(np.url).toBe(testUrl)
+  expect(np.uri).toBe(testUrl)
   expect(np.rdfString.length).toBeGreaterThan(10)
   expect(Object.keys(np.displayNp).length).toBe(4)
   expect(np.store.size).toBeGreaterThan(10)

@@ -9,7 +9,7 @@ export class Nanopub {
    * - Or provide a RDF/JS store: `const np = await Nanopub.parse(store)`
    */
 
-  url: string
+  uri: string
   rdfString: string
   store: Store
   error?: string
@@ -65,7 +65,7 @@ export class Nanopub {
   }
 
   public constructor({url = '', rdfString = '', store = new Store(), prefixes = null, error = ''}) {
-    this.url = url
+    this.uri = url
     this.rdfString = rdfString
     this.store = store
     this.error = error
@@ -149,11 +149,11 @@ export class Nanopub {
       namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
       namedNode('http://www.nanopub.org/nschema#Nanopublication')
     )) {
-      if (!this.url) this.url = quad.subject.value.toString()
+      if (!this.uri) this.uri = quad.subject.value.toString()
       this.graphsId.head = this.getCurie(quad.graph.value, 'sub')
     }
     // Extract assertion, prov and pubinfo graphs URI
-    for (const quad of this.store.match(namedNode(this.url), null, null)) {
+    for (const quad of this.store.match(namedNode(this.uri), null, null)) {
       if (quad.predicate.value === 'http://www.nanopub.org/nschema#hasAssertion') {
         this.graphsId.assertion = this.getCurie(quad.object.value, 'sub')
       }
