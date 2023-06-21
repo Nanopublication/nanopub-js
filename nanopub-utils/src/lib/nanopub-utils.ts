@@ -5,8 +5,11 @@ export const grlcNpApiUrls = [
 //  'http://grlc.np.dumontierlab.com/api/local/local/'
 ]
 
-// TODO: handle when https://purl.org is used instead of http://purl.org?
 export const getUpdateStatus = async (npUri: string) => {
+  if (npUri.startsWith('https://purl.org/np/')) {
+    // Quick fix as the URIs use http in the triplestore, but users might use the https version of the URI
+    npUri = npUri.replace('https://purl.org/np/', 'http://purl.org/np/')
+  }
   const shuffledApiUrls = [...grlcNpApiUrls].sort(() => 0.5 - Math.random())
   return getUpdateStatusX(npUri, shuffledApiUrls)
 }
