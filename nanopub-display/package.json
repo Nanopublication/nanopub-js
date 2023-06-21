@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "type": "module",
-  "main": "dist/nanopub-display.js",
+  "main": "src/index.ts",
   "module": "dist/nanopub-display.js",
   "unpkg": "dist/nanopub-display.min.js",
   "jsdelivr": "dist/nanopub-display.min.js",
