@@ -19,7 +19,7 @@ const getUpdateStatusX = async (npUri: string, apiUrls: any) => {
     return {error: 'An error has occurred while checking for updates.'}
   }
   const apiUrl = apiUrls.shift()
-  const requestUrl = apiUrl + '/get_latest_version?np=' + npUri
+  const requestUrl = `${apiUrl}get_latest_version?np=${npUri}`
   try {
     const response = await fetch(requestUrl, {
       headers: {
