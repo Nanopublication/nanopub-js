@@ -20,7 +20,7 @@ You can easily import `@nanopub/utils` from a npm CDN and use it in your HTML pa
     const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
     console.log('Parsed nanopub:', np)
 
-    const status = getUpdateStatus('npUpdate', 'https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+    const status = await getUpdateStatus('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
     console.log(status)
   </script>
 </html>
