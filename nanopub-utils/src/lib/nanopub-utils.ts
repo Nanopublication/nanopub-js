@@ -1,8 +1,8 @@
 export const grlcNpApiUrls = [
   'https://grlc.nps.petapico.org/api/local/local/',
   'https://grlc.services.np.trustyuri.net/api/local/local/'
-//  'http://grlc.nanopubs.lod.labs.vu.nl/api/local/local/',
-//  'http://grlc.np.dumontierlab.com/api/local/local/'
+  //  'http://grlc.nanopubs.lod.labs.vu.nl/api/local/local/',
+  //  'http://grlc.np.dumontierlab.com/api/local/local/'
 ]
 
 export const getUpdateStatus = async (npUri: string) => {
@@ -19,7 +19,7 @@ export const getUpdateStatus = async (npUri: string) => {
  */
 const getUpdateStatusX = async (npUri: string, apiUrls: any) => {
   if (apiUrls.length == 0) {
-    return {type:'error', html:'An error has occurred while checking for updates.'}
+    return {type: 'error', html: 'An error has occurred while checking for updates.'}
   }
   const apiUrl = apiUrls.shift()
   const requestUrl = `${apiUrl}get_latest_version?np=${npUri}`
@@ -32,19 +32,33 @@ const getUpdateStatusX = async (npUri: string, apiUrls: any) => {
     const r = await response.json()
     const bindings = r['results']['bindings']
     if (bindings.length == 1 && bindings[0]['latest']['value'] === npUri) {
-      return {type:'latest', latestUris:[npUri], html:'This is the latest version.'}
+      return {type: 'latest', latestUris: [npUri], html: 'This is the latest version.'}
     } else if (bindings.length == 0) {
-      return {type:'retracted', html:'This nanopublication has been <strong>retracted</strong>.'}
+      return {type: 'retracted', html: 'This nanopublication has been <strong>retracted</strong>.'}
     } else {
       const latestUris: string[] = []
       for (const b of bindings) {
-        latestUris.push(b['latest']['value']);
+        latestUris.push(b['latest']['value'])
       }
       const l = latestUris.at(0)
       if (latestUris.length == 1) {
-        return {type:'newer-version', latestUris:latestUris, html:'This nanopublication has a <strong>newer version</strong>: <code><a href="' + l + '">' + l + '</a></code>'}
+        return {
+          type: 'newer-version',
+          latestUris: latestUris,
+          html:
+            'This nanopublication has a <strong>newer version</strong>: <code><a href="' + l + '">' + l + '</a></code>'
+        }
       } else {
-        return {type:'newer-version', latestUris:latestUris, html:'This nanopublication has <strong>several newer versions</strong>: <code><a href="' + l + '">' + l + '</a></code> (and others)'}
+        return {
+          type: 'newer-version',
+          latestUris: latestUris,
+          html:
+            'This nanopublication has <strong>several newer versions</strong>: <code><a href="' +
+            l +
+            '">' +
+            l +
+            '</a></code> (and others)'
+        }
       }
     }
   } catch (error) {

@@ -10,10 +10,11 @@
   "repository": "https://github.com/Nanopublication/nanopub-js",
   "license": "MIT",
   "type": "module",
-  "main": "src/index.ts",
-  "typings": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "module": "dist/index.js",
   "unpkg": "dist/index.min.js",
+  "jsdelivr": "dist/index.min.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -28,7 +29,7 @@
     "build:vite": "vite build",
     "build:tsc": "tsc",
     "lint": "eslint src --ext .ts --fix",
-    "clean": "rimraf build && rimraf node_modules",
+    "clean": "rimraf dist && rimraf node_modules",
     "publish": "yarn build && npm publish"
   },
   "dependencies": {

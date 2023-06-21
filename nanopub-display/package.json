@@ -9,9 +9,10 @@
   },
   "license": "MIT",
   "type": "module",
-  "main": "src/index.ts",
+  "main": "dist/nanopub-display.js",
   "module": "dist/nanopub-display.js",
   "unpkg": "dist/nanopub-display.min.js",
+  "jsdelivr": "dist/nanopub-display.min.js",
   "types": "dist/index.d.ts",
   "customElements": "dist/custom-elements.json",
   "exports": {
@@ -23,10 +24,11 @@
     "./package.json": "./package.json"
   },
   "scripts": {
+    "start": "yarn build:utils && vite",
+    "build:utils": "cd ../nanopub-utils && vite build -c ../nanopub-utils/vite.config.js && cd ../nanopub-display",
     "dev": "vite",
     "build": "rimraf dist && tsc && rollup -c && yarn build:manifest",
     "build:vite": "vite build",
-    "build:watch": "tsc --watch",
     "build:manifest": "cem analyze --litelement --globs \"src/**/*.ts\" --outdir dist",
     "build:test": "tsc && BUNDLE=true rollup -c",
     "vitest": "vitest",
@@ -35,10 +37,10 @@
     "test:all": "yarn test:dev && yarn test:prod",
     "lint": "eslint 'src/**/*.ts' --ignore-path ../.gitignore --fix && lit-analyzer",
     "publish": "yarn build && npm publish",
-    "clean": "rimraf build && rimraf node_modules"
+    "clean": "rimraf dist && rimraf node_modules"
   },
   "dependencies": {
-    "@nanopub/utils": "workspace:^1.0.4",
+    "@nanopub/utils": "workspace:^1.0.7",
     "lit": "^2.2.4",
     "n3": "^1.16.3"
   },

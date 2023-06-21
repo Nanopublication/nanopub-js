@@ -340,7 +340,7 @@ export class NanopubDisplay extends LitElement {
                     @click="${() => this._openDisplayOptions()}"
                     @touchstart="${() => this._openDisplayOptions()}"
                   >
-                    ${displayIcon} ${this.showDisplayOptions ? html`Select the sections to display` : html``}
+                    ${displayIcon} ${this.showDisplayOptions ? html`Select the sections to displayaaa` : html``}
                   </span>
                   ${this.showDisplayOptions
                     ? html`<div class="display-checklist-wrapper">
