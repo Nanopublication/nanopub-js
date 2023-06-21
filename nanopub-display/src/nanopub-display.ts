@@ -15,7 +15,8 @@ const npColor = {
   provenance: css`#f3a08c`,
   pubinfo: css`#ffff66`,
   error: css`#f88b80`,
-  grey: css`#d1d1d1`
+  grey: css`#d1d1d1`,
+  background: css`#fafafa`
 }
 
 /**
@@ -322,7 +323,7 @@ export class NanopubDisplay extends LitElement {
       <div
         class="nanopub"
         style=${styleMap({
-          'background-color': this.error ? npColor.error.toString() : 'inherit'
+          'background-color': this.error ? npColor.error.toString() : npColor.background.toString()
         })}
       >
         ${when(this.prefixes, () => {
