@@ -14,7 +14,7 @@
   </head>
 
   <body>
-    <div style="min-height: 100vh; width: 100%;">
+    <div style="min-height: 100vh; width: 100%">
       <h1>Check the console</h1>
     </div>
   </body>
@@ -24,23 +24,24 @@
 
     // Use await
     const status = await getUpdateStatus('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
-    console.log("Awaited status", status)
+    console.log('Awaited status', status)
 
     // Or a then callback
-    getUpdateStatus('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
-      .then(status => console.log("Then status", status))
+    getUpdateStatus('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU').then(status =>
+      console.log('Then status', status)
+    )
 
     const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
     console.log('Parsed nanopub', np.uri)
     // Browse the nanopub RDF using the RDF/JS store:
     for (const quad of np.store.match(null, null, null)) {
-      console.log("One of the np subjects:", quad.subject.value.toString())
+      console.log('One of the np subjects:', quad.subject.value.toString())
       break
     }
 
     // Iterate over the nanopub prefixes
     for (const [prefix, namespace] of Object.entries(np.prefixes)) {
-      console.log("A prefix:", prefix, namespace)
+      console.log('A prefix:', prefix, namespace)
       break
     }
   </script>

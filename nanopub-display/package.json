@@ -24,8 +24,6 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "start": "yarn build:utils && vite",
-    "build:utils": "cd ../nanopub-utils && vite build -c ../nanopub-utils/vite.config.js && cd ../nanopub-display",
     "dev": "vite",
     "build": "rimraf dist && tsc && rollup -c && yarn build:manifest",
     "build:vite": "vite build",

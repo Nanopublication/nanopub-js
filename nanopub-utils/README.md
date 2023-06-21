@@ -49,10 +49,10 @@ You can instantiate the `Nanopub` object using various approaches:
   ```typescript
   import {Nanopub} from '@nanopub/utils'
   import {Parser, Store} from 'n3'
-  
+
   const parser = new Parser()
   const store = new Store(parser.parse('ADD NP RDF'))
-  
+
   const np = await Nanopub.parse(store)
   ```
 
@@ -63,7 +63,7 @@ You can then easily reuse the object to access different part of the Nanopub:
 const npUri = np.uri
 
 // Get the CURIE or URI for a specific graph
-const assertionGraph = np.graphsIds["assertion"]
+const assertionGraph = np.graphsIds['assertion']
 
 // Get the Nanopub RDF string
 const npUri = np.rdfString

@@ -50,11 +50,13 @@ We are still not fully set on which framework to use to develop the web componen
 
   - ✅ Most popular and mature
   - ⚠️ Visual components library not updated yet
+
 - ⚡️ **Fast element** from Microsoft
 
   - ✅ Visual components library up-to-date and following standard guidelines
   - ✅ Working on a standard design system
   - ⚠️ Syntax a bit more verbose than Lit (personal opinion)
+
 - 🔗 **Svelte**
   - ⚠️ New approach to web development
   - ✅ Performant and developer friendly
