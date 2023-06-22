@@ -22,9 +22,8 @@ export class Nanopub {
   rdfString: string
   store: Store
   uri?: string
-  error?: string
 
-  // The prefixes of the Nanopub, used to resolve CURIEs
+  // The prefixes defined in the Nanopub, used to resolve CURIEs
   prefixes = {
     rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
@@ -42,7 +41,7 @@ export class Nanopub {
     provenance: null,
     pubinfo: null
   }
-  // An object optimized to display the content of the Nanopub
+  // An object prefixesoptimized to display the content of the Nanopub
   displayNp?: Map<string, Map<string, Map<string, Map<string, string>>>>
   dateCreated?: string
   author?: string
@@ -62,10 +61,9 @@ export class Nanopub {
     }
   }
 
-  public constructor({rdfString = '', store = new Store(), prefixes = null, error = ''}) {
+  public constructor({rdfString = '', store = new Store(), prefixes = null}) {
     this.rdfString = rdfString
     this.store = store
-    this.error = error
     if (prefixes) this.prefixes = prefixes
 
     if (!this.rdfString && this.store.size < 1) {
@@ -133,9 +131,10 @@ export class Nanopub {
     }
   }
 
-  // TODO: also extract data created and author infos
-  // https://github.com/rdfjs/N3.js
   private extractNanopubInfos() {
+    /**
+     * Extract metadata from the nanopub RDF (np URI, graphs URIs, author...)
+     */
     // Extract the nanopub URI in the head graph
     for (const quad of this.store.match(
       null,
@@ -248,7 +247,6 @@ export class Nanopub {
           )
         )
       }
-      // console.log(graph, 'ORDERED', this.displayNp[graph])
     }
     this.displayNp = displayNp
     return this.displayNp

@@ -59,31 +59,34 @@ You can then easily reuse the object to work with the Nanopub:
 
 ```typescript
 // Get the Nanopub URI
-const npUri = np.uri
+np.uri
+
+// Get creation date and author of the nanopub
+np.dateCreated
+np.author
 
 // Generate an object optimized to display the nanopub visually
-np.getDisplay()
-const npDisplay = np.displayNp
+np.display()
 
-// Get the CURIE or URI for a specific graph
-const assertionGraph = np.graphsIds['assertion']
+// Get the namedNode/URI for a specific graph
+np.graphs.assertion
 
 // Get the Nanopub RDF string
-const npUri = np.rdfString
+np.rdfString
 
 // Browse the nanopub RDF using the RDF/JS store
 for (const quad of np.store.match(null, null, null)) {
   console.log(quad.subject.value.toString())
 }
 
-// Iterate the nanopub prefixes
-for (const [prefix, namespace] of Object.entries(np.prefixes)) {
-  console.log(prefix, namespace)
-}
-
 // Iterate the triples in the assertion graph
 for (const quad of np.store.match(null, null, null, np.graphs.assertion)) {
   console.log(quad.subject.value)
+}
+
+// Iterate the nanopub prefixes
+for (const [prefix, namespace] of Object.entries(np.prefixes)) {
+  console.log(prefix, namespace)
 }
 ```
 
