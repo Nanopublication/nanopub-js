@@ -1,8 +1,7 @@
 import {Parser, Store, Quad, Writer, DataFactory, NamedNode} from 'n3'
-const {namedNode} = DataFactory
+import {nschema, prov, default_prefixes} from './constants'
 
-const nschema = 'http://www.nanopub.org/nschema#'
-const prov = 'http://www.w3.org/ns/prov#'
+const {namedNode} = DataFactory
 
 export class MalformedNanopubError extends Error {
   constructor(message = '', ...args: ConstructorParameters<typeof Error>) {
@@ -24,16 +23,7 @@ export class Nanopub {
   uri?: string
 
   // The prefixes defined in the Nanopub, used to resolve CURIEs
-  prefixes = {
-    rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-    rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
-    dc: 'http://purl.org/dc/elements/1.1/',
-    dcterms: 'http://purl.org/dc/terms/',
-    prov: 'http://www.w3.org/ns/prov#',
-    npx: 'http://purl.org/nanopub/x/',
-    nschema: 'http://www.nanopub.org/nschema#',
-    orcid: 'https://orcid.org/'
-  }
+  prefixes = default_prefixes
   // The namedNode (URI) used for each graph
   graphs: {[key: string]: NamedNode | null} = {
     head: null,
