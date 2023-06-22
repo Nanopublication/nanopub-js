@@ -2,6 +2,15 @@ import {expect, test} from '@jest/globals'
 import {Parser, Store} from 'n3'
 import {Nanopub} from './nanopub'
 
+const checkValid = (np: Nanopub, testUrl = npTestUrl) => {
+  expect(np.uri).toBe(testUrl)
+  expect(np.rdfString.length).toBeGreaterThan(10)
+  expect(Object.keys(np.displayNp).length).toBe(4)
+  expect(np.store.size).toBeGreaterThan(10)
+}
+
+const npTestUrl = 'http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU'
+
 test('fetch np', async () => {
   const np = await Nanopub.fetch(npTestUrl)
   checkValid(np)
@@ -20,14 +29,84 @@ test('np from store', async () => {
   checkValid(np)
 })
 
-const checkValid = (np: Nanopub, testUrl = npTestUrl) => {
-  expect(np.uri).toBe(testUrl)
-  expect(np.rdfString.length).toBeGreaterThan(10)
-  expect(Object.keys(np.displayNp).length).toBe(4)
-  expect(np.store.size).toBeGreaterThan(10)
-}
+// TODO: needs to be fixed. For some reason JS is incapable of catching the error thrown in the await
+// But according to every post out there it should.
+// Here it just blatantly let the error pass uncaught, and ignore our try catch
+// Even if the await should make it wait for the async function to be resolved
+// test('fail parsing np from wrong RDF', async () => {
+//   expect.assertions(1)
+//   try {
+//     const np = await Nanopub.parse(wrongNpMissUri)
+//     // expect(np).toBe(undefined)
+//     console.log(np.uri)
+//   } catch (e: any) {
+//     console.log('CATCH IN TEST', e.message)
+//     expect(e.message).toBe('Could not extract the Nanopub URI')
+//   } finally {
+//     console.log('FINALLY IN TEST')
+//   }
 
-const npTestUrl = 'http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU'
+//   // await Nanopub.parse(wrongNpMissUri)
+//   //   .then(
+//   //     np => {
+//   //       // user was successfully created
+//   //       console.log(np)
+//   //       // expect(true).toBe(false)
+//   //       // business logic goes here
+//   //     }
+//   //     // error => {
+//   //     //   console.error(error) // from creation
+//   //     //   expect(error.message).toBe('Could not extract the Nanopub URI')
+//   //     // }
+//   //   )
+//   //   .catch(error => {
+//   //     console.error(error) // from creation
+//   //     expect(error.message).toBe('Could not extract the Nanopub URI')
+//   //   })
+// })
+
+// const wrongNpMissUri = `@prefix biolink: <https://w3id.org/biolink/vocab/> .
+// @prefix dct: <http://purl.org/dc/terms/> .
+// @prefix infores: <https://w3id.org/biolink/infores/> .
+// @prefix np: <http://www.nanopub.org/nschema#> .
+// @prefix npx: <http://purl.org/nanopub/x/> .
+// @prefix orcid: <https://orcid.org/> .
+// @prefix pav: <http://purl.org/pav/> .
+// @prefix prov: <http://www.w3.org/ns/prov#> .
+// @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+// @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+// @prefix sub: <http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU#> .
+// @prefix tao: <http://pubannotation.org/ontology/tao.owl#> .
+// @prefix this: <http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU> .
+// @prefix umls: <http://identifiers.org/umls/> .
+// @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+// sub:Head {
+//   this: np:hasAssertion sub:assertion ;
+//     np:hasProvenance sub:provenance ;
+//     np:hasPublicationInfo sub:pubinfo .
+// }
+// sub:assertion {
+//   sub:_1 rdf:object <http://purl.obolibrary.org/obo/MONDO_0007079> ;
+//     rdf:predicate biolink:treats ;
+//     rdf:subject umls:C0355800 ;
+//     a biolink:Association ;
+//     biolink:aggregator_knowledge_source infores:knowledge-collaboratory ;
+//     biolink:category "biolink:Association" ;
+//     biolink:id "collaboratory:UMLS:C0355800-biolink:treats-MONDO:0007079" ;
+//     biolink:publications <https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=49aa3d6d-2270-4615-aafa-b440859ab870> .
+// }
+// sub:provenance {
+//   sub:assertion prov:generatedAtTime "2023-02-21T11:15:07.732162"^^xsd:dateTime ;
+//     prov:wasAttributedTo orcid:0000-0002-1501-1082 .
+// }
+// sub:pubinfo {
+//   sub:sig npx:hasAlgorithm "RSA" ;
+//     npx:hasPublicKey "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR9fz0fKCdWOWC+pxhkQhEM/ppbdIYe5TLSdj+lJzSlv9mYBaPgrzVezSwwbmhlHBPDZa4/vHycU315BdmUGq+pXllp9+rWFfrb+kBJwhZjpG6BeyyXBsRFz4jmQVxl/ZYHilQTh/XalYzKkEAyTiEMPee4Kz61PaWOKH24CsnOQIDAQAB" ;
+//     npx:hasSignature "jjrkdlQ340JSloOmL24tOZkKnMuDl6ztapHOi/2tlnabownWOKUPtilPVMvFd4Hsz6bLfB+bk59rlDz3Qb02H7lhJAH6C75LiFKiddbvPA+8VYXYOZmBJNwmsC45ScB1gm3yJlJRPMKm1/uIFYXg7Wfx4+ukoSInbZ/wgzff0vg=" ;
+//     npx:hasSignatureTarget this: .
+//   this: prov:generatedAtTime "2023-02-21T11:15:07.732162"^^xsd:dateTime ;
+//     prov:wasAttributedTo orcid:0000-0002-1501-1082 .
+// }`
 
 const npTestStr = `@prefix biolink: <https://w3id.org/biolink/vocab/> .
 @prefix dct: <http://purl.org/dc/terms/> .

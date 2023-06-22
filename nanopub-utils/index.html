@@ -35,7 +35,7 @@
     console.log('Parsed nanopub', np.uri)
     // Browse the nanopub RDF using the RDF/JS store:
     for (const quad of np.store.match(null, null, null)) {
-      console.log('One of the np subjects:', quad.subject.value.toString())
+      console.log('One of the np subjects:', quad.subject.value)
       break
     }
 
@@ -43,6 +43,67 @@
     for (const [prefix, namespace] of Object.entries(np.prefixes)) {
       console.log('A prefix:', prefix, namespace)
       break
+    }
+
+    console.log(np.graphs.head.id)
+    // Iterate the assertion triples
+    for (const quad of np.store.match(null, null, null, np.graphs.assertion)) {
+      console.log(quad.subject.value)
+      break
+    }
+
+
+    const wrongNpMissUri = `@prefix biolink: <https://w3id.org/biolink/vocab/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix infores: <https://w3id.org/biolink/infores/> .
+@prefix np: <http://www.nanopub.org/nschema#> .
+@prefix npx: <http://purl.org/nanopub/x/> .
+@prefix orcid: <https://orcid.org/> .
+@prefix pav: <http://purl.org/pav/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sub: <http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU#> .
+@prefix tao: <http://pubannotation.org/ontology/tao.owl#> .
+@prefix this: <http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU> .
+@prefix umls: <http://identifiers.org/umls/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+sub:Head {
+  this: np:hasAssertion sub:assertion ;
+    np:hasProvenance sub:provenance ;
+    np:hasPublicationInfo sub:pubinfo .
+}
+sub:assertion {
+  sub:_1 rdf:object <http://purl.obolibrary.org/obo/MONDO_0007079> ;
+    rdf:predicate biolink:treats ;
+    rdf:subject umls:C0355800 ;
+    a biolink:Association ;
+    biolink:aggregator_knowledge_source infores:knowledge-collaboratory ;
+    biolink:category "biolink:Association" ;
+    biolink:id "collaboratory:UMLS:C0355800-biolink:treats-MONDO:0007079" ;
+    biolink:publications <https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=49aa3d6d-2270-4615-aafa-b440859ab870> .
+}
+sub:provenance {
+  sub:assertion prov:generatedAtTime "2023-02-21T11:15:07.732162"^^xsd:dateTime ;
+    prov:wasAttributedTo orcid:0000-0002-1501-1082 .
+}
+sub:pubinfo {
+  sub:sig npx:hasAlgorithm "RSA" ;
+    npx:hasPublicKey "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR9fz0fKCdWOWC+pxhkQhEM/ppbdIYe5TLSdj+lJzSlv9mYBaPgrzVezSwwbmhlHBPDZa4/vHycU315BdmUGq+pXllp9+rWFfrb+kBJwhZjpG6BeyyXBsRFz4jmQVxl/ZYHilQTh/XalYzKkEAyTiEMPee4Kz61PaWOKH24CsnOQIDAQAB" ;
+    npx:hasSignature "jjrkdlQ340JSloOmL24tOZkKnMuDl6ztapHOi/2tlnabownWOKUPtilPVMvFd4Hsz6bLfB+bk59rlDz3Qb02H7lhJAH6C75LiFKiddbvPA+8VYXYOZmBJNwmsC45ScB1gm3yJlJRPMKm1/uIFYXg7Wfx4+ukoSInbZ/wgzff0vg=" ;
+    npx:hasSignatureTarget this: .
+  this: prov:generatedAtTime "2023-02-21T11:15:07.732162"^^xsd:dateTime ;
+    prov:wasAttributedTo orcid:0000-0002-1501-1082 .
+}`
+
+    try {
+      const np = await Nanopub.parse(wrongNpMissUri)
+      // expect(np).toBe(undefined)
+      console.log(np.uri)
+    } catch (e) {
+      console.log('MESS', e.message)
+    } finally {
+      console.log("FINISHED")
     }
   </script>
 </html>

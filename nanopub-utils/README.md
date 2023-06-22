@@ -9,7 +9,6 @@ You can easily import `@nanopub/utils` from a npm CDN and use it in your HTML pa
   <head>
     <script type="module" src="https://unpkg.com/@nanopub/utils"></script>
   </head>
-
   <body>
     <h1>Check the console</h1>
   </body>
@@ -44,19 +43,19 @@ You can instantiate the `Nanopub` object using various approaches:
   const np = await Nanopub.parse('ADD NP RDF')
   ```
 
-- Providing an already parsed **RDF/JS store**:
+- Provide an already parsed **RDF/JS store**:
 
   ```typescript
   import {Nanopub} from '@nanopub/utils'
   import {Parser, Store} from 'n3'
-
+  
   const parser = new Parser()
   const store = new Store(parser.parse('ADD NP RDF'))
-
+  
   const np = await Nanopub.parse(store)
   ```
 
-You can then easily reuse the object to access different part of the Nanopub:
+You can then easily reuse the object to work with the Nanopub:
 
 ```typescript
 // Get the Nanopub URI
@@ -76,6 +75,11 @@ for (const quad of np.store.match(null, null, null)) {
 // Iterate the nanopub prefixes
 for (const [prefix, namespace] of Object.entries(np.prefixes)) {
   console.log(prefix, namespace)
+}
+
+// Iterate the triples in the assertion graph
+for (const quad of np.store.match(null, null, null, np.graphs.assertion)) {
+  console.log(quad.subject.value)
 }
 ```
 
