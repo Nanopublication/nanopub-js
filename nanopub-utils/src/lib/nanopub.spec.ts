@@ -5,7 +5,6 @@ import {Nanopub} from './nanopub'
 const checkValid = (np: Nanopub, testUrl = npTestUrl) => {
   expect(np.uri).toBe(testUrl)
   expect(np.rdfString.length).toBeGreaterThan(10)
-  expect(Object.keys(np.displayNp).length).toBe(4)
   expect(np.store.size).toBeGreaterThan(10)
 }
 
@@ -16,12 +15,12 @@ test('fetch np', async () => {
   checkValid(np)
 })
 
-test('np from string', async () => {
+test('parse np from string', async () => {
   const np = await Nanopub.parse(npTestStr)
   checkValid(np)
 })
 
-test('np from store', async () => {
+test('parse np from store', async () => {
   const parser = new Parser()
   const store = new Store(parser.parse(npTestStr))
 
@@ -29,10 +28,18 @@ test('np from store', async () => {
   checkValid(np)
 })
 
+test('parse np and get display', async () => {
+  // const np = (await Nanopub.parse(npTestStr)).getDisplay()
+  const np = await Nanopub.parse(npTestStr)
+  checkValid(np)
+  expect(np.display().get('assertion')?.size).toBeGreaterThan(0)
+})
+
 // TODO: needs to be fixed. For some reason JS is incapable of catching the error thrown in the await
 // But according to every post out there it should.
 // Here it just blatantly let the error pass uncaught, and ignore our try catch
-// Even if the await should make it wait for the async function to be resolved
+// Even if the await should make it wait for the async function to throw an error
+
 // test('fail parsing np from wrong RDF', async () => {
 //   expect.assertions(1)
 //   try {

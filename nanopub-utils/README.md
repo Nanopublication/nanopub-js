@@ -61,6 +61,10 @@ You can then easily reuse the object to work with the Nanopub:
 // Get the Nanopub URI
 const npUri = np.uri
 
+// Generate an object optimized to display the nanopub visually
+np.getDisplay()
+const npDisplay = np.displayNp
+
 // Get the CURIE or URI for a specific graph
 const assertionGraph = np.graphsIds['assertion']
 

@@ -42,12 +42,7 @@ export class Nanopub {
     pubinfo: null
   }
   // An object optimized to display the content of the Nanopub
-  displayNp = {
-    head: new Map(),
-    assertion: new Map(),
-    provenance: new Map(),
-    pubinfo: new Map()
-  }
+  displayNp?: Map<string, Map<string, Map<string, Map<string, string>>>>
 
   static async fetch(url: string) {
     const response = await fetch(url, {
@@ -164,22 +159,32 @@ export class Nanopub {
     if (!this.graphs.head || !this.graphs.assertion || !this.graphs.provenance || !this.graphs.pubinfo) {
       throw new MalformedNanopubError(`Issue extracting one of the Nanopub graphs: ${this.graphs}`)
     }
+  }
 
-    // TODO: put this in a separate function (to be done after object construction)
+  public display(): Map<string, Map<string, Map<string, Map<string, string>>>> {
+    /**
+     * Generate an object optimized for visually displaying the nanopub
+     * It will add the object to this.displayNp to avoid recomputing again later if reused
+     */
+
+    if (this.displayNp) return this.displayNp
+    const displayNp = new Map()
+
     const predOrder = ['a', 'rdfs:label', 'rdfs:comment', 'rdf:subject', 'rdf:predicate', 'rdf:object']
-    // Generate the displayNp object, more optimized for visually displaying the nanopub
     for (const graph of Object.keys(this.graphs)) {
+      displayNp.set(graph, new Map())
       for (const quad of this.store.match(null, null, null, this.graphs[graph])) {
         const subject = this.getCurie(quad.subject.value)
         const pred = this.getCurie(quad.predicate.value)
 
-        if (!this.displayNp[graph].has(subject)) this.displayNp[graph].set(subject, new Map())
+        if (!displayNp.get(graph).has(subject)) displayNp.get(graph).set(subject, new Map())
 
-        if (!this.displayNp[graph].get(subject).has(pred)) {
-          this.displayNp[graph].get(subject).set(pred, [])
+        if (!displayNp.get(graph)?.get(subject).has(pred)) {
+          displayNp.get(graph).get(subject).set(pred, [])
         }
 
-        this.displayNp[graph]
+        displayNp
+          .get(graph)
           .get(subject)
           .get(pred)
           .push({
@@ -188,21 +193,24 @@ export class Nanopub {
           })
       }
       // Order subjects in graph, put sub:* in first
-      this.displayNp[graph] = new Map(
-        [...this.displayNp[graph].entries()].sort((a, b) => {
-          if (a[0].startsWith('sub:') && !b[0].startsWith('sub:')) {
-            return -1
-          } else if (!a[0].startsWith('sub:') && b[0].startsWith('sub:')) {
-            return 1
-          } else {
-            return a[0].localeCompare(b[0]) // None in predOrder list
-          }
-        })
+      displayNp.set(
+        graph,
+        new Map(
+          [...displayNp.get(graph).entries()].sort((a, b) => {
+            if (a[0].startsWith('sub:') && !b[0].startsWith('sub:')) {
+              return -1
+            } else if (!a[0].startsWith('sub:') && b[0].startsWith('sub:')) {
+              return 1
+            } else {
+              return a[0].localeCompare(b[0]) // None in predOrder list
+            }
+          })
+        )
       )
 
       // Order predicates for each subject
-      for (const [subj, preds] of this.displayNp[graph].entries()) {
-        this.displayNp[graph].set(
+      for (const [subj, preds] of displayNp.get(graph).entries()) {
+        displayNp.get(graph).set(
           subj,
           new Map(
             [...preds.entries()].sort((a, b) => {
@@ -219,8 +227,9 @@ export class Nanopub {
           )
         )
       }
-
       // console.log(graph, 'ORDERED', this.displayNp[graph])
     }
+    this.displayNp = displayNp
+    return this.displayNp
   }
 }
