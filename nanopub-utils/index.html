@@ -45,7 +45,6 @@
       break
     }
 
-    console.log(np.graphs.head.id)
     // Iterate the assertion triples
     for (const quad of np.store.match(null, null, null, np.graphs.assertion)) {
       console.log(quad.subject.value)
@@ -98,12 +97,9 @@ sub:pubinfo {
 
     try {
       const np = await Nanopub.parse(wrongNpMissUri)
-      // expect(np).toBe(undefined)
       console.log(np.uri)
     } catch (e) {
-      console.log('MESS', e.message)
-    } finally {
-      console.log("FINISHED")
+      console.log('Failing nanopub:', e)
     }
   </script>
 </html>

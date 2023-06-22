@@ -1,4 +1,4 @@
-import {Parser, Store, Quad, Writer, DataFactory, NamedNode} from 'n3'
+import {Parser, Store, Writer, DataFactory, NamedNode} from 'n3'
 import {nschema, prov, default_prefixes} from './constants'
 
 const {namedNode} = DataFactory
@@ -23,7 +23,7 @@ export class Nanopub {
   uri?: string
 
   // The prefixes defined in the Nanopub, used to resolve CURIEs
-  prefixes = default_prefixes
+  prefixes: {[key: string]: string} = default_prefixes
   // The namedNode (URI) used for each graph
   graphs: {[key: string]: NamedNode | null} = {
     head: null,
@@ -69,56 +69,25 @@ export class Nanopub {
         this.rdfString = result
       })
     }
-    if (this.store && this.store.size > 0) {
-      this.extractNanopubInfos()
-    }
 
     // Store not provided, we parse the RDF string with n3.js
     if (this.rdfString && this.store.size < 1) {
       const parser = new Parser()
-
-      parser.parse(this.rdfString, (error: any, quad: Quad, prefixes: any): any => {
-        if (error) {
-          throw new MalformedNanopubError(
-            `⚠️ Issue parsing the nanopublication RDF with n3.js, make sure it is in the TRiG format. ${error}`
-          )
+      this.store = new Store(
+        parser.parse(this.rdfString, null, (prefix, namespace) => {
+          // Retrieve the prefixes
+          this.prefixes[prefix] = namespace['id']
+        })
+      )
+      // Put this and sub at the top of the prefixes hash
+      if (this.prefixes['this'] && this.prefixes['sub'])
+        this.prefixes = {
+          this: this.prefixes['this'],
+          sub: this.prefixes['sub'],
+          ...this.prefixes
         }
-        if (quad) {
-          this.store.addQuad(quad)
-        } else {
-          if (prefixes['this'] && prefixes['sub'])
-            this.prefixes = {
-              this: prefixes['this'],
-              sub: prefixes['sub'],
-              ...prefixes
-            }
-          else this.prefixes = prefixes
-          this.extractNanopubInfos()
-        }
-      })
     }
-  }
-
-  // Get the complete URI for a CURIE
-  public getUri(curie: string) {
-    const prefix = curie.substring(0, curie.indexOf(':'))
-    return curie.replace(`${prefix}:`, this.prefixes[prefix])
-  }
-
-  // Get the CURIE for a complete URI
-  public getCurie(uri: string, namespace?: string) {
-    if (uri === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') return 'a'
-    // "sub" namespace needs to be before "this" namespace
-    const prefixes = this.prefixes['sub'] ? {sub: this.prefixes['sub'], ...this.prefixes} : this.prefixes
-    if (namespace) return uri.replace(prefixes[namespace], `${namespace}:`)
-    else {
-      for (const prefix in prefixes) {
-        if (uri.startsWith(prefixes[prefix])) {
-          return uri.replace(prefixes[prefix], `${prefix}:`)
-        }
-      }
-      return uri
-    }
+    this.extractNanopubInfos()
   }
 
   private extractNanopubInfos() {
@@ -240,5 +209,27 @@ export class Nanopub {
     }
     this.displayNp = displayNp
     return this.displayNp
+  }
+
+  // Get the complete URI for a CURIE
+  public getUri(curie: string) {
+    const prefix = curie.substring(0, curie.indexOf(':'))
+    return curie.replace(`${prefix}:`, this.prefixes[prefix])
+  }
+
+  // Get the CURIE for a complete URI
+  public getCurie(uri: string, namespace?: string) {
+    if (uri === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') return 'a'
+    // "sub" namespace needs to be before "this" namespace
+    const prefixes = this.prefixes['sub'] ? {sub: this.prefixes['sub'], ...this.prefixes} : this.prefixes
+    if (namespace) return uri.replace(prefixes[namespace], `${namespace}:`)
+    else {
+      for (const prefix in prefixes) {
+        if (uri.startsWith(prefixes[prefix])) {
+          return uri.replace(prefixes[prefix], `${prefix}:`)
+        }
+      }
+      return uri
+    }
   }
 }
