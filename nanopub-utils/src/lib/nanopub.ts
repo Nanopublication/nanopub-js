@@ -2,6 +2,7 @@ import {Parser, Store, Quad, Writer, DataFactory, NamedNode} from 'n3'
 const {namedNode} = DataFactory
 
 const nschema = 'http://www.nanopub.org/nschema#'
+const prov = 'http://www.w3.org/ns/prov#'
 
 export class MalformedNanopubError extends Error {
   constructor(message = '', ...args: ConstructorParameters<typeof Error>) {
@@ -43,6 +44,8 @@ export class Nanopub {
   }
   // An object optimized to display the content of the Nanopub
   displayNp?: Map<string, Map<string, Map<string, Map<string, string>>>>
+  dateCreated?: string
+  author?: string
 
   static async fetch(url: string) {
     const response = await fetch(url, {
@@ -158,6 +161,24 @@ export class Nanopub {
     }
     if (!this.graphs.head || !this.graphs.assertion || !this.graphs.provenance || !this.graphs.pubinfo) {
       throw new MalformedNanopubError(`Issue extracting one of the Nanopub graphs: ${this.graphs}`)
+    }
+
+    // Extract the creation date and author of the nanopub
+    for (const quad of this.store.match(
+      namedNode(this.uri),
+      namedNode(`${prov}generatedAtTime`),
+      null,
+      this.graphs.pubinfo
+    )) {
+      this.dateCreated = quad.object.value
+    }
+    for (const quad of this.store.match(
+      namedNode(this.uri),
+      namedNode(`${prov}wasAttributedTo`),
+      null,
+      this.graphs.pubinfo
+    )) {
+      this.author = quad.object.value
     }
   }
 

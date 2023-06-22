@@ -13,6 +13,8 @@ const npTestUrl = 'http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmR
 test('fetch np', async () => {
   const np = await Nanopub.fetch(npTestUrl)
   checkValid(np)
+  expect(np.dateCreated).toBe('2023-02-21T11:15:07.732162')
+  expect(np.author).toBe('https://orcid.org/0000-0002-1501-1082')
 })
 
 test('parse np from string', async () => {
