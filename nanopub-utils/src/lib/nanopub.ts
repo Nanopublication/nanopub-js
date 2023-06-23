@@ -54,13 +54,14 @@ export class Nanopub {
       this.store = new Store()
     } else {
       this.store = rdf
-      // Store already provided, but we need to serialize the RDF string
       this.rdfString = ''
+      // Store already provided, but we need to serialize the RDF string
       const writer = new Writer({prefixes: this.prefixes})
-      for (const [prefix, namespace] of Object.entries(this.prefixes)) {
-        this.rdfString += `@prefix ${prefix}: <${namespace}> .\n`
-      }
-      this.rdfString += writer.quadsToString(this.store.getQuads(null, null, null, null))
+      writer.addQuads(this.store.getQuads(null, null, null, null))
+      writer.end((error, result) => {
+        if (error) throw new MalformedNanopubError(error.message)
+        this.rdfString = result
+      })
     }
 
     if (!this.rdfString && this.store.size < 1) {

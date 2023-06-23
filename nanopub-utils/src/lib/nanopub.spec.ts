@@ -30,7 +30,6 @@ test('parse np from string', async () => {
 test('parse np from store', async () => {
   const parser = new Parser()
   const store = new Store(parser.parse(validNpStr))
-
   const np = await Nanopub.parse(store)
   checkValid(np)
 })
