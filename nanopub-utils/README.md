@@ -63,7 +63,7 @@ You can instantiate the `Nanopub` object using various approaches:
   const np = new Nanopub('ADD NP RDF') // string or Store 
   ```
 
-You can then easily reuse the object to work with the Nanopub:
+You can then easily reuse the instantiated object to work with the Nanopub:
 
 ```typescript
 // Get the Nanopub URI
@@ -73,11 +73,13 @@ np.uri
 np.dateCreated
 np.author
 
-// Generate an object optimized to display the nanopub visually
+// Generate an object built to easily display the nanopub visually
 np.display()
 
-// Get the namedNode/URI for a specific graph
+// Get the namedNode (URI) for a specific graph
 np.graphs.assertion
+np.graphs.provenance
+np.graphs.pubinfo
 
 // Get the Nanopub RDF string
 np.rdfString
