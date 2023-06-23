@@ -1,5 +1,6 @@
 import {Parser, Store, Writer, DataFactory, NamedNode} from 'n3'
 import {nschema, prov, default_prefixes} from './constants'
+import {getUpdateStatus} from './nanopub-utils'
 
 const {namedNode} = DataFactory
 
@@ -146,6 +147,12 @@ export class Nanopub {
     )) {
       this.author = quad.object.value
     }
+  }
+
+  // public status = async () => {
+  public async status() {
+    if (!this.uri) return null
+    return await getUpdateStatus(this.uri)
   }
 
   public display(): Map<string, Map<string, Map<string, Map<string, string>>>> {

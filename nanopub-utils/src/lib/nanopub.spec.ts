@@ -10,7 +10,7 @@ const checkValid = (np: Nanopub, testUrl = npTestUrl) => {
 
 const npTestUrl = 'http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU'
 
-test('construct np from string sync', () => {
+test('construct np from string (sync)', () => {
   const np = new Nanopub(validNpStr)
   checkValid(np)
 })
@@ -38,6 +38,13 @@ test('parse np and get display', async () => {
   const np = await Nanopub.parse(validNpStr)
   checkValid(np)
   expect(np.display().get('assertion')?.size).toBeGreaterThan(0)
+})
+
+test('parse np and check status', async () => {
+  const np = await Nanopub.parse(validNpStr)
+  checkValid(np)
+  const status = await np.status()
+  expect(status.type).toBe('latest')
 })
 
 test('fail parsing np from wrong RDF', async () => {
