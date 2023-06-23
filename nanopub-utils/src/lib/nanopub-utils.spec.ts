@@ -1,5 +1,7 @@
 import {expect, test} from '@jest/globals'
-import {getUpdateStatus} from './nanopub-utils'
+import {getLatestNp, getUpdateStatus, getArtifactCode, getShortCode, isTrustyUri} from './nanopub-utils'
+
+const npTestUrl = 'http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU'
 
 test('getUpdateStatus', async () => {
   const statusList = await getUpdateStatus(npTestUrl)
@@ -8,4 +10,18 @@ test('getUpdateStatus', async () => {
   expect(statusList.html.length).toBeGreaterThan(0)
 })
 
-const npTestUrl = 'http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU'
+test('get latest np', () => {
+  getLatestNp((np: string) => expect(np.length).toBeGreaterThan(0))
+})
+
+test('is Trusty URI', () => {
+  expect(isTrustyUri(npTestUrl)).toBe(true)
+})
+
+test('get artifact code', () => {
+  expect(getArtifactCode(npTestUrl)).toBe('RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+})
+
+test('get short code', () => {
+  expect(getShortCode(npTestUrl)).toBe('RAHtkscyyy')
+})

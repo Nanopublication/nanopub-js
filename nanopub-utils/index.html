@@ -4,13 +4,6 @@
     <meta charset="utf-8" />
     <title>Nanopub Utils dev</title>
     <link rel="icon" type="image/svg+xml" href="https://vitejs.dev/logo.svg" />
-
-    <!-- Import local for dev: -->
-    <!-- <script type="module" src="./src/index.ts"></script> -->
-
-    <!-- Import the latest bundled and minified: -->
-    <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@nanopub/utils/dist/index.min.js"></script> -->
-    <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@nanopub/utils@1.0.4/dist/index.min.js"></script> -->
   </head>
 
   <body>
@@ -20,24 +13,22 @@
   </body>
 
   <script type="module">
-    import {getUpdateStatus, Nanopub} from './src/index.ts'
+    import {getJson, getLatestNp, getUpdateStatus, Nanopub} from './src/index.ts'
 
-    // Use await
-    const status = await getUpdateStatus('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+    const npUrl = 'https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU'
+
+    // Get status with await
+    const status = await getUpdateStatus(npUrl)
     console.log('Awaited status', status)
 
     // Or a then callback
-    getUpdateStatus('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU').then(status =>
-      console.log('Then status', status)
+    getUpdateStatus(npUrl).then(status =>
+      console.log('Then callback status', status)
     )
 
-    const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
-    console.log('Parsed nanopub', np.uri)
-    // Browse the nanopub RDF using the RDF/JS store:
-    for (const quad of np.store.match(null, null, null)) {
-      console.log('One of the np subjects:', quad.subject.value)
-      break
-    }
+    // Fetch a nanopub
+    const np = await Nanopub.fetch(npUrl)
+    console.log('Fetched nanopub', np.uri)
 
     // Iterate over the nanopub prefixes
     for (const [prefix, namespace] of Object.entries(np.prefixes)) {
@@ -45,61 +36,18 @@
       break
     }
 
-    // Iterate the assertion triples
-    for (const quad of np.store.match(null, null, null, np.graphs.assertion)) {
-      console.log(quad.subject.value)
+    // Browse the nanopub RDF using the RDF/JS store:
+    for (const quad of np.store.match(null, null, null)) {
+      console.log('One of the np subjects:', quad.subject.value)
       break
     }
 
-
-    const wrongNpMissUri = `@prefix biolink: <https://w3id.org/biolink/vocab/> .
-@prefix dct: <http://purl.org/dc/terms/> .
-@prefix infores: <https://w3id.org/biolink/infores/> .
-@prefix np: <http://www.nanopub.org/nschema#> .
-@prefix npx: <http://purl.org/nanopub/x/> .
-@prefix orcid: <https://orcid.org/> .
-@prefix pav: <http://purl.org/pav/> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix sub: <http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU#> .
-@prefix tao: <http://pubannotation.org/ontology/tao.owl#> .
-@prefix this: <http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU> .
-@prefix umls: <http://identifiers.org/umls/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-sub:Head {
-  this: np:hasAssertion sub:assertion ;
-    np:hasProvenance sub:provenance ;
-    np:hasPublicationInfo sub:pubinfo .
-}
-sub:assertion {
-  sub:_1 rdf:object <http://purl.obolibrary.org/obo/MONDO_0007079> ;
-    rdf:predicate biolink:treats ;
-    rdf:subject umls:C0355800 ;
-    a biolink:Association ;
-    biolink:aggregator_knowledge_source infores:knowledge-collaboratory ;
-    biolink:category "biolink:Association" ;
-    biolink:id "collaboratory:UMLS:C0355800-biolink:treats-MONDO:0007079" ;
-    biolink:publications <https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=49aa3d6d-2270-4615-aafa-b440859ab870> .
-}
-sub:provenance {
-  sub:assertion prov:generatedAtTime "2023-02-21T11:15:07.732162"^^xsd:dateTime ;
-    prov:wasAttributedTo orcid:0000-0002-1501-1082 .
-}
-sub:pubinfo {
-  sub:sig npx:hasAlgorithm "RSA" ;
-    npx:hasPublicKey "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR9fz0fKCdWOWC+pxhkQhEM/ppbdIYe5TLSdj+lJzSlv9mYBaPgrzVezSwwbmhlHBPDZa4/vHycU315BdmUGq+pXllp9+rWFfrb+kBJwhZjpG6BeyyXBsRFz4jmQVxl/ZYHilQTh/XalYzKkEAyTiEMPee4Kz61PaWOKH24CsnOQIDAQAB" ;
-    npx:hasSignature "jjrkdlQ340JSloOmL24tOZkKnMuDl6ztapHOi/2tlnabownWOKUPtilPVMvFd4Hsz6bLfB+bk59rlDz3Qb02H7lhJAH6C75LiFKiddbvPA+8VYXYOZmBJNwmsC45ScB1gm3yJlJRPMKm1/uIFYXg7Wfx4+ukoSInbZ/wgzff0vg=" ;
-    npx:hasSignatureTarget this: .
-  this: prov:generatedAtTime "2023-02-21T11:15:07.732162"^^xsd:dateTime ;
-    prov:wasAttributedTo orcid:0000-0002-1501-1082 .
-}`
-
-    try {
-      const np = await Nanopub.parse(wrongNpMissUri)
-      console.log(np.uri)
-    } catch (e) {
-      console.log('Failing nanopub:', e)
+    // Iterate the assertion triples
+    for (const quad of np.store.match(null, null, null, np.graphs.assertion)) {
+      console.log('One of the assertion subjects:', quad.subject.value)
+      break
     }
+
+    // console.log(await getJson(npUrl))
   </script>
 </html>

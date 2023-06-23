@@ -67,33 +67,30 @@ const getUpdateStatusX = async (npUri: string, apiUrls: any) => {
   }
 }
 
-export const getJson = (url: string, callback: any) => {
-  const request = new XMLHttpRequest()
-  request.open('GET', url, true)
-  request.responseType = 'json'
-  request.onload = function () {
-    const status = request.status
-    if (status === 200) {
-      callback(null, request.response)
-    } else {
-      callback(status, request.response)
-    }
-  }
-  request.send()
+// TODO: not working yet, asking for json does not send json back
+export const getJson = async (url: string) => {
+  const response = await fetch(url, {
+    headers: {Accept: 'application/json'}
+  })
+  console.log(await response.text())
+  return await response.json()
+  // const request = new XMLHttpRequest()
+  // request.open('GET', url, true)
+  // request.responseType = 'json'
+  // request.onload = function () {
+  //   const status = request.status
+  //   if (status === 200) {
+  //     console.log(request.response)
+  //     // callback(null, request.response)
+  //   } else {
+  //     // callback(status, request.response)
+  //     console.log(request.response)
+  //   }
+  // }
+  // request.send()
 }
 
-// export const populate = (elementId, apiUrl, template) => {
-//   getJson(apiUrl, function (error, response) {
-//     if (error == null) {
-//       document.getElementById(elementId).innerHTML = json2html.render(response, template);
-//     } else {
-//       document.getElementById(elementId).innerHTML =
-//         '<li><em>error: something went wrong with calling the API</en></li>';
-//     }
-//   });
-// };
-
-export const getLatestNp = callback => {
+export const getLatestNp = (callback: CallableFunction) => {
   fetch('https://server.np.trustyuri.net/nanopubs.txt')
     .then(response => response.text())
     .then(data => {
@@ -116,3 +113,14 @@ export const getShortCode = (uri: string) => {
   if (ac == null) return null
   return ac.substring(0, 10)
 }
+
+// export const populate = (elementId, apiUrl, template) => {
+//   getJson(apiUrl, function (error, response) {
+//     if (error == null) {
+//       document.getElementById(elementId).innerHTML = json2html.render(response, template);
+//     } else {
+//       document.getElementById(elementId).innerHTML =
+//         '<li><em>error: something went wrong with calling the API</en></li>';
+//     }
+//   });
+// };
