@@ -39,8 +39,38 @@ You can instantiate the `Nanopub` object using various approaches:
 
   ```typescript
   import {Nanopub} from '@nanopub/utils'
-
-  const np = await Nanopub.parse('ADD NP RDF')
+  
+  const rdfString = `@prefix this: <http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGX> .
+  @prefix sub: <http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGX#> .
+  @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+  @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+  @prefix np: <http://www.nanopub.org/nschema#> .
+  @prefix npx: <http://purl.org/nanopub/x/> .
+  @prefix orcid: <https://orcid.org/> .
+  @prefix prov: <http://www.w3.org/ns/prov#> .
+  sub:Head {
+    this: np:hasAssertion sub:assertion ;
+      np:hasProvenance sub:provenance ;
+      np:hasPublicationInfo sub:pubinfo ;
+      a np:Nanopublication .
+  }
+  sub:assertion {
+    <http://identifiers.org/umls/C0355800> rdfs:label "Naltrexone hydrochloride" .
+  }
+  sub:provenance {
+    sub:assertion prov:generatedAtTime "2023-02-21T11:15:07.732162"^^xsd:dateTime ;
+      prov:wasAttributedTo orcid:0000-0002-1501-1082 .
+  }
+  sub:pubinfo {
+    sub:sig npx:hasAlgorithm "RSA" ;
+      npx:hasPublicKey "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCR9fz0fKCdWOWC+pxhkQhEM/ppbdIYe5TLSdj+lJzSlv9mYBaPgrzVezSwwbmhlHBPDZa4/vHycU315BdmUGq+pXllp9+rWFfrb+kBJwhZjpG6BeyyXBsRFz4jmQVxl/ZYHilQTh/XalYzKkEAyTiEMPee4Kz61PaWOKH24CsnOQIDAQAB" ;
+      npx:hasSignature "jjrkdlQ340JSloOmL24tOZkKnMuDl6ztapHOi/2tlnabownWOKUPtilPVMvFd4Hsz6bLfB+bk59rlDz3Qb02H7lhJAH6C75LiFKiddbvPA+8VYXYOZmBJNwmsC45ScB1gm3yJlJRPMKm1/uIFYXg7Wfx4+ukoSInbZ/wgzff0vg=" ;
+      npx:hasSignatureTarget this: .
+    this: prov:generatedAtTime "2023-02-21T11:15:07.732162"^^xsd:dateTime ;
+      prov:wasAttributedTo orcid:0000-0002-1501-1082 .
+  }`
+  
+  const np = await Nanopub.parse(rdfString)
   ```
 
 - Provide an already parsed **RDF/JS store**:
@@ -50,7 +80,7 @@ You can instantiate the `Nanopub` object using various approaches:
   import {Parser, Store} from 'n3'
 
   const parser = new Parser()
-  const store = new Store(parser.parse('ADD NP RDF'))
+  const store = new Store(parser.parse(rdfString))
 
   const np = await Nanopub.parse(store)
   ```
@@ -59,8 +89,8 @@ You can instantiate the `Nanopub` object using various approaches:
 
   ```typescript
   import {Nanopub} from '@nanopub/utils'
-
-  const np = new Nanopub('ADD NP RDF') // string or Store
+  
+  const np = new Nanopub(rdfString) // string or Store
   ```
 
 You can then easily reuse the instantiated object to work with the Nanopub:

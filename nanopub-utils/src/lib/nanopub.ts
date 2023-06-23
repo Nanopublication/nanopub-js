@@ -179,7 +179,6 @@ export class Nanopub {
 
     const predOrder = ['a', 'rdfs:label', 'rdfs:comment', 'rdf:subject', 'rdf:predicate', 'rdf:object']
     for (const graph of Object.keys(this.graphs)) {
-      console.log(graph)
       for (const quad of this.store.match(null, null, null, this.graphs[graph])) {
         const subject = this.uriToCurie(quad.subject.value)
         const pred = this.uriToCurie(quad.predicate.value)
