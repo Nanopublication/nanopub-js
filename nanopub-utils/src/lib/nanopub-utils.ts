@@ -5,7 +5,7 @@ export const grlcNpApiUrls = [
   //  'http://grlc.np.dumontierlab.com/api/local/local/'
 ]
 
-export interface NanopubStatus {
+export interface NpStatus {
   type: string
   html: string
   latestUris?: Array<string>
@@ -14,7 +14,7 @@ export interface NanopubStatus {
 /**
  * Get update status for a nanopub URI in one of the APIs
  */
-export const getUpdateStatus = async (npUri: string): Promise<NanopubStatus> => {
+export const getUpdateStatus = async (npUri: string): Promise<NpStatus> => {
   if (npUri.startsWith('https://purl.org/np/')) {
     // Quick fix as the URIs use http in the triplestore, but users might use the https version of the URI
     npUri = npUri.replace('https://purl.org/np/', 'http://purl.org/np/')
@@ -26,10 +26,9 @@ export const getUpdateStatus = async (npUri: string): Promise<NanopubStatus> => 
 /**
  * Get update status for a nanopub URI from a specific API
  */
-const getUpdateStatusX = async (npUri: string, apiUrls: any): Promise<NanopubStatus> => {
-  if (apiUrls.length == 0) {
-    return {type: 'error', html: 'An error has occurred while checking for updates.'}
-  }
+const getUpdateStatusX = async (npUri: string, apiUrls: any): Promise<NpStatus> => {
+  if (apiUrls.length == 0) return {type: 'error', html: 'An error has occurred while checking for updates.'}
+  if (!npUri) return {type: 'error', html: 'No URI provided, cannot retrieve the Nanopub status.'}
   const apiUrl = apiUrls.shift()
   const requestUrl = `${apiUrl}get_latest_version?np=${npUri}`
   try {

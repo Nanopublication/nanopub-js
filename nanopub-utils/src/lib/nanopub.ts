@@ -1,6 +1,6 @@
 import {Parser, Store, Writer, DataFactory, NamedNode} from 'n3'
 import {nschema, prov, default_prefixes} from './constants'
-import {getUpdateStatus, NanopubStatus} from './nanopub-utils'
+import {getUpdateStatus, NpStatus} from './nanopub-utils'
 
 const {namedNode} = DataFactory
 
@@ -9,6 +9,14 @@ export class MalformedNanopubError extends Error {
     super(...args)
     this.message = message
   }
+}
+
+export interface NpDisplay {
+  head: Map<string, Map<string, Map<string, string>>>
+  assertion: Map<string, Map<string, Map<string, string>>>
+  provenance: Map<string, Map<string, Map<string, string>>>
+  pubinfo: Map<string, Map<string, Map<string, string>>>
+  prefixes: {[key: string]: string}
 }
 
 export class Nanopub {
@@ -33,7 +41,7 @@ export class Nanopub {
     pubinfo: null
   }
   // An object prefixes optimized to display the content of the Nanopub
-  displayNp?: Map<string, Map<string, Map<string, Map<string, string>>>>
+  displayNp?: NpDisplay
   dateCreated?: string
   author?: string
 
@@ -149,35 +157,40 @@ export class Nanopub {
     }
   }
 
-  public async status(): Promise<NanopubStatus> {
+  public async status(): Promise<NpStatus> {
     if (!this.uri) throw new MalformedNanopubError('No URI found for this Nanopub, can not get its status')
     return await getUpdateStatus(this.uri)
   }
 
-  public display(): Map<string, Map<string, Map<string, Map<string, string>>>> {
+  public display(): NpDisplay {
     /**
      * Generate an object optimized for visually displaying the nanopub
      * It will add the object to this.displayNp to avoid recomputing again later if reused
      */
 
     if (this.displayNp) return this.displayNp
-    const displayNp = new Map()
+    const displayNp: NpDisplay = {
+      head: new Map(),
+      assertion: new Map(),
+      provenance: new Map(),
+      pubinfo: new Map(),
+      prefixes: this.prefixes
+    }
 
     const predOrder = ['a', 'rdfs:label', 'rdfs:comment', 'rdf:subject', 'rdf:predicate', 'rdf:object']
     for (const graph of Object.keys(this.graphs)) {
-      displayNp.set(graph, new Map())
+      console.log(graph)
       for (const quad of this.store.match(null, null, null, this.graphs[graph])) {
         const subject = this.uriToCurie(quad.subject.value)
         const pred = this.uriToCurie(quad.predicate.value)
 
-        if (!displayNp.get(graph).has(subject)) displayNp.get(graph).set(subject, new Map())
+        if (!displayNp[graph].has(subject)) displayNp[graph].set(subject, new Map())
 
-        if (!displayNp.get(graph)?.get(subject).has(pred)) {
-          displayNp.get(graph).get(subject).set(pred, [])
+        if (!displayNp[graph]?.get(subject).has(pred)) {
+          displayNp[graph].get(subject).set(pred, [])
         }
 
-        displayNp
-          .get(graph)
+        displayNp[graph]
           .get(subject)
           .get(pred)
           .push({
@@ -186,24 +199,21 @@ export class Nanopub {
           })
       }
       // Order subjects in graph, put sub:* in first
-      displayNp.set(
-        graph,
-        new Map(
-          [...displayNp.get(graph).entries()].sort((a, b) => {
-            if (a[0].startsWith('sub:') && !b[0].startsWith('sub:')) {
-              return -1
-            } else if (!a[0].startsWith('sub:') && b[0].startsWith('sub:')) {
-              return 1
-            } else {
-              return a[0].localeCompare(b[0]) // None in predOrder list
-            }
-          })
-        )
+      displayNp[graph] = new Map(
+        [...displayNp[graph].entries()].sort((a, b) => {
+          if (a[0].startsWith('sub:') && !b[0].startsWith('sub:')) {
+            return -1
+          } else if (!a[0].startsWith('sub:') && b[0].startsWith('sub:')) {
+            return 1
+          } else {
+            return a[0].localeCompare(b[0]) // None in predOrder list
+          }
+        })
       )
 
       // Order predicates for each subject
-      for (const [subj, preds] of displayNp.get(graph).entries()) {
-        displayNp.get(graph).set(
+      for (const [subj, preds] of displayNp[graph].entries()) {
+        displayNp[graph].set(
           subj,
           new Map(
             [...preds.entries()].sort((a, b) => {

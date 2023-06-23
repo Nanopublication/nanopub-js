@@ -37,7 +37,7 @@ test('parse np from store', async () => {
 test('parse np and get display', async () => {
   const np = await Nanopub.parse(validNpStr)
   checkValid(np)
-  expect(np.display().get('assertion')?.size).toBeGreaterThan(0)
+  expect(np.display().assertion.size).toBeGreaterThan(0)
 })
 
 test('parse np and check status', async () => {
