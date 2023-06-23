@@ -35,9 +35,6 @@ export class NanopubStatusIcon extends LitElement {
   override async connectedCallback() {
     super.connectedCallback()
 
-    if (this.url.startsWith('https://purl.org/np/')) {
-      this.url = this.url.replace('https://purl.org/np/', 'http://purl.org/np/')
-    }
     if (this.url.endsWith('.trig')) {
       this.url = this.url.slice(0, -5)
     }
