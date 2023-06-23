@@ -1,6 +1,6 @@
 import {Parser, Store, Writer, DataFactory, NamedNode} from 'n3'
 import {nschema, prov, default_prefixes} from './constants'
-import {getUpdateStatus} from './nanopub-utils'
+import {getUpdateStatus, NanopubStatus} from './nanopub-utils'
 
 const {namedNode} = DataFactory
 
@@ -37,14 +37,14 @@ export class Nanopub {
   dateCreated?: string
   author?: string
 
-  static async fetch(url: string) {
+  static async fetch(url: string): Promise<Nanopub> {
     const response = await fetch(url, {
       headers: {Accept: 'application/trig'}
     })
     return new Nanopub(await response.text())
   }
 
-  static async parse(rdf: string | Store, prefixes = null) {
+  static async parse(rdf: string | Store, prefixes = null): Promise<Nanopub> {
     return new Nanopub(rdf, prefixes)
   }
 
@@ -149,9 +149,8 @@ export class Nanopub {
     }
   }
 
-  // public status = async () => {
-  public async status() {
-    if (!this.uri) return null
+  public async status(): Promise<NanopubStatus> {
+    if (!this.uri) throw new MalformedNanopubError('No URI found for this Nanopub, can not get its status')
     return await getUpdateStatus(this.uri)
   }
 
@@ -168,8 +167,8 @@ export class Nanopub {
     for (const graph of Object.keys(this.graphs)) {
       displayNp.set(graph, new Map())
       for (const quad of this.store.match(null, null, null, this.graphs[graph])) {
-        const subject = this.getCurie(quad.subject.value)
-        const pred = this.getCurie(quad.predicate.value)
+        const subject = this.uriToCurie(quad.subject.value)
+        const pred = this.uriToCurie(quad.predicate.value)
 
         if (!displayNp.get(graph).has(subject)) displayNp.get(graph).set(subject, new Map())
 
@@ -182,7 +181,7 @@ export class Nanopub {
           .get(subject)
           .get(pred)
           .push({
-            value: this.getCurie(quad.object.value),
+            value: this.uriToCurie(quad.object.value),
             type: quad.object.termType
           })
       }
@@ -227,13 +226,13 @@ export class Nanopub {
   }
 
   // Get the complete URI for a CURIE
-  public getUri(curie: string) {
+  public curieToUri(curie: string): string {
     const prefix = curie.substring(0, curie.indexOf(':'))
     return curie.replace(`${prefix}:`, this.prefixes[prefix])
   }
 
   // Get the CURIE for a complete URI
-  public getCurie(uri: string, namespace?: string) {
+  public uriToCurie(uri: string, namespace?: string): string {
     if (uri === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') return 'a'
     // "sub" namespace needs to be before "this" namespace
     const prefixes = this.prefixes['sub'] ? {sub: this.prefixes['sub'], ...this.prefixes} : this.prefixes

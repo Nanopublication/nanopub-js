@@ -5,7 +5,16 @@ export const grlcNpApiUrls = [
   //  'http://grlc.np.dumontierlab.com/api/local/local/'
 ]
 
-export const getUpdateStatus = async (npUri: string) => {
+export interface NanopubStatus {
+  type: string
+  html: string
+  latestUris?: Array<string>
+}
+
+/**
+ * Get update status for a nanopub URI in one of the APIs
+ */
+export const getUpdateStatus = async (npUri: string): Promise<NanopubStatus> => {
   if (npUri.startsWith('https://purl.org/np/')) {
     // Quick fix as the URIs use http in the triplestore, but users might use the https version of the URI
     npUri = npUri.replace('https://purl.org/np/', 'http://purl.org/np/')
@@ -15,9 +24,9 @@ export const getUpdateStatus = async (npUri: string) => {
 }
 
 /**
- * Get update status for a nanopub URI in one of the APIs
+ * Get update status for a nanopub URI from a specific API
  */
-const getUpdateStatusX = async (npUri: string, apiUrls: any) => {
+const getUpdateStatusX = async (npUri: string, apiUrls: any): Promise<NanopubStatus> => {
   if (apiUrls.length == 0) {
     return {type: 'error', html: 'An error has occurred while checking for updates.'}
   }
@@ -67,8 +76,44 @@ const getUpdateStatusX = async (npUri: string, apiUrls: any) => {
   }
 }
 
+/**
+ * Get the latest nanopub published
+ */
+export const getLatestNp = (callback: CallableFunction) => {
+  fetch('https://server.np.trustyuri.net/nanopubs.txt')
+    .then(response => response.text())
+    .then(data => {
+      const lines = data.split(/\n/)
+      callback(lines[lines.length - 2].trim())
+    })
+}
+
+/**
+ * Check if an URI is a Trusty URI
+ */
+export const isTrustyUri = (uri: string): boolean => {
+  return /.*[^A-Za-z0-9_\-](RA[A-Za-z0-9_\-]{43})/.test(uri)
+}
+
+/**
+ * Get the artifact code from a Trusty URI
+ */
+export const getArtifactCode = (uri: string): string | null => {
+  if (isTrustyUri(uri)) return uri.replace(/^.*[^A-Za-z0-9_\-](RA[A-Za-z0-9_\-]{43})$/, '$1')
+  return null
+}
+
+/**
+ * Get the short artifact code from a Trusty URI
+ */
+export const getShortCode = (uri: string): string | null => {
+  const ac = getArtifactCode(uri)
+  if (ac == null) return null
+  return ac.substring(0, 10)
+}
+
 // TODO: not working yet, asking for json does not send json back
-export const getJson = async (url: string) => {
+export const getJson = async (url: string): Promise<any> => {
   const response = await fetch(url, {
     headers: {Accept: 'application/json'}
   })
@@ -88,30 +133,6 @@ export const getJson = async (url: string) => {
   //   }
   // }
   // request.send()
-}
-
-export const getLatestNp = (callback: CallableFunction) => {
-  fetch('https://server.np.trustyuri.net/nanopubs.txt')
-    .then(response => response.text())
-    .then(data => {
-      const lines = data.split(/\n/)
-      callback(lines[lines.length - 2].trim())
-    })
-}
-
-export const isTrustyUri = (uri: string) => {
-  return /.*[^A-Za-z0-9_\-](RA[A-Za-z0-9_\-]{43})/.test(uri)
-}
-
-export const getArtifactCode = (uri: string) => {
-  if (isTrustyUri(uri)) return uri.replace(/^.*[^A-Za-z0-9_\-](RA[A-Za-z0-9_\-]{43})$/, '$1')
-  return null
-}
-
-export const getShortCode = (uri: string) => {
-  const ac = getArtifactCode(uri)
-  if (ac == null) return null
-  return ac.substring(0, 10)
 }
 
 // export const populate = (elementId, apiUrl, template) => {
