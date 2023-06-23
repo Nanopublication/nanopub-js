@@ -10,6 +10,11 @@ const checkValid = (np: Nanopub, testUrl = npTestUrl) => {
 
 const npTestUrl = 'http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU'
 
+test('construct np from string sync', () => {
+  const np = new Nanopub(validNpStr)
+  checkValid(np)
+})
+
 test('fetch np', async () => {
   const np = await Nanopub.fetch(npTestUrl)
   checkValid(np)

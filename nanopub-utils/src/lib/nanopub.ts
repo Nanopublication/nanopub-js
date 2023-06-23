@@ -31,7 +31,7 @@ export class Nanopub {
     provenance: null,
     pubinfo: null
   }
-  // An object prefixesoptimized to display the content of the Nanopub
+  // An object prefixes optimized to display the content of the Nanopub
   displayNp?: Map<string, Map<string, Map<string, Map<string, string>>>>
   dateCreated?: string
   author?: string
@@ -40,21 +40,28 @@ export class Nanopub {
     const response = await fetch(url, {
       headers: {Accept: 'application/trig'}
     })
-    return new Nanopub({rdfString: await response.text()})
+    return new Nanopub(await response.text())
   }
 
   static async parse(rdf: string | Store, prefixes = null) {
-    if (typeof rdf === 'string') {
-      return new Nanopub({rdfString: rdf})
-    } else {
-      return new Nanopub({store: rdf, prefixes: prefixes})
-    }
+    return new Nanopub(rdf, prefixes)
   }
 
-  public constructor({rdfString = '', store = new Store(), prefixes = null}) {
-    this.rdfString = rdfString
-    this.store = store
+  public constructor(rdf: string | Store, prefixes = null) {
     if (prefixes) this.prefixes = prefixes
+    if (typeof rdf === 'string') {
+      this.rdfString = rdf
+      this.store = new Store()
+    } else {
+      this.store = rdf
+      // Store already provided, but we need to serialize the RDF string
+      this.rdfString = ''
+      const writer = new Writer({prefixes: this.prefixes})
+      for (const [prefix, namespace] of Object.entries(this.prefixes)) {
+        this.rdfString += `@prefix ${prefix}: <${namespace}> .\n`
+      }
+      this.rdfString += writer.quadsToString(this.store.getQuads(null, null, null, null))
+    }
 
     if (!this.rdfString && this.store.size < 1) {
       throw new MalformedNanopubError(`⚠️ No RDF has been provided for the Nanopublication`)

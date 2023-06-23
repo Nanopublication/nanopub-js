@@ -27,11 +27,11 @@ You can easily import `@nanopub/utils` from a npm CDN and use it in your HTML pa
 
 You can instantiate the `Nanopub` object using various approaches:
 
-- **Fetch** from a URI:
+- **Fetch** from a URI using an async function:
 
   ```typescript
   import {Nanopub} from '@nanopub/utils'
-
+  
   const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
   ```
 
@@ -39,7 +39,7 @@ You can instantiate the `Nanopub` object using various approaches:
 
   ```typescript
   import {Nanopub} from '@nanopub/utils'
-
+  
   const np = await Nanopub.parse('ADD NP RDF')
   ```
 
@@ -53,6 +53,14 @@ You can instantiate the `Nanopub` object using various approaches:
   const store = new Store(parser.parse('ADD NP RDF'))
   
   const np = await Nanopub.parse(store)
+  ```
+
+- You can also directly use the **constructor** synchronously:
+
+  ```typescript
+  import {Nanopub} from '@nanopub/utils'
+  
+  const np = new Nanopub('ADD NP RDF') // string or Store 
   ```
 
 You can then easily reuse the object to work with the Nanopub:
