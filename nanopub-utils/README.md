@@ -31,7 +31,7 @@ You can instantiate the `Nanopub` object using various approaches:
 
   ```typescript
   import {Nanopub} from '@nanopub/utils'
-  
+
   const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
   ```
 
@@ -39,7 +39,7 @@ You can instantiate the `Nanopub` object using various approaches:
 
   ```typescript
   import {Nanopub} from '@nanopub/utils'
-  
+
   const np = await Nanopub.parse('ADD NP RDF')
   ```
 
@@ -48,10 +48,10 @@ You can instantiate the `Nanopub` object using various approaches:
   ```typescript
   import {Nanopub} from '@nanopub/utils'
   import {Parser, Store} from 'n3'
-  
+
   const parser = new Parser()
   const store = new Store(parser.parse('ADD NP RDF'))
-  
+
   const np = await Nanopub.parse(store)
   ```
 
@@ -59,8 +59,8 @@ You can instantiate the `Nanopub` object using various approaches:
 
   ```typescript
   import {Nanopub} from '@nanopub/utils'
-  
-  const np = new Nanopub('ADD NP RDF') // string or Store 
+
+  const np = new Nanopub('ADD NP RDF') // string or Store
   ```
 
 You can then easily reuse the instantiated object to work with the Nanopub:

@@ -22,9 +22,7 @@
     console.log('Awaited status', status)
 
     // Or a then callback
-    getUpdateStatus(npUrl).then(status =>
-      console.log('Then callback status', status)
-    )
+    getUpdateStatus(npUrl).then(status => console.log('Then callback status', status))
 
     // Fetch a nanopub
     const np = await Nanopub.fetch(npUrl)
