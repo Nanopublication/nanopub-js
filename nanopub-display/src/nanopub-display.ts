@@ -212,7 +212,7 @@ export class NanopubDisplay extends LitElement {
 
     // const np = new Nanopub({url: this.url})
     const np = await Nanopub.fetch(this.url)
-    console.log(np)
+    console.log(np.display())
 
     if (!this.url && !this.rdf) {
       this.error = `⚠️ No nanopublication has been provided, use the "url" or "rdf"
@@ -340,7 +340,7 @@ export class NanopubDisplay extends LitElement {
                     @click="${() => this._openDisplayOptions()}"
                     @touchstart="${() => this._openDisplayOptions()}"
                   >
-                    ${displayIcon} ${this.showDisplayOptions ? html`Select the sections to displayaaa` : html``}
+                    ${displayIcon} ${this.showDisplayOptions ? html`Select the sections to display` : html``}
                   </span>
                   ${this.showDisplayOptions
                     ? html`<div class="display-checklist-wrapper">
