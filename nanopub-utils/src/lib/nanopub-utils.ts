@@ -15,9 +15,9 @@ export interface NpStatus {
  * Get update status for a nanopub URI in one of the APIs
  */
 export const getUpdateStatus = async (npUri: string): Promise<NpStatus> => {
-  if (npUri.startsWith('https://purl.org/np/')) {
+  if (npUri.startsWith('https://')) {
     // Quick fix as the URIs use http in the triplestore, but users might use the https version of the URI
-    npUri = npUri.replace('https://purl.org/np/', 'http://purl.org/np/')
+    npUri = npUri.replace('https://', 'http://')
   }
   const shuffledApiUrls = [...grlcNpApiUrls].sort(() => 0.5 - Math.random())
   return getUpdateStatusX(npUri, shuffledApiUrls)

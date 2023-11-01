@@ -211,8 +211,8 @@ export class NanopubDisplay extends LitElement {
     super.connectedCallback()
 
     // const np = new Nanopub({url: this.url})
-    const np = await Nanopub.fetch(this.url)
-    console.log(np.display())
+    // const np = await Nanopub.fetch(this.url)
+    // console.log(np.display())
 
     if (!this.url && !this.rdf) {
       this.error = `⚠️ No nanopublication has been provided, use the "url" or "rdf"
@@ -220,11 +220,13 @@ export class NanopubDisplay extends LitElement {
     }
 
     if (!this.error && this.url && !this.rdf) {
-      if (this.url.startsWith('https://purl.org/np/') && !this.url.endsWith('.trig')) {
-        this.url = this.url + '.trig'
-      }
+      // if (this.url.startsWith('https://purl.org/np/') && !this.url.endsWith('.trig')) {
+      //   this.url = this.url.replace('https://purl.org/np/', 'https://w3id.org/np/') // + '.trig'
+      // }
       try {
-        const response = await fetch(this.url)
+        const response = await fetch(this.url, {
+          headers: {Accept: 'application/trig'}
+        })
         this.rdf = await response.text()
       } catch (error) {
         this.error = `⚠️ Issue fetching the nanopublication RDF at ${this.url}. ${error}`
