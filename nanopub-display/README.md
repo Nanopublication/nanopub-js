@@ -61,9 +61,9 @@ render(
 ⚠️ Cytoscape is not imported by `@nanopub/display`, you will need to make sure to install the following packages first:
 
 ```bash
-npm i --save cytoscape cytoscape-cose-bilkent cytoscape-popper
+npm i --save cytoscape cytoscape-fcose cytoscape-popper
 # or
-yarn add cytoscape cytoscape-cose-bilkent cytoscape-popper
+yarn add cytoscape cytoscape-fcose cytoscape-popper
 ```
 
 The code below shows how to easily generate the cytoscape configuration, please refer to the [cytoscape documentation](https://js.cytoscape.org/#getting-started) to see how to setup your cytoscape container.
@@ -72,7 +72,7 @@ The code below shows how to easily generate the cytoscape configuration, please 
 import {cyGetConfig, cyShowNodeOnClick, cyHighlightConnectedEdges} from '@nanopub/display';
 import cytoscape, { Core } from 'cytoscape';
 import popper from 'cytoscape-popper';
-import COSEBilkent from 'cytoscape-cose-bilkent';
+import fcose from 'cytoscape-fcose'
 
 // Get the cytoscape div container, and nanopub RDF
 const cyContainer?: HTMLDivElement;
