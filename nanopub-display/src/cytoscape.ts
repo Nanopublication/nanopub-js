@@ -267,7 +267,7 @@ export const cyLayouts = {
     // - "draft" only applies spectral layout
     // - "default" improves the quality with incremental layout (fast cooling rate)
     // - "proof" improves the quality with incremental layout (slow cooling rate)
-    quality: "default",
+    quality: 'default',
     // Use random node positions at beginning of layout
     // if this is set to false, then quality option must be "proof"
     randomize: true,
@@ -289,7 +289,7 @@ export const cyLayouts = {
     // Whether to pack disconnected components - cytoscape-layout-utilities extension should be registered and initialized
     packComponents: false,
     // Layout step - all, transformed, enforced, cose - for debug purpose only
-    step: "all",
+    step: 'all',
     // False for random, true for greedy sampling
     samplingType: true,
     // Sample size to construct distance matrix
@@ -334,7 +334,7 @@ export const cyLayouts = {
     alignmentConstraint: undefined,
     // Place two nodes relatively in vertical/horizontal direction
     // [{top: 'n1', bottom: 'n2', gap: 100}, {left: 'n3', right: 'n4', gap: 75}, {...}]
-    relativePlacementConstraint: undefined,
+    relativePlacementConstraint: undefined
     /* layout event callbacks */
     // ready: () => {}, // on layoutready
     // stop: () => {} // on layoutstop
@@ -390,7 +390,7 @@ export const cyLayouts = {
     gravityRange: 3.8,
     // Initial cooling factor for incremental layout
     initialEnergyOnIncremental: 0.5
-  },
+  }
   // 'dagre': {
   //     name: 'dagre',
   //     // dagre algo options, uses default value on undefined

@@ -39,7 +39,7 @@ You can instantiate the `Nanopub` object using various approaches:
 
   ```typescript
   import {Nanopub} from '@nanopub/utils'
-  
+
   const rdfString = `@prefix this: <http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGX> .
   @prefix sub: <http://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGX#> .
   @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -69,7 +69,7 @@ You can instantiate the `Nanopub` object using various approaches:
     this: prov:generatedAtTime "2023-02-21T11:15:07.732162"^^xsd:dateTime ;
       prov:wasAttributedTo orcid:0000-0002-1501-1082 .
   }`
-  
+
   const np = await Nanopub.parse(rdfString)
   ```
 
@@ -89,7 +89,7 @@ You can instantiate the `Nanopub` object using various approaches:
 
   ```typescript
   import {Nanopub} from '@nanopub/utils'
-  
+
   const np = new Nanopub(rdfString) // string or Store
   ```
 

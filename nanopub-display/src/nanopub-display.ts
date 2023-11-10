@@ -6,7 +6,7 @@ import {styleMap} from 'lit/directives/style-map.js'
 
 import {Parser, Quad} from 'n3'
 import {NanopubWriter} from './n3-writer'
-import {Nanopub} from '@nanopub/utils'
+// import {Nanopub} from '@nanopub/utils'
 import './nanopub-status-icon'
 
 const npColor = {
