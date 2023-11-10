@@ -300,11 +300,11 @@ export const cyLayouts = {
     piTol: 0.0000001,
     /* incremental layout options */
     // Node repulsion (non overlapping) multiplier
-    nodeRepulsion: (node: any) => 4500,
+    nodeRepulsion: (_node: any) => 4500,
     // Ideal edge (non nested) length
-    idealEdgeLength: (edge: any) => 300,
+    idealEdgeLength: (_edge: any) => 300,
     // Divisor to compute edge forces
-    edgeElasticity: (edge: any) => 0.45,
+    edgeElasticity: (_edge: any) => 0.45,
     // Nesting factor (multiplier) to compute ideal edge length for nested edges
     nestingFactor: 0.4,
     // Maximum number of iterations to perform - this is a suggested value and might be adjusted by the algorithm as required
