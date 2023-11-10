@@ -39,7 +39,6 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "packageManager": "yarn@3.4.1",
   "prettier": {
     "trailingComma": "none",
     "semi": false,

@@ -1,0 +1,10 @@
+packages:
+  - nanopub-utils
+  - nanopub-display
+  - display-react
+  - fast-element
+  - eslint-config-custom
+  # all packages in direct subdirs of packages/
+  # - 'packages/*'
+  # exclude packages that are inside test directories
+  # - '!**/test/**'
