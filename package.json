@@ -7,6 +7,7 @@
     "dev": "nx run-many --target=dev",
     "build": "nx run-many --target=build --parallel=false --output-style=stream",
     "test": "nx run-many --target=test --parallel=false",
+    "bump": "nx run-many --target=version --parallel=false",
     "publish": "yarn build && yarn workspaces foreach --no-private npm publish --access public",
     "clean": "nx run-many --target=clean && rimraf .yarn/cache && rimraf node_modules",
     "fmt": "prettier \"**/*.{ts,tsx,js,cjs,json,md,html}\" --ignore-path .gitignore --write",

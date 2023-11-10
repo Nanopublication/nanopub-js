@@ -124,6 +124,13 @@ To publish a new version of each package to NPM:
 
 1. Edit the `package.json` files for each package to update them to the new version.
 
+    ```bash
+    yarn bump --patch
+    
+    # If you are using yarn v1, to prevent auto commit run:
+    yarn config set version-git-tag false
+    ```
+
 2. Run `yarn publish` from the root to build and publish all libraries:
 
    ```bash
