@@ -18,7 +18,7 @@ test('construct np from string (sync)', () => {
 test('fetch np', async () => {
   const np = await Nanopub.fetch(npTestUrl)
   checkValid(np)
-})
+}, 10000)
 
 test('parse np from string', async () => {
   const np = await Nanopub.parse(validNpStr)
