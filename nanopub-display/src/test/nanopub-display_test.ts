@@ -11,7 +11,7 @@ suite('nanopub-display', () => {
 
   test('render and check loading with a nanopub URL', async () => {
     const el = await fixture(
-      html`<nanopub-display url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />`
+      html`<nanopub-display url="https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />`
     )
     // console.log(assert.shadowDom);
     assert.shadowDom.equal(
@@ -28,7 +28,7 @@ suite('nanopub-display', () => {
   })
 
   // test('render and wait', async () => {
-  //   const el = await fixture(html`<nanopub-display url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU"></nanopub-display>`);
+  //   const el = await fixture(html`<nanopub-display url="https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU"></nanopub-display>`);
   //   assert.shadowDom.equal(
   //     el,
   //     `

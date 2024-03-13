@@ -16,10 +16,10 @@ You can easily import `@nanopub/utils` from a npm CDN and use it in your HTML pa
   <script type="module">
     const {getUpdateStatus, Nanopub} = NanopubUtils
 
-    const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+    const np = await Nanopub.fetch('https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
     console.log('Parsed nanopub:', np)
 
-    const status = await getUpdateStatus('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+    const status = await getUpdateStatus('https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
     console.log(status)
   </script>
 </html>
@@ -32,7 +32,7 @@ You can instantiate the `Nanopub` object using various approaches:
   ```typescript
   import {Nanopub} from '@nanopub/utils'
 
-  const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+  const np = await Nanopub.fetch('https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
   ```
 
 - **Parse** a RDF string in TRiG format:
@@ -153,7 +153,7 @@ Then import it in your JavaScript/TypeScript:
 ```typescript
 import {Nanopub} from '@nanopub/utils'
 
-const np = await Nanopub.fetch('https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
+const np = await Nanopub.fetch('https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU')
 ```
 
 ## 🌐 Import from a CDN

@@ -20,9 +20,9 @@ If you want to improve this library, please refer to the [contribute page](/page
   <body>
     <div style="min-height: 100vh; width: 100%;">
       <div>
-        <nanopub-status url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />
+        <nanopub-status url="https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />
       </div>
-      <nanopub-display url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />
+      <nanopub-display url="https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />
     </div>
   </body>
 </html>
@@ -31,9 +31,9 @@ If you want to improve this library, please refer to the [contribute page](/page
 > `<nanopub-display>` enables developers and users to control which graphs from the nanopublication are displayed.
 
 <div>
-  <nanopub-status url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />
+  <nanopub-status url="https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />
 </div>
-<nanopub-display url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU"></nanopub-display>
+<nanopub-display url="https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU"></nanopub-display>
 
 ## 💫 Declarative rendering
 
@@ -43,7 +43,7 @@ If you want to improve this library, please refer to the [contribute page](/page
 import {html, render} from 'lit-html'
 import '@nanopub/display'
 
-const np = 'https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU'
+const np = 'https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU'
 
 render(
   html`

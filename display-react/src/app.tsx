@@ -8,8 +8,8 @@ export default function App() {
   return (
     <div>
       <h1>Nanopub Display React development</h1>
-      <NanopubDisplayReact url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />
-      {/* <nanopub-display url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" /> */}
+      <NanopubDisplayReact url="https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />
+      {/* <nanopub-display url="https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" /> */}
     </div>
   )
 }

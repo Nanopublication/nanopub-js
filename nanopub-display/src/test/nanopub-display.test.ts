@@ -18,7 +18,7 @@ test.describe('custom element adds "NEWLYADDED" when clicked', async () => {
           <script src="/dist/nanopub-display.js"></script>
         </head>
         <body>
-          <${CUSTOM_ELEMENT_TAG} url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" id="display" />
+          <${CUSTOM_ELEMENT_TAG} url="https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" id="display" />
         </body>
         <script>
         </script>
@@ -114,7 +114,7 @@ test.describe('custom element adds "NEWLYADDED" when clicked', async () => {
 
 //   beforeEach(async () => {
 //     document.body.innerHTML =
-//       '<nanopub-display url="https://purl.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />'
+//       '<nanopub-display url="https://w3id.org/np/RAHtkscyyyJDLvWRuINckQrn5rbHzQKvwakNVC3fmRzGU" />'
 //     await new Promise<void>(resolve => {
 //       const interval = setInterval(() => {
 //         if (getDisplay()) {
