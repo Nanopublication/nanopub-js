@@ -1,5 +1,6 @@
+// List available at https://monitor.np.trustyuri.net
 export const grlcNpApiUrls = [
-  'https://grlc.nps.petapico.org/api/local/local/',
+  'https://grlc.nps.knowledgepixels.com/api/local/local/',
   'https://grlc.services.np.trustyuri.net/api/local/local/'
   //  'http://grlc.nanopubs.lod.labs.vu.nl/api/local/local/',
   //  'http://grlc.np.dumontierlab.com/api/local/local/'
