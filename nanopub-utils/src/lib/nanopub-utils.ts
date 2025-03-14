@@ -1,15 +1,15 @@
 // List available at https://monitor.np.trustyuri.net
-export const grlcNpApiUrls = [
-  'https://grlc.nps.knowledgepixels.com/api/local/local/',
-  'https://grlc.services.np.trustyuri.net/api/local/local/'
-  //  'http://grlc.nanopubs.lod.labs.vu.nl/api/local/local/',
-  //  'http://grlc.np.dumontierlab.com/api/local/local/'
+export const queryApiUrls = [
+  'https://query.petapico.org/api/',
+  'https://query.knowledgepixels.com/api/',
+  'https://query.np.trustyuri.net/api/'
 ]
 
 export interface NpStatus {
   type: string
   html: string
   latestUris?: Array<string>
+  retractions?: Array<string>
 }
 
 /**
@@ -20,7 +20,7 @@ export const getUpdateStatus = async (npUri: string): Promise<NpStatus> => {
     // Quick fix as the URIs use http in the triplestore, but users might use the https version of the URI
     npUri = npUri.replace('https://', 'http://')
   }
-  const shuffledApiUrls = [...grlcNpApiUrls].sort(() => 0.5 - Math.random())
+  const shuffledApiUrls = [...queryApiUrls].sort(() => 0.5 - Math.random())
   return getUpdateStatusX(npUri, shuffledApiUrls)
 }
 
@@ -31,7 +31,7 @@ const getUpdateStatusX = async (npUri: string, apiUrls: any): Promise<NpStatus> 
   if (apiUrls.length == 0) return {type: 'error', html: 'An error has occurred while checking for updates.'}
   if (!npUri) return {type: 'error', html: 'No URI provided, cannot retrieve the Nanopub status.'}
   const apiUrl = apiUrls.shift()
-  const requestUrl = `${apiUrl}get_latest_version?np=${npUri}`
+  const requestUrl = `${apiUrl}RA3qSfVzcnAeMOODdpgCg4e-bX6KjZYZ2JQXDsSwluMaI/get-newer-versions-of-np?np=${npUri}`
   try {
     const response = await fetch(requestUrl, {
       headers: {
@@ -40,34 +40,36 @@ const getUpdateStatusX = async (npUri: string, apiUrls: any): Promise<NpStatus> 
     })
     const r = await response.json()
     const bindings = r['results']['bindings']
-    if (bindings.length == 1 && bindings[0]['latest']['value'] === npUri) {
-      return {type: 'latest', latestUris: [npUri], html: 'This is the latest version.'}
-    } else if (bindings.length == 0) {
-      return {type: 'retracted', html: 'This nanopublication has been <strong>retracted</strong>.'}
-    } else {
-      const latestUris: string[] = []
-      for (const b of bindings) {
-        latestUris.push(b['latest']['value'])
+    const latest: string[] = []
+    const retractions: string[] = []
+    bindings.forEach((b) => {
+      if (!b['retractedBy'] && !b['supersededBy']) {
+        latest.push(b['newerVersion']['value'])
+      } else if (b['retractedBy'] && !b['supersededBy']) {
+        retractions.push(b['retractedBy']['value'])
       }
-      const l = latestUris.at(0)
-      if (latestUris.length == 1) {
-        return {
-          type: 'newer-version',
-          latestUris: latestUris,
-          html:
-            'This nanopublication has a <strong>newer version</strong>: <code><a href="' + l + '">' + l + '</a></code>'
-        }
+    });
+    if (latest.length == 0 && retractions.length == 0) {
+      return {type: 'unpublished', html: '<em>This nanopublication doesn\'t seem to be properly published (yet). This can take a minute or two for new nanopublications.</em>'}
+    } else if (latest.length == 1) {
+      if (latest[0] === npUri) {
+        return {type: 'latest', latestUris: [npUri], html: 'This is the latest version.'}
       } else {
-        return {
-          type: 'newer-version',
-          latestUris: latestUris,
-          html:
-            'This nanopublication has <strong>several newer versions</strong>: <code><a href="' +
-            l +
-            '">' +
-            l +
-            '</a></code> (and others)'
-        }
+        return {type: 'newer-version', latestUris: [npUri], html: 'This nanopublication has a <a href="' + latest[0] + '">newer version</a>.'}
+      }
+    } else if (latest.length > 1) {
+      return {
+        type: 'newer-version',
+        latestUris: latest,
+        html:
+          'This nanopublication has <strong>several newer versions</strong>: <a href="' + latest.join('">latest</a>, <a href="') + '">latest</a>)'
+      }
+    } else {
+      return {
+        type: 'retracted',
+        retractions: retractions,
+        html:
+          'This nanopublication has been <strong>retracted</strong>: <a href="' + retractions.join('">retraction</a>, <a href="') + '">retraction</a>'
       }
     }
   } catch (error) {

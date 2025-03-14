@@ -24,7 +24,7 @@ export class NanopubStatusIcon extends LitElement {
   url = ''
 
   /**
-   * Latest versions retrieved from the grlc API for the nanopub
+   * Latest versions retrieved via the Nanopub Query APIs
    */
   @state()
   status?: NpStatus
