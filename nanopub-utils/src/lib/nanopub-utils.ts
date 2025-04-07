@@ -79,18 +79,6 @@ const getUpdateStatusX = async (npUri: string, apiUrls: any): Promise<NpStatus> 
 }
 
 /**
- * Get the latest nanopub published
- */
-export const getLatestNp = (callback: CallableFunction) => {
-  fetch('https://server.np.trustyuri.net/nanopubs.txt')
-    .then(response => response.text())
-    .then(data => {
-      const lines = data.split(/\n/)
-      callback(lines[lines.length - 2].trim())
-    })
-}
-
-/**
  * Check if an URI is a Trusty URI
  */
 export const isTrustyUri = (uri: string): boolean => {
