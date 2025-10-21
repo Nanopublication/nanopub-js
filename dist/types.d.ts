@@ -1,0 +1,29 @@
+import type { Quad } from 'rdf-js';
+export interface Profile {
+    id: string;
+    privateKey?: string;
+    publicKey?: string;
+}
+export interface NanopubOptions {
+    attribution?: string;
+    provenance?: string;
+    derivation?: string;
+    timestamp?: Date;
+    server?: string;
+}
+export interface ValidationOptions {
+    shaclShapes?: Quad[] | string;
+}
+export interface ValidationResult {
+    structureValid: boolean;
+    signatureValid: boolean;
+    shaclValid?: boolean;
+    errors?: string[];
+}
+export interface Nanopub {
+    id: string;
+    assertion: Quad[];
+    provenance: Quad[];
+    pubinfo: Quad[];
+    signature?: string;
+}

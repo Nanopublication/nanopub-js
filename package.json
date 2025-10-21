@@ -1,0 +1,22 @@
+{
+  "name": "nanopub-ts",
+  "packageManager": "yarn@4.6.0",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "node dist/index.js",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/n3": "^1",
+    "@types/node": "^24.9.1",
+    "@types/rdfjs__data-model": "^2",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@rdfjs/data-model": "^2.1.1",
+    "n3": "^1.26.0",
+    "rdf-js": "^4.0.2"
+  }
+}
