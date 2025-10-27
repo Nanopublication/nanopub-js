@@ -1,5 +1,5 @@
 {
-  "name": "nanopub-ts",
+  "name": "nanopub-js",
   "packageManager": "yarn@4.6.0",
   "scripts": {
     "build": "tsc",
