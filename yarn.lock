@@ -1247,9 +1247,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanopub-ts@workspace:.":
+"nanopub-js@workspace:.":
   version: 0.0.0-use.local
-  resolution: "nanopub-ts@workspace:."
+  resolution: "nanopub-js@workspace:."
   dependencies:
     "@rdfjs/data-model": "npm:^2.1.1"
     "@types/n3": "npm:^1"

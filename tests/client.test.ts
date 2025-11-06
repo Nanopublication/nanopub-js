@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { NanopubClient } from '../src/client';
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { NanopubClient } from "../src/client";
 
-describe('NanopubClient querySparql (mocked)', () => {
+describe("NanopubClient (unit)", () => {
   let fetchMock: any;
 
   beforeEach(() => {
@@ -14,34 +14,98 @@ describe('NanopubClient querySparql (mocked)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should fetch and parse SPARQL results from endpoints', async () => {
-    // Mock a SPARQL JSON response
+  it("querySparql returns parsed SPARQL results", async () => {
     const sparqlResponse = {
-      head: { vars: ['s', 'p', 'o'] },
+      head: { vars: ["s", "p", "o"] },
       results: {
         bindings: [
           {
-            s: { type: 'uri', value: 'http://example.org/s' },
-            p: { type: 'uri', value: 'http://example.org/p' },
-            o: { type: 'uri', value: 'http://example.org/o' },
+            s: { type: "uri", value: "s" },
+            p: { type: "uri", value: "p" },
+            o: { type: "literal", value: "o" },
           },
         ],
       },
     };
 
     fetchMock.mockResolvedValueOnce({
-      json: async () => sparqlResponse,
       ok: true,
+      json: async () => sparqlResponse,
     });
 
-    const client = new NanopubClient({ endpoints: ['https://mockserver.org/repo'] });
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const results = await client.querySparql("SELECT * WHERE {?s ?p ?o}");
+    expect(results[0]).toEqual({ s: "s", p: "p", o: "o" });
+  });
 
-    const results = await client.querySparql('SELECT * WHERE {?s ?p ?o}');
+  it("fetchNanopub returns parsed quads", async () => {
+    const trigData = `
+      <s#assertion> {
+        <s> <p> "o" .
+      }
+      <s#provenance> {
+        <s> <p> "o" .
+      }
+      <s#pubinfo> {
+        <s> <p> "o" .
+      }
+    `;
+    fetchMock.mockResolvedValueOnce({ ok: true, text: async () => trigData });
+  
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const np = await client.fetchNanopub("https://mock.org/np1");
+  
+    expect(np.assertion.length).toBeGreaterThan(0);
+    expect(np.provenance.length).toBeGreaterThan(0);
+    expect(np.pubinfo.length).toBeGreaterThan(0);
+  });
 
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+  it("findNanopubsWithText yields search results", async () => {
+    const fakeResponse = {
+      results: {
+        bindings: [{ np: { value: "np1" }, created: { value: "2025-01-01" } }],
+      },
+    };
+    fetchMock.mockResolvedValue({ ok: true, json: async () => fakeResponse });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const results: Record<string, string>[] = [];
+    for await (const r of client.findNanopubsWithText("test")) results.push(r);
     expect(results.length).toBe(1);
-    expect(results[0].s).toBe('http://example.org/s');
-    expect(results[0].p).toBe('http://example.org/p');
-    expect(results[0].o).toBe('http://example.org/o');
+    expect(results[0].np).toBe("np1");
+  });
+
+  it("findNanopubsWithPattern yields search results", async () => {
+    const fakeResponse = { results: { bindings: [{ np: { value: "np2" } }] } };
+    fetchMock.mockResolvedValue({ ok: true, json: async () => fakeResponse });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const results: Record<string, string>[] = [];
+    for await (const r of client.findNanopubsWithPattern("s", "p", "o"))
+      results.push(r);
+    expect(results.length).toBe(1);
+    expect(results[0].np).toBe("np2");
+  });
+
+  it("findThings yields search results", async () => {
+    const fakeResponse = {
+      results: { bindings: [{ thing: { value: "thing1" } }] },
+    };
+    fetchMock.mockResolvedValue({ ok: true, json: async () => fakeResponse });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const results: Record<string, string>[] = [];
+    for await (const r of client.findThings("type1")) results.push(r);
+    expect(results.length).toBe(1);
+    expect(results[0].thing).toBe("thing1");
+  });
+
+  it("findRetractionsOf returns retraction URIs", async () => {
+    const fakeResponse = { results: { bindings: [{ np: { value: "np3" } }] } };
+    fetchMock.mockResolvedValue({ ok: true, json: async () => fakeResponse });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const retractions = await client.findRetractionsOf("uri1");
+    expect(retractions).toContain("np3");
   });
 });

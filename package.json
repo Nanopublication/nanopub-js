@@ -1,5 +1,9 @@
 {
   "name": "nanopub-js",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "packageManager": "yarn@4.6.0",
   "scripts": {
     "build": "tsc",
