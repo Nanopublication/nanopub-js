@@ -21,4 +21,4 @@ The initial release will include:
 
 ## License
 
-*To be determined.*
+This project is licensed under the [MIT License](./LICENSE).
