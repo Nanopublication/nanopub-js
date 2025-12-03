@@ -1256,6 +1256,7 @@ __metadata:
     "@types/node": "npm:^24.9.1"
     "@types/rdfjs__data-model": "npm:^2"
     n3: "npm:^1.26.0"
+    rdf-canonize: "npm:^4.0.1"
     rdf-js: "npm:^4.0.2"
     typescript: "npm:^5.9.3"
     vitest: "npm:^3.2.4"
@@ -1394,6 +1395,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rdf-canonize@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "rdf-canonize@npm:4.0.1"
+  dependencies:
+    setimmediate: "npm:^1.0.5"
+  checksum: 10c0/8f6040847c5731817cc5ad95ca16caa588fba76c94ee3b24f282c9a3054f36226560bcb33bed8a173903960af1b9937e21db6e0dc2e90caa749682fff8228250
+  languageName: node
+  linkType: hard
+
 "rdf-js@npm:^4.0.2":
   version: 4.0.2
   resolution: "rdf-js@npm:4.0.2"
@@ -1524,6 +1534,13 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 10c0/4afe5c986567db82f44c8c6faef8fe9df2a9b1d98098fc1721f57c696c4c21cebd572f297fc21002f81889492345b8470473bc6f4aff5fb032a6ea59ea2bc45e
+  languageName: node
+  linkType: hard
+
+"setimmediate@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "setimmediate@npm:1.0.5"
+  checksum: 10c0/5bae81bfdbfbd0ce992893286d49c9693c82b1bcc00dcaaf3a09c8f428fdeacf4190c013598b81875dfac2b08a572422db7df779a99332d0fce186d15a3e4d49
   languageName: node
   linkType: hard
 

@@ -18,7 +18,7 @@ export function parse(
 ): Quad[] {
   try {
     const parser = new Parser({ format });
-    const quads = parser.parse(input); // returns an array synchronously
+    const quads = parser.parse(input); 
     console.log(`Parsed ${quads.length} quads`);
     return quads;
   } catch (err) {

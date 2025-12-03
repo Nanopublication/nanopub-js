@@ -12,6 +12,11 @@ export interface NanopubOptions {
   derivation?: string;
   timestamp?: Date;
   server?: string;
+
+  privateKey?: string;
+  name?: string;
+  orcid?: string;
+  email?: string;
 }
 
 export interface ValidationOptions {
