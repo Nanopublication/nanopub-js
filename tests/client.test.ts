@@ -38,7 +38,22 @@ describe("NanopubClient (unit)", () => {
     expect(results[0]).toEqual({ s: "s", p: "p", o: "o" });
   });
 
-  it("fetchNanopub returns parsed quads", async () => {
+  it("fetchNanopub returns JSON-LD when format='jsonld'", async () => {
+    const jsonldData = { "@id": "s", "p": "o" };
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => jsonldData
+    });
+  
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const np = await client.fetchNanopub("https://mock.org/np1", "jsonld");
+  
+    expect(np).toEqual(jsonldData);
+    expect(typeof np).toBe("object");
+  });
+  
+  
+  it("fetchNanopub returns raw TRiG text when format='trig' (default)", async () => {
     const trigData = `
       <s#assertion> {
         <s> <p> "o" .
@@ -50,15 +65,18 @@ describe("NanopubClient (unit)", () => {
         <s> <p> "o" .
       }
     `;
-    fetchMock.mockResolvedValueOnce({ ok: true, text: async () => trigData });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      text: async () => trigData
+    });
   
     const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
     const np = await client.fetchNanopub("https://mock.org/np1");
   
-    expect(np.assertion.length).toBeGreaterThan(0);
-    expect(np.provenance.length).toBeGreaterThan(0);
-    expect(np.pubinfo.length).toBeGreaterThan(0);
+    expect(np).toBe(trigData);
+    expect(typeof np).toBe("string");
   });
+  
 
   it("findNanopubsWithText yields search results", async () => {
     const fakeResponse = {

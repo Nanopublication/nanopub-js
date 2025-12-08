@@ -15,17 +15,38 @@ describe("NanopubClient querySparql (integration)", () => {
     expect(results.length).toBeGreaterThan(0);
   }, 20000);
 
-  it("fetchNanopub returns parsed assertions", async () => {
+  it("fetchNanopub returns raw trig text", async () => {
     const client = new NanopubClient({
       endpoints: ["https://query.knowledgepixels.com/"],
     });
+  
     const uri =
       "https://w3id.org/np/RAO0soO0mUWTqqMaz1QcGbdIt90MJ55RXJck8w8wGGc0U";
-    const np = await client.fetchNanopub(uri);
-    expect(np.id).toBe("RAO0soO0mUWTqqMaz1QcGbdIt90MJ55RXJck8w8wGGc0U");
-    expect(np.assertion.length).toBeGreaterThan(0);
-    expect(np.provenance.length).toBeGreaterThan(0);
-    expect(np.pubinfo.length).toBeGreaterThan(0);
+  
+    const trig = await client.fetchNanopub(uri); // default = 'trig'
+  
+    expect(typeof trig).toBe("string");
+    expect(trig.length).toBeGreaterThan(0);
+  
+    expect(trig).toMatch(/sub:assertion\s*\{/);
+    expect(trig).toMatch(/sub:provenance\s*\{/);
+    expect(trig).toMatch(/sub:pubinfo\s*\{/);
+  }, 20000);
+
+  it("fetchNanopub returns json-ld", async () => {
+    const client = new NanopubClient({
+      endpoints: ["https://query.knowledgepixels.com/"],
+    });
+  
+    const uri =
+      "https://w3id.org/np/RAO0soO0mUWTqqMaz1QcGbdIt90MJ55RXJck8w8wGGc0U";
+  
+    const json = await client.fetchNanopub(uri, "jsonld");
+  
+    expect(typeof json).toBe("object");
+    expect(json).not.toBeNull();
+  
+    expect(JSON.stringify(json)).toContain("RAO0soO0mUWTqqMaz1QcGbdIt90MJ55RXJck8w8wGGc0U");
   }, 20000);
 
   it("findNanopubsWithText returns results", async () => {
