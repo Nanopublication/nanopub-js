@@ -217,6 +217,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nanopub/sign@npm:^0.1.5":
+  version: 0.1.5
+  resolution: "@nanopub/sign@npm:0.1.5"
+  checksum: 10c0/e4d78afce2aa72dfe8cc86df4d36147b540e13738c18489d85ed6e5e0cff53312220afba0d2b1152357dae3133dfee40ab5113b3e81dc4be00caad3f99a97719
+  languageName: node
+  linkType: hard
+
 "@npmcli/agent@npm:^3.0.0":
   version: 3.0.0
   resolution: "@npmcli/agent@npm:3.0.0"
@@ -1251,6 +1258,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nanopub-js@workspace:."
   dependencies:
+    "@nanopub/sign": "npm:^0.1.5"
     "@rdfjs/data-model": "npm:^2.1.1"
     "@types/n3": "npm:^1"
     "@types/node": "npm:^24.9.1"
