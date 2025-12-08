@@ -1,5 +1,5 @@
-import type { Nanopub, NanopubObject, QueryOptions } from './types';
-import { parse, quadsToJson } from './serialize.js';
+import type { Nanopub, QueryOptions } from './types';
+import { parse } from './serialize.js';
 
 const ENDPOINT_UUIDS: Record<string, string> = {
   findNanopubsWithText: 'RAWruhiSmyzgZhVRs8QY8YQPAgHzTfl7anxII1de-yaCs/fulltext-search-on-labels',
