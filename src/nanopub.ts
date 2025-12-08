@@ -75,7 +75,7 @@ export class NanopubClass implements Nanopub {
     this.assertion = Object.entries(graphs).find(([g]) => g.endsWith("#-assertion"))?.[1] || [];
     this.provenance = Object.entries(graphs).find(([g]) => g.endsWith("#-provenance"))?.[1] || [];
     this.pubinfo = Object.entries(graphs).find(([g]) => g.endsWith("#-pubinfo"))?.[1] || [];
-// console.log(JSON.stringify(this))
+
     return this;
   }
 
@@ -89,7 +89,7 @@ export class NanopubClass implements Nanopub {
   }
 
   get hasValidSignature(): Promise<boolean> | boolean {
-    console.log('Verifying nanopub signature...', this.signature);
+
     if (!this.signature) return false;
   
     const quads = [...this.assertion, ...this.provenance, ...this.pubinfo];

@@ -19,7 +19,6 @@ export function parse(
   try {
     const parser = new Parser({ format });
     const quads = parser.parse(input); 
-    console.log(`Parsed ${quads.length} quads`);
     return quads;
   } catch (err) {
     console.error("Error parsing RDF:", err);

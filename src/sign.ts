@@ -61,7 +61,6 @@ export async function verifySignature(quads: Quad[]): Promise<boolean> {
   verify.end();
 
   // return verify.verify(publicKeyPemFormatted, signature);
-  console.log("Verifying signature with public key:", publicKeyPemFormatted);
 
   try {
     return verify.verify(publicKeyPemFormatted, signature);
