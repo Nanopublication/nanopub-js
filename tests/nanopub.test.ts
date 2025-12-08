@@ -34,7 +34,6 @@ describe('Nanopub-ts signing', () => {
 
     // Sign the nanopub using actual sign method
     await np.sign();
-    console.log('Nanopub signature:', np.signature);
     expect(np.signature).toBeDefined();
     expect(typeof np.signature).toBe('string');
 
