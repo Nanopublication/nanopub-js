@@ -30,18 +30,12 @@ describe("Nanopub class", () => {
   });
 
   it("should serialize nanopub to trig", async () => {
-    const trig = await serialize(
-      { id: np.id, assertion: np.assertion, provenance: np.provenance, pubinfo: np.pubinfo },
-      "trig"
-    );
+    const trig = await serialize(np, "trig"); 
     expect(trig).toContain("http://example.org/s");
   });
-
+  
   it("should parse trig back to quads", async () => {
-    const trig = await serialize(
-      { id: np.id, assertion: np.assertion, provenance: np.provenance, pubinfo: np.pubinfo },
-      "trig"
-    );
+    const trig = await serialize(np, "trig"); 
     const parsedQuads = parse(trig, "trig");
     expect(parsedQuads.length).toBeGreaterThan(0);
   });
@@ -54,7 +48,7 @@ describe("Nanopub class", () => {
 
   it("should validate nanopub signature", async () => {
     await np.sign();
-    const valid = await np.hasValidSignature;
+    const valid = await np.hasValidSignature();
     expect(valid).toBe(true);
   });
 });

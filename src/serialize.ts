@@ -1,10 +1,24 @@
 import { Writer, Parser, Quad } from 'n3';
-import type { Nanopub } from './types';
+import { NanopubClass } from './nanopub';
 
-export function serialize(np: Nanopub, format: 'trig' | 'turtle' | 'jsonld' = 'trig'): Promise<string> {
+export function serialize(
+  np: NanopubClass,
+  format: 'trig' | 'turtle' = 'trig'
+): Promise<string> {
   return new Promise((resolve, reject) => {
-    const writer = new Writer({ format });
-    writer.addQuads([...np.assertion, ...np.provenance, ...np.pubinfo]);
+    const writer = new Writer({
+      format,
+      prefixes: {
+        this: `urn:uuid:${np.id}#`,
+        sub: `urn:uuid:${np.id}-`,
+        np: 'http://www.nanopub.org/nschema#',
+        rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+        prov: 'http://www.w3.org/ns/prov#',
+      },
+    });
+
+    writer.addQuads([...np.head, ...np.assertion, ...np.provenance, ...np.pubinfo]);
+
     writer.end((err, result) => {
       if (err) reject(err);
       else resolve(result);

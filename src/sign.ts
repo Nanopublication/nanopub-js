@@ -4,9 +4,9 @@ import type { Quad } from "n3";
 /**
  * Verify a Nanopub signature using `nanopub-rs` via `check()`.
  */
-export async function verifySignature(quads: Quad[]): Promise<boolean> {
+export async function verifySignature(rdf: string): Promise<boolean> {
   try {
-    const np = new Nanopub(quads);
+    const np = new Nanopub(rdf);
 
     np.check();
 
