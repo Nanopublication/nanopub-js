@@ -7,6 +7,7 @@ import { verifySignature } from './sign';
 
 export class NanopubClass implements Nanopub {
   id: string;
+  head: Quad[];
   assertion: Quad[];
   provenance: Quad[];
   pubinfo: Quad[];
@@ -17,11 +18,18 @@ export class NanopubClass implements Nanopub {
   constructor(quads: Quad[] = [], id?: string, options?: NanopubOptions) {
     this.id = id ?? crypto.randomUUID();
 
+    const npNode = namedNode(`urn:uuid:${this.id}`);
     const assertionGraph = namedNode(`urn:uuid:${this.id}-assertion`);
     const provenanceGraph = namedNode(`urn:uuid:${this.id}-provenance`);
     const pubinfoGraph = namedNode(`urn:uuid:${this.id}-pubinfo`);
-    const npNode = namedNode(`urn:uuid:${this.id}`);
-
+    const headGraph = namedNode(`urn:uuid:${this.id}-Head`);
+    
+    this.head = [
+      quad(npNode, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://www.nanopub.org/nschema#Nanopublication'), headGraph),
+      quad(npNode, namedNode('http://www.nanopub.org/nschema#hasAssertion'), assertionGraph, headGraph),
+      quad(npNode, namedNode('http://www.nanopub.org/nschema#hasProvenance'), provenanceGraph, headGraph),
+      quad(npNode, namedNode('http://www.nanopub.org/nschema#hasPublicationInfo'), pubinfoGraph, headGraph)
+    ];
     this.assertion = quads.map(q =>
       quad(q.subject, q.predicate, q.object, assertionGraph)
     );
@@ -32,11 +40,7 @@ export class NanopubClass implements Nanopub {
     ];
 
     this.pubinfo = [
-      quad(npNode, namedNode('http://www.w3.org/ns/prov#generatedAtTime'), literal(now), pubinfoGraph),
-      quad(npNode, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://www.nanopub.org/nschema#Nanopublication'), pubinfoGraph),
-      quad(npNode, namedNode('http://www.nanopub.org/nschema#hasAssertion'), assertionGraph, pubinfoGraph),
-      quad(npNode, namedNode('http://www.nanopub.org/nschema#hasProvenance'), provenanceGraph, pubinfoGraph),
-      quad(npNode, namedNode('http://www.nanopub.org/nschema#hasPublicationInfo'), pubinfoGraph, pubinfoGraph)
+      quad(npNode, namedNode('http://www.w3.org/ns/prov#generatedAtTime'), literal(now), pubinfoGraph)
     ];
 
     // Optional profile
