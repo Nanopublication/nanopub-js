@@ -16,7 +16,10 @@
     "@types/n3": "^1",
     "@types/node": "^24.9.1",
     "@types/rdfjs__data-model": "^2",
+    "happy-dom": "^20.0.11",
     "typescript": "^5.9.3",
+    "vite-plugin-top-level-await": "^1.6.0",
+    "vite-plugin-wasm": "^3.5.0",
     "vitest": "^3.2.4"
   },
   "dependencies": {

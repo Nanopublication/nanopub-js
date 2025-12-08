@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ES2020",
     "module": "ES2020",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": false,
@@ -10,6 +10,7 @@
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
+    
   },
   "include": ["src"]
 }
