@@ -1,5 +1,5 @@
-import type { Nanopub, QueryOptions } from './types';
-import { parse } from './serialize.js';
+import type { Nanopub, NanopubObject, QueryOptions } from './types';
+import { parse, quadsToJson } from './serialize.js';
 
 const ENDPOINT_UUIDS: Record<string, string> = {
   findNanopubsWithText: 'RAWruhiSmyzgZhVRs8QY8YQPAgHzTfl7anxII1de-yaCs/fulltext-search-on-labels',
@@ -14,7 +14,7 @@ export class NanopubClient {
   endpoints: string[];
 
   constructor(config?: { endpoints?: string[] }) {
-    this.endpoints = config?.endpoints ?? ['https://query.knowledgepixels.com/', 'https://query.knowledgepixels.com/repo/full'];
+    this.endpoints = config?.endpoints ?? ['https://query.knowledgepixels.com/'];
   }
 
   async publish(np: Nanopub): Promise<string> {
@@ -22,34 +22,31 @@ export class NanopubClient {
     return `${this.endpoints}/${np.id}`;
   }
 
-  /** Fetch a nanopub by URI */
-  async fetchNanopub(uri: string): Promise<Nanopub> {
-    if (!uri) throw new Error('Missing nanopub URI');
+  /** Fetch a nanopub by URI in the requested format */
+  async fetchNanopub(uri: string, format: 'trig' | 'jsonld' = 'trig'): Promise<any> {
+    const accept =
+      format === 'trig'
+        ? 'application/trig'
+        : 'application/ld+json';
 
-    const res: any = await fetch(uri, {
-      headers: { Accept: 'application/trig' },
-    }).catch(err => console.log(err));
+    const res = await fetch(uri, { headers: { Accept: accept } });
+    if (!res.ok) {
+      throw new Error(`Failed to fetch nanopub: ${res.status} ${res.statusText}`);
+    }
 
-    if (!res.ok) throw new Error(`Failed to fetch nanopub: ${res.status} ${res.statusText}`);
+    if (format === 'trig') {
+      return await res.text();
+    }
 
-    const nquads = await res.text();
-    const quads = parse(nquads, 'trig'); 
-
-    const assertion = quads.filter(q => q.graph.value.endsWith('assertion'));
-    const provenance = quads.filter(q => q.graph.value.endsWith('provenance'));
-    const pubinfo = quads.filter(q => q.graph.value.endsWith('pubinfo'));
-
-    return {
-      id: uri.split('/').pop()!,
-      assertion,
-      provenance,
-      pubinfo,
-    };
+    if (format === 'jsonld') {
+      return await res.json();
+    }
   }
   
   /** Raw SPARQL query */
   async querySparql(query: string, returnFormat: 'json' | 'csv' = 'json'): Promise<any> {
     const endpoints = ['https://query.knowledgepixels.com/repo/full'] // Override for SPARQL queries
+    let error;
     for (const endpoint of endpoints) {
       try {
         const url = new URL(endpoint);
@@ -63,7 +60,14 @@ export class NanopubClient {
           }
         });
 
-        if (!res.ok) throw new Error(`SPARQL query failed: ${res.status} ${res.statusText}`);
+        // if (!res.ok) throw new Error(`SPARQL query failed: ${res.status} ${res.statusText}`);
+        if (!res.ok) {
+          if (res.status >= 400 && res.status < 500) {
+            return []; // Return empty result for 404
+          }
+          error = new Error(`SPARQL query failed: ${res.status} ${res.statusText}`);
+          return error;
+        }
 
         if (returnFormat === 'json') {
           const data = await res.json();
