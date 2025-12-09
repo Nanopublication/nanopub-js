@@ -3,14 +3,15 @@ import { NanopubClass } from './nanopub';
 
 export function serialize(
   np: NanopubClass,
-  format: 'trig' | 'turtle' = 'trig'
+  format: 'trig' | 'turtle' = 'trig',
+  baseUrl: string = 'http://temp.nanopub.local/'
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const writer = new Writer({
       format,
       prefixes: {
-        this: `urn:uuid:${np.id}#`,
-        sub: `urn:uuid:${np.id}-`,
+        this: `${baseUrl}${np.id}#`,
+        sub: `${baseUrl}${np.id}-`,
         np: 'http://www.nanopub.org/nschema#',
         rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
         prov: 'http://www.w3.org/ns/prov#',

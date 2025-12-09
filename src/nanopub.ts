@@ -20,11 +20,13 @@ export class NanopubClass implements Nanopub {
   constructor(quads: Quad[] = [], id?: string, options?: NanopubOptions) {
     this.id = id ?? crypto.randomUUID();
 
-    const npNode = namedNode(`urn:uuid:${this.id}#this`);
-    const assertionGraph = namedNode(`urn:uuid:${this.id}-assertion`);
-    const provenanceGraph = namedNode(`urn:uuid:${this.id}-provenance`);
-    const pubinfoGraph = namedNode(`urn:uuid:${this.id}-pubinfo`);
-    const headGraph = namedNode(`urn:uuid:${this.id}-Head`);
+    const tempBaseUri = 'http://temp.nanopub.local/';
+
+    const npNode = namedNode(`${tempBaseUri}${this.id}#this`);
+    const assertionGraph = namedNode(`${tempBaseUri}${this.id}-assertion`);
+    const provenanceGraph = namedNode(`${tempBaseUri}${this.id}-provenance`);
+    const pubinfoGraph = namedNode(`${tempBaseUri}:${this.id}-pubinfo`);
+    const headGraph = namedNode(`${tempBaseUri}${this.id}-Head`);
 
     this.head = [
       quad(npNode, namedNode('rdf:type'), namedNode('np:Nanopublication'), headGraph),

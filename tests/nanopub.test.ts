@@ -6,10 +6,14 @@ describe("Nanopub class", () => {
   let quads: Quad[];
   let np: NanopubClass;
 
+  const tempBaseUri = 'http://temp.nanopub.local/';
+
+  const subjectUrl = `${tempBaseUri}test-nanopub#this`;
+
   beforeEach(() => {
     quads = [
       new Quad(
-        new NamedNode("http://example.org/s"),
+        new NamedNode(subjectUrl),
         new NamedNode("http://example.org/p"),
         new NamedNode("http://example.org/o"),
         new DefaultGraph()
@@ -31,7 +35,7 @@ describe("Nanopub class", () => {
 
   it("should serialize nanopub to trig", async () => {
     const trig = await serialize(np, "trig"); 
-    expect(trig).toContain("http://example.org/s");
+    expect(trig).toContain(subjectUrl);
   });
   
   it("should parse trig back to quads", async () => {
