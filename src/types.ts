@@ -31,7 +31,6 @@ export interface ValidationResult {
 }
 
 export interface Nanopub {
-  id: string;
   assertion: Quad[];
   provenance: Quad[];
   pubinfo: Quad[];

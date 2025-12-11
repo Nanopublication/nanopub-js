@@ -19,7 +19,7 @@ export class NanopubClient {
 
   async publish(np: Nanopub): Promise<string> {
     // TODO: POST nanopub to server
-    return `${this.endpoints}/${np.id}`;
+    return `${this.endpoints}/`;
   }
 
   /** Fetch a nanopub by URI in the requested format */
