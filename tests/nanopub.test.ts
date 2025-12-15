@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { NanopubClass, serialize, parse } from "../src/index";
+import { NanopubClass, serialize, parse, DEFAULT_NANOPUB_URI } from "../src/index";
 import { NamedNode, Quad, DefaultGraph } from "n3";
 import { generateKeyPairSync } from "crypto";
+import { makeNamedGraphNode } from "../src/utils";
 
 describe("Nanopub class", () => {
   let assertionQuads: Quad[];
@@ -10,11 +11,11 @@ describe("Nanopub class", () => {
 
   let np: NanopubClass;
 
-  const nanopubUri = "http://purl.org/nanopub/temp/np";
-  const npNode = new NamedNode(`${nanopubUri}`);
-  const assertionGraph = new NamedNode(`${nanopubUri}/assertion`);
-  const provGraph = new NamedNode(`${nanopubUri}/provenance`);
-  const pubinfoGraph = new NamedNode(`${nanopubUri}/pubinfo`);
+  const nanopubUri = DEFAULT_NANOPUB_URI;
+  const npNode = makeNamedGraphNode(nanopubUri, "");
+  const assertionGraph = makeNamedGraphNode(nanopubUri, "assertion");
+  const provGraph = makeNamedGraphNode(nanopubUri, "provenance");
+  const pubinfoGraph = makeNamedGraphNode(nanopubUri, "pubinfo");
 
   beforeEach(() => {
     const { privateKey, publicKey } = generateKeyPairSync("rsa", {

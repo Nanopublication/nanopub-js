@@ -1,17 +1,19 @@
 import { Writer, Parser, Quad } from 'n3';
 import { NanopubClass } from './nanopub';
+import { DEFAULT_NANOPUB_URI } from './nanopub';
 
 export function serialize(
   np: NanopubClass,
   format: 'trig' | 'turtle' = 'trig',
-  nanopubUri: string = 'http://purl.org/nanopub/temp/np'
+  nanopubUri: string = DEFAULT_NANOPUB_URI
 ): Promise<string> {
   return new Promise((resolve, reject) => {
+    const subUri = nanopubUri == DEFAULT_NANOPUB_URI ? nanopubUri : nanopubUri + '/'; 
     const writer = new Writer({
       format,
       prefixes: {
-        this: `${nanopubUri}`,
-        sub: `${nanopubUri}/`,
+        this: nanopubUri,
+        sub: subUri,
         np: 'http://www.nanopub.org/nschema#',
         rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
         prov: 'http://www.w3.org/ns/prov#',

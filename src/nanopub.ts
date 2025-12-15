@@ -3,8 +3,11 @@ import { Nanopub as WasmNanopub, NpProfile } from '@nanopub/sign';
 import { Parser, Quad, DataFactory } from 'n3';
 import { serialize, parse } from './serialize';
 import { verifySignature } from './sign';
+import { makeNamedGraphNode } from './utils';
 
 const { namedNode, quad, literal } = DataFactory;
+
+export const DEFAULT_NANOPUB_URI = 'http://purl.org/nanopub/temp/np/';
 
 export class NanopubClass implements Nanopub {
   head: Quad[];
@@ -23,14 +26,14 @@ export class NanopubClass implements Nanopub {
     options?: NanopubOptions;
   } = {}) {
     const { assertion = [], provenance = [], pubinfo = [], options } = params;
-
-    const nanopubUri = this.sourceUri || 'http://purl.org/nanopub/temp/np';
-    const npNode = namedNode(`${nanopubUri}`);
-    const assertionGraph = namedNode(`${nanopubUri}/assertion`);
-    const provenanceGraph = namedNode(`${nanopubUri}/provenance`);
-    const pubinfoGraph = namedNode(`${nanopubUri}/pubinfo`);
-    const headGraph = namedNode(`${nanopubUri}/Head`);
-
+    
+    const nanopubUri = this.sourceUri || DEFAULT_NANOPUB_URI;
+    const npNode = makeNamedGraphNode(nanopubUri, ''); 
+    const assertionGraph = makeNamedGraphNode(nanopubUri, 'assertion');
+    const provenanceGraph = makeNamedGraphNode(nanopubUri, 'provenance');
+    const pubinfoGraph = makeNamedGraphNode(nanopubUri, 'pubinfo');
+    const headGraph = makeNamedGraphNode(nanopubUri, 'Head');    
+    
     this.head = [
       quad(npNode, namedNode('rdf:type'), namedNode('np:Nanopublication'), headGraph),
       quad(npNode, namedNode('np:hasAssertion'), assertionGraph, headGraph),
@@ -89,7 +92,7 @@ export class NanopubClass implements Nanopub {
   async hasValidSignature(): Promise<boolean> {
     if (!this.signature) return false;
     try {
-      const rdf = await serialize(this, 'trig', this.sourceUri || 'http://purl.org/nanopub/temp/np');
+      const rdf = await serialize(this, 'trig', this.sourceUri || DEFAULT_NANOPUB_URI);
       return verifySignature(rdf);
     } catch {
       return false;
