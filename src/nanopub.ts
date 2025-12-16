@@ -18,38 +18,68 @@ export class NanopubClass implements Nanopub {
   privateKey?: string;
   profile?: NpProfile;
   sourceUri?: string;
+  private _signedRdf?: string;
 
-  constructor(params: {
-    assertion?: Quad[];
-    provenance?: Quad[];
-    pubinfo?: Quad[];
-    options?: NanopubOptions;
-  } = {}) {
+  constructor(
+    params: {
+      assertion?: Quad[];
+      provenance?: Quad[];
+      pubinfo?: Quad[];
+      options?: NanopubOptions;
+    } = {}
+  ) {
     const { assertion = [], provenance = [], pubinfo = [], options } = params;
-    
-    const nanopubUri = this.sourceUri || DEFAULT_NANOPUB_URI;
-    const npNode = makeNamedGraphNode(nanopubUri, ''); 
+
+    const RDF_TYPE = namedNode(
+      'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+    );
+
+    const NP = 'http://www.nanopub.org/nschema#';
+    const PROV = 'http://www.w3.org/ns/prov#';
+
+    const NP_NANOPUBLICATION = namedNode(`${NP}Nanopublication`);
+    const NP_HAS_ASSERTION = namedNode(`${NP}hasAssertion`);
+    const NP_HAS_PROVENANCE = namedNode(`${NP}hasProvenance`);
+    const NP_HAS_PUBINFO = namedNode(`${NP}hasPublicationInfo`);
+    const PROV_GENERATED_AT_TIME = namedNode(`${PROV}generatedAtTime`);
+
+    const nanopubUri = this.sourceUri ?? DEFAULT_NANOPUB_URI;
+
+    const npNode = makeNamedGraphNode(nanopubUri, '');
     const assertionGraph = makeNamedGraphNode(nanopubUri, 'assertion');
     const provenanceGraph = makeNamedGraphNode(nanopubUri, 'provenance');
     const pubinfoGraph = makeNamedGraphNode(nanopubUri, 'pubinfo');
-    const headGraph = makeNamedGraphNode(nanopubUri, 'Head');    
-    
+    const headGraph = makeNamedGraphNode(nanopubUri, 'Head');
+
     this.head = [
-      quad(npNode, namedNode('rdf:type'), namedNode('np:Nanopublication'), headGraph),
-      quad(npNode, namedNode('np:hasAssertion'), assertionGraph, headGraph),
-      quad(npNode, namedNode('np:hasProvenance'), provenanceGraph, headGraph),
-      quad(npNode, namedNode('np:hasPublicationInfo'), pubinfoGraph, headGraph),
+      quad(npNode, RDF_TYPE, NP_NANOPUBLICATION, headGraph),
+      quad(npNode, NP_HAS_ASSERTION, assertionGraph, headGraph),
+      quad(npNode, NP_HAS_PROVENANCE, provenanceGraph, headGraph),
+      quad(npNode, NP_HAS_PUBINFO, pubinfoGraph, headGraph),
     ];
 
-    this.assertion = assertion.map(q => quad(q.subject, q.predicate, q.object, assertionGraph));
+    this.assertion = assertion.map((q) =>
+      quad(q.subject, q.predicate, q.object, assertionGraph)
+    );
 
     const now = new Date().toISOString();
+
     this.provenance = provenance.length
-      ? provenance.map(q => quad(q.subject, q.predicate, q.object, provenanceGraph))
-      : [quad(assertionGraph, namedNode('prov:generatedAtTime'), literal(now), provenanceGraph)];
+      ? provenance.map((q) =>
+          quad(q.subject, q.predicate, q.object, provenanceGraph)
+        )
+      : [
+          quad(
+            assertionGraph,
+            PROV_GENERATED_AT_TIME,
+            literal(now),
+            provenanceGraph
+          ),
+        ];
+
     this.pubinfo = pubinfo.length
-      ? pubinfo.map(q => quad(q.subject, q.predicate, q.object, pubinfoGraph))
-      : [quad(npNode, namedNode('prov:generatedAtTime'), literal(now), pubinfoGraph)];
+      ? pubinfo.map((q) => quad(q.subject, q.predicate, q.object, pubinfoGraph))
+      : [quad(npNode, PROV_GENERATED_AT_TIME, literal(now), pubinfoGraph)];
 
     if (options?.privateKey && options?.name && options?.orcid) {
       this.privateKey = options.privateKey;
@@ -62,39 +92,54 @@ export class NanopubClass implements Nanopub {
     }
   }
 
+  private rehydrateFromSignedRdf(): void {
+    if (!this._signedRdf) throw new Error('No signed RDF');
+
+    const quads = parse(this._signedRdf, 'trig');
+
+    const graphs: Record<string, Quad[]> = {};
+    for (const q of quads) {
+      const g = q.graph.value;
+      (graphs[g] ||= []).push(q);
+    }
+
+    const findGraph = (suffix: string) =>
+      Object.entries(graphs).find(([g]) => g.endsWith(suffix))?.[1] ?? [];
+
+    this.head = findGraph('Head');
+    this.assertion = findGraph('assertion');
+    this.provenance = findGraph('provenance');
+    this.pubinfo = findGraph('pubinfo');
+  }
+
   async sign(): Promise<this> {
     if (!this.profile) throw new Error('Profile not set. Cannot sign nanopub.');
 
     const trig = await serialize(this, 'trig');
-    console.log('Serializing nanopub for signing:\n', trig);
     const wasmNp = new WasmNanopub(trig);
+
     const signed = wasmNp.sign(this.profile);
-    console.log('Signed nanopub RDF:\n', signed.rdf());
+  
+    this._signedRdf = signed.rdf();
     this.sourceUri = signed.info().uri;
     this.signature = signed.info().signature;
 
-    const parsed = parse(signed.rdf(), 'trig');
-    const graphs = parsed.reduce((acc, q) => {
-      const g = q.graph.value;
-      acc[g] = acc[g] || [];
-      acc[g].push(q);
-      return acc;
-    }, {} as Record<string, Quad[]>);
-
-    this.head = Object.entries(graphs).find(([g]) => g.endsWith('/Head'))?.[1] || [];
-    this.assertion = Object.entries(graphs).find(([g]) => g.endsWith('/assertion'))?.[1] || [];
-    this.provenance = Object.entries(graphs).find(([g]) => g.endsWith('/provenance'))?.[1] || [];
-    this.pubinfo = Object.entries(graphs).find(([g]) => g.endsWith('/pubinfo'))?.[1] || [];
+    this.rehydrateFromSignedRdf();
 
     return this;
   }
 
+  rdf(): string {
+    if (!this._signedRdf) throw new Error('Nanopub not signed yet');
+    return this._signedRdf;
+  }
+
   async hasValidSignature(): Promise<boolean> {
-    if (!this.signature) return false;
+    if (!this.signature || !this._signedRdf) return false;
     try {
-      const rdf = await serialize(this, 'trig', this.sourceUri || DEFAULT_NANOPUB_URI);
-      return verifySignature(rdf);
-    } catch {
+      return verifySignature(this._signedRdf);
+    } catch (err) {
+      console.error('signature verification failed:', err);
       return false;
     }
   }
