@@ -7,7 +7,7 @@ import type { Quad } from "n3";
 export async function verifySignature(rdf: string): Promise<boolean> {
   try {
     const np = new Nanopub(rdf);
-
+    console.log("Verifying nanopub signature for RDF:\n", np.rdf());
     np.check();
 
     return true;
