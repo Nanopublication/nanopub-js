@@ -3,6 +3,7 @@ import { NanopubClass, serialize, parse, DEFAULT_NANOPUB_URI } from "../src/inde
 import { NamedNode, Quad, DefaultGraph } from "n3";
 import { generateKeyPairSync } from "crypto";
 import { makeNamedGraphNode } from "../src/utils";
+import { Nanopub as WasmNanopub } from "@nanopub/sign";
 
 describe("Nanopub class", () => {
   let assertionQuads: Quad[];
@@ -96,9 +97,18 @@ describe("Nanopub class", () => {
     expect(np.signature).toBeDefined();
   });
 
+  // This is a temporary test to check what is going wrong along the way
+  it('re-creating nanopub using WASM from rehydrated nanopub should be identical to signed RDF', async () => {
+    const signed = await np.sign();
+    const signedRdf = signed.rdf()
+    const wasmNp = new WasmNanopub(signedRdf)
+    expect(signedRdf).toBe(wasmNp.rdf());
+  })
+
   it("validates signature", async () => {
-    await np.sign();
-    const ok = await np.hasValidSignature();
+    const signed = await np.sign();
+    const ok = await signed.hasValidSignature();
     expect(ok).toBe(true);
   });
+
 });
