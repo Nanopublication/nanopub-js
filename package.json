@@ -24,7 +24,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@nanopub/sign": "^0.1.5",
+    "@nanopub/sign": "^0.1.10",
     "@rdfjs/data-model": "^2.1.1",
     "n3": "^1.26.0",
     "rdf-canonize": "^4.0.1",
