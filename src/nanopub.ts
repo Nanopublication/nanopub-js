@@ -116,10 +116,11 @@ export class NanopubClass implements Nanopub {
     if (!this.profile) throw new Error('Profile not set. Cannot sign nanopub.');
 
     const trig = await serialize(this, 'trig');
+
     const wasmNp = new WasmNanopub(trig);
 
     const signed = wasmNp.sign(this.profile);
-  
+
     this._signedRdf = signed.rdf();
     this.sourceUri = signed.info().uri;
     this.signature = signed.info().signature;
