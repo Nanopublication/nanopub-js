@@ -1,4 +1,4 @@
-import { Nanopub, NpProfile } from "@nanopub/sign";
+import { Nanopub, NpProfile, KeyPair } from "@nanopub/sign";
 import type { Quad } from "n3";
 
 /**
@@ -31,4 +31,19 @@ export async function sign(
     sourceUri: signed.info().uri,
     signature: signed.info().signature,
   };
+}
+
+export async function generateKeys() {
+  try {
+    const keypair = new KeyPair();
+    const keys = keypair.toJs();
+    
+    return {
+      privateKey: keys.private,
+      publicKey: keys.public
+    };
+  } catch (error) {
+    console.error('Key generation failed:', error);
+    throw new Error('Failed to generate RSA keys');
+  }
 }
