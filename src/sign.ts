@@ -19,12 +19,12 @@ export async function verifySignature(rdf: string): Promise<boolean> {
 
 export async function sign(
   rdf: string,
-  profile: NpProfile
+  privateKey: string,
+  orcid: string,
+  name: string
 ): Promise<{ signedRdf: string; sourceUri: string; signature: string }> {
-  if (!profile) throw new Error("Profile not specified. Cannot sign nanopub.");
-
   const wasmNp = new Nanopub(rdf);
-  const signed = wasmNp.sign(profile);
+  const signed = wasmNp.sign(new NpProfile(privateKey, orcid, name));
 
   return {
     signedRdf: signed.rdf(),
