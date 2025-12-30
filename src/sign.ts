@@ -1,4 +1,4 @@
-import { Nanopub } from "@nanopub/sign";
+import { Nanopub, NpProfile } from "@nanopub/sign";
 import type { Quad } from "n3";
 
 /**
@@ -15,4 +15,20 @@ export async function verifySignature(rdf: string): Promise<boolean> {
     console.error("signature verification failed:", err);
     return false;
   }
+}
+
+export async function sign(
+  rdf: string,
+  profile: NpProfile
+): Promise<{ signedRdf: string; sourceUri: string; signature: string }> {
+  if (!profile) throw new Error("Profile not specified. Cannot sign nanopub.");
+
+  const wasmNp = new Nanopub(rdf);
+  const signed = wasmNp.sign(profile);
+
+  return {
+    signedRdf: signed.rdf(),
+    sourceUri: signed.info().uri,
+    signature: signed.info().signature,
+  };
 }
