@@ -2,7 +2,7 @@ import { NanopubOptions, Nanopub } from './types';
 import { Nanopub as WasmNanopub, NpProfile } from '@nanopub/sign';
 import { Parser, Quad, DataFactory } from 'n3';
 import { serialize, parse } from './serialize';
-import { verifySignature } from './sign';
+import { initNanopubSignWasm, verifySignature } from './sign';
 import { makeNamedGraphNode } from './utils';
 
 const { namedNode, quad, literal } = DataFactory;
@@ -114,6 +114,9 @@ export class NanopubClass implements Nanopub {
 
   async sign(): Promise<this> {
     if (!this.profile) throw new Error('Profile not set. Cannot sign nanopub.');
+
+    // Ensure the `@nanopub/sign` WASM runtime is initialized before using wasm-backed APIs.
+    initNanopubSignWasm();
 
     const trig = await serialize(this, 'trig');
 

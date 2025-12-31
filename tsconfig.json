@@ -9,8 +9,8 @@
     "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
-    
+    "forceConsistentCasingInFileNames": true,
+    "types": ["vite-plugin-arraybuffer/types"]
   },
   "include": ["src"]
 }
