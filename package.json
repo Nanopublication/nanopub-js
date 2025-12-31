@@ -10,7 +10,8 @@
     "build": "vite build",
     "watch": "tsc --watch",
     "start": "node dist/index.js",
-    "test": "vitest"
+    "test": "vitest",
+    "install": "npm run build"
   },
   "devDependencies": {
     "@types/n3": "^1",
