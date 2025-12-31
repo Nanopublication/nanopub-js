@@ -1,4 +1,4 @@
-import { getNanopubSignModule } from './wasm';
+import { getNanopubSignModule } from "./wasm";
 
 /**
  * Eagerly initialize `@nanopub/sign` for browser usage.
@@ -46,19 +46,34 @@ export async function sign(
   };
 }
 
+export async function publish(
+  signedRdf: string,
+  privateKey: string,
+  orcid: string,
+  name: string
+): Promise<string> {
+  const { Nanopub, NpProfile } = (await getNanopubSignModule()) as any;
+
+  const signedWasmNp = new Nanopub(signedRdf);
+  const result = await signedWasmNp.publish(
+    new NpProfile(privateKey, orcid, name), "https://np.petapico.org"
+  );
+  return result;
+}
+
 export async function generateKeys() {
   try {
     const { KeyPair } = (await getNanopubSignModule()) as any;
 
     const keypair = new KeyPair();
     const keys = keypair.toJs();
-    
+
     return {
       privateKey: keys.private,
-      publicKey: keys.public
+      publicKey: keys.public,
     };
   } catch (error) {
-    console.error('Key generation failed:', error);
-    throw new Error('Failed to generate RSA keys');
+    console.error("Key generation failed:", error);
+    throw new Error("Failed to generate RSA keys");
   }
 }
