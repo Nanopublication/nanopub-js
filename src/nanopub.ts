@@ -1,8 +1,9 @@
 import { NanopubOptions, Nanopub } from './types';
-import { Nanopub as WasmNanopub, NpProfile } from '@nanopub/sign';
 import { Parser, Quad, DataFactory } from 'n3';
 import { serialize, parse } from './serialize';
-import { initNanopubSignWasm, verifySignature } from './sign';
+import type { NpProfile } from '@nanopub/sign';
+import { verifySignature } from './sign';
+import { getNanopubSignModule } from './wasm';
 import { makeNamedGraphNode } from './utils';
 
 const { namedNode, quad, literal } = DataFactory;
@@ -17,6 +18,12 @@ export class NanopubClass implements Nanopub {
   signature?: string;
   privateKey?: string;
   profile?: NpProfile;
+  private _profileParams?: {
+    privateKey: string;
+    orcid: string;
+    name: string;
+    email?: string;
+  };
   sourceUri?: string;
   private _signedRdf?: string;
 
@@ -83,12 +90,13 @@ export class NanopubClass implements Nanopub {
 
     if (options?.privateKey && options?.name && options?.orcid) {
       this.privateKey = options.privateKey;
-      this.profile = new NpProfile(
-        options.privateKey,
-        options.orcid,
-        options.name,
-        options.email ?? ''
-      );
+      // Lazily instantiate `NpProfile` in `.sign()` to avoid eager wasm imports.
+      this._profileParams = {
+        privateKey: options.privateKey,
+        orcid: options.orcid,
+        name: options.name,
+        email: options.email ?? '',
+      };
     }
   }
 
@@ -113,10 +121,21 @@ export class NanopubClass implements Nanopub {
   }
 
   async sign(): Promise<this> {
-    if (!this.profile) throw new Error('Profile not set. Cannot sign nanopub.');
+    const { Nanopub: WasmNanopub, NpProfile } =
+      (await getNanopubSignModule()) as any;
 
-    // Ensure the `@nanopub/sign` WASM runtime is initialized before using wasm-backed APIs.
-    initNanopubSignWasm();
+    if (!this.profile) {
+      if (!this._profileParams) {
+        throw new Error('Profile not set. Cannot sign nanopub.');
+      }
+
+      this.profile = new NpProfile(
+        this._profileParams.privateKey,
+        this._profileParams.orcid,
+        this._profileParams.name,
+        this._profileParams.email ?? ''
+      );
+    }
 
     const trig = await serialize(this, 'trig');
 

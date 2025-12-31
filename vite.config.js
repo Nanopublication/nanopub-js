@@ -1,24 +1,26 @@
 import { defineConfig } from "vite";
 import wasm from "vite-plugin-wasm";
-import topLevelAwait from "vite-plugin-top-level-await";
 import dts from "vite-plugin-dts";
-import arraybuffer from "vite-plugin-arraybuffer";
 
 export default defineConfig({
   // These plugins allow wasm (@nanopub/sign) to be bundled as a buffer in the library for seamless use in browser environments
-  // It does increase the build size though. There might be a more efficient storage than an arraybuffer.
-  // The dts plugin generates types (.d.ts file) in the build dist folder
-  plugins: [arraybuffer(), wasm(), topLevelAwait(), dts({ rollupTypes: true })],
+  // We no longer need `vite-plugin-top-level-await` as we now lazy-load `@nanopub/sign`.
+  plugins: [wasm(), dts({ rollupTypes: true })],
   optimizeDeps: {
     exclude: ["@nanopub/sign"],
   },
   // Build in library mode
   build: {
     lib: {
+      // We now use single-entry index.ts when using vite build.
+      // To add multi-entry see https://vite.dev/guide/build#library-mode
       entry: "src/index.ts",
       name: "nanopub-js",
       // the proper extensions will be added
       fileName: "index",
+      // Avoid UMD output: Rollup UMD does not support top-level await and some wasm
+      // dependency patterns. ESM output is the primary supported format.
+      formats: ["es"],
     },
   },
 

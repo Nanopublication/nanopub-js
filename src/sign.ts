@@ -1,19 +1,13 @@
-import { Nanopub, NpProfile, KeyPair } from "@nanopub/sign";
-import { initSync } from "@nanopub/sign/web.js";
-// Note: There is a tradeoff of much lower bundle size but extra run-time decoding overhead, when using base64
-import wasmBuffer from "@nanopub/sign/web_bg.wasm?arraybuffer&base64";
-
-let wasmInitialized = false;
+import { getNanopubSignModule } from './wasm';
 
 /**
- * Singleton initializer for use of the `@nanopub/sign` WASM module in web-browser environments
+ * Eagerly initialize `@nanopub/sign` for browser usage.
  *
+ * Safe to call multiple times; it will only initialize once.
+ * It's also safe to never call it, since it is lazy-loaded when required.
  */
-export function initNanopubSignWasm(): void {
-  if (wasmInitialized) return;
-
-  initSync(wasmBuffer);
-  wasmInitialized = true;
+export async function initNanopubSignWasm(): Promise<void> {
+  await getNanopubSignModule();
 }
 
 /**
@@ -21,7 +15,7 @@ export function initNanopubSignWasm(): void {
  */
 export async function verifySignature(rdf: string): Promise<boolean> {
   try {
-    initNanopubSignWasm();
+    const { Nanopub } = (await getNanopubSignModule()) as any;
 
     const np = new Nanopub(rdf);
     console.log("Verifying nanopub signature for RDF:\n", np.rdf());
@@ -40,7 +34,7 @@ export async function sign(
   orcid: string,
   name: string
 ): Promise<{ signedRdf: string; sourceUri: string; signature: string }> {
-  initNanopubSignWasm();
+  const { Nanopub, NpProfile } = (await getNanopubSignModule()) as any;
 
   const wasmNp = new Nanopub(rdf);
   const signed = wasmNp.sign(new NpProfile(privateKey, orcid, name));
@@ -54,7 +48,7 @@ export async function sign(
 
 export async function generateKeys() {
   try {
-    initNanopubSignWasm();
+    const { KeyPair } = (await getNanopubSignModule()) as any;
 
     const keypair = new KeyPair();
     const keys = keypair.toJs();
