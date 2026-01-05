@@ -1,9 +1,9 @@
 import { Writer, Parser, Quad } from 'n3';
-import { NanopubClass } from './nanopub';
-import { DEFAULT_NANOPUB_URI } from './nanopub';
+import { DEFAULT_NANOPUB_URI } from './constants';
+import { Nanopub } from './types';
 
 export function serialize(
-  np: NanopubClass,
+  np: Nanopub,
   format: 'trig' | 'turtle' = 'trig',
   nanopubUri: string = np.sourceUri ?? DEFAULT_NANOPUB_URI
 ): Promise<string> {

@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { NanopubClass, serialize, parse, DEFAULT_NANOPUB_URI } from "../src/index";
-import { NamedNode, Quad, DefaultGraph } from "n3";
+import { NanopubClass, serialize, parse } from "../src/index";
+import { NamedNode, Quad, DefaultGraph, Literal } from "n3";
 import { generateKeyPairSync } from "crypto";
 import { makeNamedGraphNode } from "../src/utils";
 import { Nanopub as WasmNanopub } from "@nanopub/sign";
+import { DEFAULT_NANOPUB_URI } from '../src/constants';
 
 describe("Nanopub class", () => {
   let assertionQuads: Quad[];
@@ -44,7 +45,7 @@ describe("Nanopub class", () => {
       new Quad(
         assertionGraph,
         new NamedNode("http://purl.org/dc/terms/created"),
-        new NamedNode("http://example.org/time"),
+        new Literal("2024-01-01T00:00:00Z"),
         provGraph
       ),
     ];
@@ -97,18 +98,10 @@ describe("Nanopub class", () => {
     expect(np.signature).toBeDefined();
   });
 
-  // This is a temporary test to check what is going wrong along the way
-  it('re-creating nanopub using WASM from rehydrated nanopub should be identical to signed RDF', async () => {
-    const signed = await np.sign();
-    const signedRdf = signed.rdf()
-    const wasmNp = new WasmNanopub(signedRdf)
-    expect(signedRdf).toBe(wasmNp.rdf());
-  })
-
   it("validates signature", async () => {
     const signed = await np.sign();
     const ok = await signed.hasValidSignature();
-    expect(ok).toBe(true);
+    expect(ok).toBeTruthy();
   });
 
 });

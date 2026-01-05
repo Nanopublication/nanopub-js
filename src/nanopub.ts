@@ -5,10 +5,9 @@ import type { NpProfile } from '@nanopub/sign';
 import { verifySignature } from './sign';
 import { getNanopubSignModule } from './wasm';
 import { makeNamedGraphNode } from './utils';
+import { DEFAULT_NANOPUB_URI } from './constants';
 
 const { namedNode, quad, literal } = DataFactory;
-
-export const DEFAULT_NANOPUB_URI = 'http://purl.org/nanopub/temp/np/';
 
 export class NanopubClass implements Nanopub {
   head: Quad[];

@@ -34,7 +34,9 @@ export interface Nanopub {
   assertion: Quad[];
   provenance: Quad[];
   pubinfo: Quad[];
+  head: Quad[];
   signature?: string;
+  sourceUri?: string;
 }
 
 export interface QueryTextOptions {
