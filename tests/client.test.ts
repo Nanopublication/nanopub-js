@@ -126,4 +126,51 @@ describe("NanopubClient (unit)", () => {
     const retractions = await client.findRetractionsOf("uri1");
     expect(retractions).toContain("np3");
   });
+
+  it("publish posts signed example nanopub to the registry", async () => {
+    const TEST_REGISTRY = "https://test.registry.knowledgepixels.com/np/";
+  
+    const signedTrig = `
+  @prefix np: <http://www.nanopub.org/nschema#> .
+  @prefix npx: <http://purl.org/nanopub/x/> .
+  @prefix dct: <http://purl.org/dc/terms/> .
+  @prefix this: <https://w3id.org/np/TEST123> .
+  
+  this: a np:Nanopublication, npx:ExampleNanopub ;
+    dct:creator <https://orcid.org/0000-0002-1267-0234> .
+  `;
+  
+    const fakeNanopub: any = {
+      sourceUri: "https://w3id.org/np/TEST123",
+      rdf: () => signedTrig,
+    };
+  
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      text: async () => "",
+    });
+  
+    const client = new NanopubClient({
+      endpoints: [TEST_REGISTRY],
+    });
+  
+    const result = await client.publish(fakeNanopub, {
+      useServer: TEST_REGISTRY,
+    });
+  
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  
+    const [url, options] = fetchMock.mock.calls[0];
+  
+    expect(url).toBe(TEST_REGISTRY);
+    expect(options.method).toBe("POST");
+    expect(options.headers["Content-Type"]).toBe("application/trig");
+  
+    expect(options.body).toContain("npx:ExampleNanopub");
+  
+    expect(result.uri).toBe(fakeNanopub.sourceUri);
+    expect(result.server).toBe(TEST_REGISTRY);
+  });
+  
 });
