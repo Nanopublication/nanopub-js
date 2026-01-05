@@ -18,7 +18,6 @@ export async function verifySignature(rdf: string): Promise<boolean> {
     const { Nanopub } = (await getNanopubSignModule()) as any;
 
     const np = new Nanopub(rdf);
-    console.log("Verifying nanopub signature for RDF:\n", np.rdf());
     np.check();
 
     return true;
