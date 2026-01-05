@@ -64,7 +64,7 @@ describe("Nanopub class", () => {
       provenance: provQuads,
       pubinfo: pubinfoQuads,
       options: {
-        name: "Alice",
+        name: "Hello from nanopub-js test",
         orcid: "https://orcid.org/0000-0000-0000-0000",
         privateKey: privateKeyBase64,
       }
@@ -103,5 +103,16 @@ describe("Nanopub class", () => {
     const ok = await signed.hasValidSignature();
     expect(ok).toBeTruthy();
   });
+  it("publishes the nanopub", async () => {
+    const TEST_ENDPOINT = "https://test.registry.knowledgepixels.com/np/";
 
+    await np.sign();
+
+    const result = await np.publish(TEST_ENDPOINT);
+
+    expect(result.uri).toBeDefined();
+    expect(result.server).toBe(TEST_ENDPOINT);
+    expect(result.response.ok).toBeTruthy();
+    expect(np.signature).toBeDefined();
+  }, 20000); 
 });
