@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [wasm()],
   test: {
     globals: true,
-    environment: "happy-dom", 
+    environment: "node",
     include: ["tests/**/*.test.ts"],
     deps: {
       inline: ["@nanopub/sign"], 
