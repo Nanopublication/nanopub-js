@@ -137,7 +137,7 @@ describe("NanopubClient (unit)", () => {
   @prefix this: <https://w3id.org/np/TEST123> .
   
   this: a np:Nanopublication, npx:ExampleNanopub ;
-    dct:creator <https://orcid.org/0000-0002-1267-0234> .
+    dct:creator <https://orcid.org/0000-0000-0000-0000> .
   `;
   
     const fakeNanopub: any = {
