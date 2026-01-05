@@ -9,8 +9,7 @@
     "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
-    
+    "forceConsistentCasingInFileNames": true,
   },
   "include": ["src"]
 }

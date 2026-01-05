@@ -1,10 +1,25 @@
 import { defineConfig } from "vite";
 import wasm from "vite-plugin-wasm";
-import topLevelAwait from "vite-plugin-top-level-await";
+import dts from "vite-plugin-dts";
 
 export default defineConfig({
+  // We no longer need `vite-plugin-top-level-await` as we now lazy-load `@nanopub/sign`.
+  plugins: [wasm(), dts({ rollupTypes: true })],
   optimizeDeps: {
     exclude: ["@nanopub/sign"],
+  },
+  // Build in library mode
+  build: {
+    lib: {
+      // We now use single-entry index.ts when using vite build.
+      // To add multi-entry see https://vite.dev/guide/build#library-mode
+      entry: "src/index.ts",
+      name: "nanopub-js",
+      fileName: "index",
+      // Avoid UMD output: Rollup UMD does not support top-level await and some wasm
+      // dependency patterns. ESM output is the primary supported format.
+      formats: ["es"],
+    },
   },
 
   resolve: {
@@ -20,7 +35,7 @@ export default defineConfig({
         optimizer: {
           ssr: {
             include: ["@nanopub/sign/dist/index.js"],
-            exclude: ["@nanopub/sign"], 
+            exclude: ["@nanopub/sign"],
           },
         },
       },
@@ -28,9 +43,9 @@ export default defineConfig({
 
     poolOptions: {
       threads: {
-        singleThread: true, 
+        singleThread: true,
       },
     },
   },
-  
+
 });
