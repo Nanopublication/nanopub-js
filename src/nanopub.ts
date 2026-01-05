@@ -165,4 +165,34 @@ export class NanopubClass implements Nanopub {
       return false;
     }
   }
+
+  async publish(
+    server: string = 'https://query.knowledgepixels.com/'
+  ): Promise<{ uri: string; server: string; response: Response }> {
+    // check if signed
+    if (!this._signedRdf) {
+      if (typeof this.sign === 'function') {
+        await this.sign();
+      } else {
+        throw new Error('Nanopub is not signed and cannot be signed');
+      }
+    }
+
+    const rdf = this.rdf();
+
+    const res = await fetch(server, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/trig' },
+      body: rdf,
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      throw new Error(
+        `Nanopub publish failed: ${res.status} ${res.statusText}\n${text}`
+      );
+    }
+
+    return { uri: this.sourceUri!, server, response: res };
+  }
 }

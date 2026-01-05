@@ -16,51 +16,6 @@ export class NanopubClient {
     this.endpoints = config?.endpoints ?? ['https://query.knowledgepixels.com/'];
   }
 
-  async publish(
-    nanopub: Nanopub,
-    opts?: { useServer?: string }
-  ): Promise<{
-    uri: string;
-    server: string;
-    response: Response;
-  }> {
-    const server =
-      opts?.useServer ??
-      this.endpoints[0];
-  
-    // sign if needed
-    if (!('rdf' in nanopub) || !nanopub.sourceUri) {
-      if (typeof (nanopub as any).sign === 'function') {
-        await (nanopub as any).sign();
-      } else {
-        throw new Error('Nanopub is not signed and cannot be signed');
-      }
-    }
-  
-    const rdf = (nanopub as any).rdf();
-  
-    const res = await fetch(server, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/trig',
-      },
-      body: rdf,
-    });
-  
-    if (!res.ok) {
-      const text = await res.text().catch(() => '');
-      throw new Error(
-        `Nanopub publish failed: ${res.status} ${res.statusText}\n${text}`
-      );
-    }
-  
-    return {
-      uri: (nanopub as any).sourceUri,
-      server,
-      response: res,
-    };
-  }  
-
   /** Fetch a nanopub by URI in the requested format */
   async fetchNanopub(uri: string, format: 'trig' | 'jsonld' = 'trig'): Promise<any> {
     const accept =
