@@ -45,23 +45,6 @@ export async function sign(
   };
 }
 
-export async function publish(
-  signedRdf: string,
-  privateKey: string,
-  orcid: string,
-  name: string,
-  server?: string
-): Promise<string> {
-  const { Nanopub, NpProfile } = (await getNanopubSignModule()) as any;
-
-  const signedWasmNp = new Nanopub(signedRdf);
-  const result = await signedWasmNp.publish(
-    new NpProfile(privateKey, orcid, name),
-    server ?? "https://np.knowledgepixels.com/"
-  );
-  return result;
-}
-
 export async function generateKeys() {
   try {
     const { KeyPair } = (await getNanopubSignModule()) as any;

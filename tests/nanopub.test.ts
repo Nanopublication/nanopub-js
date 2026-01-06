@@ -4,7 +4,7 @@ import { NamedNode, Quad, DefaultGraph, Literal } from "n3";
 import { generateKeyPairSync } from "crypto";
 import { makeNamedGraphNode } from "../src/utils";
 import { Nanopub as WasmNanopub } from "@nanopub/sign";
-import { DEFAULT_NANOPUB_URI } from '../src/constants';
+import { DEFAULT_NANOPUB_URI } from "../src/constants";
 
 describe("Nanopub class", () => {
   let assertionQuads: Quad[];
@@ -23,14 +23,13 @@ describe("Nanopub class", () => {
     const { privateKey, publicKey } = generateKeyPairSync("rsa", {
       modulusLength: 2048,
       publicKeyEncoding: { type: "spki", format: "pem" },
-      privateKeyEncoding: { type: "pkcs8", format: "pem" }
+      privateKeyEncoding: { type: "pkcs8", format: "pem" },
     });
 
     const privateKeyBase64 = privateKey
       .replace("-----BEGIN PRIVATE KEY-----", "")
       .replace("-----END PRIVATE KEY-----", "")
       .replace(/\r?\n|\r/g, "");
-
 
     assertionQuads = [
       new Quad(
@@ -67,7 +66,7 @@ describe("Nanopub class", () => {
         name: "Hello from nanopub-js test",
         orcid: "https://orcid.org/0000-0000-0000-0000",
         privateKey: privateKeyBase64,
-      }
+      },
     });
   });
 
@@ -114,5 +113,52 @@ describe("Nanopub class", () => {
     expect(result.server).toBe(TEST_ENDPOINT);
     expect(result.response.ok).toBeTruthy();
     expect(np.signature).toBeDefined();
-  }, 20000); 
+  }, 20000);
+
+  describe("NanopubClass.fromRdf", () => {
+    let signedNp: NanopubClass;
+    let trigRdf: string;
+
+    beforeEach(async () => {
+      signedNp = await np.sign();
+      trigRdf = signedNp.rdf();
+    });
+
+    it("loads nanopub from RDF without losing graphs", () => {
+      const npFromRdf = NanopubClass.fromRdf(trigRdf);
+
+      expect(npFromRdf.head.length).toBeGreaterThan(0);
+      expect(npFromRdf.assertion.length).toBe(np.assertion.length);
+      expect(npFromRdf.provenance.length).toBe(np.provenance.length);
+      expect(npFromRdf.pubinfo.length).toBe(np.pubinfo.length);
+
+      expect(npFromRdf.rdf()).toBe(trigRdf);
+    });
+
+    it("can be re-signed after loading", async () => {
+      const npFromRdf = NanopubClass.fromRdf(trigRdf);
+
+      npFromRdf["_profileParams"] = {
+        privateKey: np["_profileParams"]!.privateKey,
+        orcid: np["_profileParams"]!.orcid,
+        name: np["_profileParams"]!.name,
+        email: np["_profileParams"]!.email,
+      };
+
+      const signed = await npFromRdf.sign();
+      expect(signed.signature).toBeDefined();
+      expect(signed.sourceUri).toBeDefined();
+    });
+
+    it("works for unsigned RDF", async () => {
+      const unsignedTrig = await serialize(np, "trig");
+      const npFromUnsigned = NanopubClass.fromRdf(unsignedTrig);
+
+      expect(npFromUnsigned.assertion.length).toBe(np.assertion.length);
+      expect(npFromUnsigned.provenance.length).toBe(np.provenance.length);
+      expect(npFromUnsigned.pubinfo.length).toBe(np.pubinfo.length);
+
+      expect(npFromUnsigned.rdf()).toBe(unsignedTrig);
+    });
+  });
 });
