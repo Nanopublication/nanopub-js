@@ -102,7 +102,7 @@ describe("Nanopub class", () => {
     const ok = await signed.hasValidSignature();
     expect(ok).toBeTruthy();
   });
-  it.skip("publishes the nanopub", async () => {
+  it("publishes the nanopub", async () => {
     const TEST_ENDPOINT = "https://test.registry.knowledgepixels.com/np/";
 
     await np.sign();
