@@ -4,3 +4,4 @@ export * from './sign.js';
 export * from './validate.js';
 export { serialize, parse } from './serialize.js';
 export * from './types.js';
+export * from './constants.js';
