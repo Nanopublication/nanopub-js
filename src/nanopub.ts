@@ -1,11 +1,11 @@
-import { NanopubOptions, Nanopub } from './types';
-import { Parser, Quad, DataFactory } from 'n3';
-import { serialize, parse } from './serialize';
-import type { NpProfile } from '@nanopub/sign';
-import { verifySignature } from './sign';
-import { getNanopubSignModule } from './wasm';
-import { makeNamedGraphNode } from './utils';
-import { DEFAULT_NANOPUB_URI } from './constants';
+import { NanopubOptions, Nanopub } from "./types";
+import { Parser, Quad, DataFactory } from "n3";
+import { serialize, parse } from "./serialize";
+import type { NpProfile } from "@nanopub/sign";
+import { verifySignature, sign as signRdf } from "./sign";
+import { getNanopubSignModule } from "./wasm";
+import { makeNamedGraphNode } from "./utils";
+import { DEFAULT_NANOPUB_URI, TEST_NANOPUB_REGISTRY_URL } from "./constants";
 
 const { namedNode, quad, literal } = DataFactory;
 
@@ -24,7 +24,7 @@ export class NanopubClass implements Nanopub {
     email?: string;
   };
   sourceUri?: string;
-  private _signedRdf?: string;
+  private _rdf?: string;
 
   constructor(
     params: {
@@ -37,11 +37,11 @@ export class NanopubClass implements Nanopub {
     const { assertion = [], provenance = [], pubinfo = [], options } = params;
 
     const RDF_TYPE = namedNode(
-      'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
     );
 
-    const NP = 'http://www.nanopub.org/nschema#';
-    const PROV = 'http://www.w3.org/ns/prov#';
+    const NP = "http://www.nanopub.org/nschema#";
+    const PROV = "http://www.w3.org/ns/prov#";
 
     const NP_NANOPUBLICATION = namedNode(`${NP}Nanopublication`);
     const NP_HAS_ASSERTION = namedNode(`${NP}hasAssertion`);
@@ -51,11 +51,11 @@ export class NanopubClass implements Nanopub {
 
     const nanopubUri = this.sourceUri ?? DEFAULT_NANOPUB_URI;
 
-    const npNode = makeNamedGraphNode(nanopubUri, '');
-    const assertionGraph = makeNamedGraphNode(nanopubUri, 'assertion');
-    const provenanceGraph = makeNamedGraphNode(nanopubUri, 'provenance');
-    const pubinfoGraph = makeNamedGraphNode(nanopubUri, 'pubinfo');
-    const headGraph = makeNamedGraphNode(nanopubUri, 'Head');
+    const npNode = makeNamedGraphNode(nanopubUri, "");
+    const assertionGraph = makeNamedGraphNode(nanopubUri, "assertion");
+    const provenanceGraph = makeNamedGraphNode(nanopubUri, "provenance");
+    const pubinfoGraph = makeNamedGraphNode(nanopubUri, "pubinfo");
+    const headGraph = makeNamedGraphNode(nanopubUri, "Head");
 
     this.head = [
       quad(npNode, RDF_TYPE, NP_NANOPUBLICATION, headGraph),
@@ -94,17 +94,18 @@ export class NanopubClass implements Nanopub {
         privateKey: options.privateKey,
         orcid: options.orcid,
         name: options.name,
-        email: options.email ?? '',
+        email: options.email ?? "",
       };
     }
+
+    serialize(this, "trig").then((trig) => {
+      this._rdf = trig;
+    });
   }
 
-  private rehydrateFromSignedRdf(): void {
-    if (!this._signedRdf) throw new Error('No signed RDF');
-
-    const quads = parse(this._signedRdf, 'trig');
-
+  private hydrateFromQuads(quads: Quad[]): void {
     const graphs: Record<string, Quad[]> = {};
+
     for (const q of quads) {
       const g = q.graph.value;
       (graphs[g] ||= []).push(q);
@@ -113,81 +114,102 @@ export class NanopubClass implements Nanopub {
     const findGraph = (suffix: string) =>
       Object.entries(graphs).find(([g]) => g.endsWith(suffix))?.[1] ?? [];
 
-    this.head = findGraph('Head');
-    this.assertion = findGraph('assertion');
-    this.provenance = findGraph('provenance');
-    this.pubinfo = findGraph('pubinfo');
+    this.head = findGraph("Head");
+    this.assertion = findGraph("assertion");
+    this.provenance = findGraph("provenance");
+    this.pubinfo = findGraph("pubinfo");
+  }
+
+  private rehydrateFromSignedRdf(): void {
+    if (!this._rdf) throw new Error("No signed RDF");
+
+    const quads = parse(this._rdf, "trig");
+    this.hydrateFromQuads(quads);
   }
 
   async sign(): Promise<this> {
-    const { Nanopub: WasmNanopub, NpProfile } =
-      (await getNanopubSignModule()) as any;
-
-    if (!this.profile) {
-      if (!this._profileParams) {
-        throw new Error('Profile not set. Cannot sign nanopub.');
-      }
-
-      this.profile = new NpProfile(
-        this._profileParams.privateKey,
-        this._profileParams.orcid,
-        this._profileParams.name,
-        this._profileParams.email ?? ''
-      );
+    if (!this._profileParams) {
+      throw new Error("Profile not set. Cannot sign nanopub.");
     }
 
-    const trig = await serialize(this, 'trig');
+    const trig = await serialize(this, "trig");
 
-    const wasmNp = new WasmNanopub(trig);
+    const { signedRdf, sourceUri, signature } = await signRdf(
+      trig,
+      this._profileParams.privateKey,
+      this._profileParams.orcid,
+      this._profileParams.name
+    );
 
-    const signed = wasmNp.sign(this.profile);
-
-    this._signedRdf = signed.rdf();
-    this.sourceUri = signed.info().uri;
-    this.signature = signed.info().signature;
+    this._rdf = signedRdf;
+    this.sourceUri = sourceUri;
+    this.signature = signature;
 
     this.rehydrateFromSignedRdf();
-
     return this;
   }
 
   rdf(): string {
-    if (!this._signedRdf) throw new Error('Nanopub not signed yet');
-    return this._signedRdf;
+    if (!this._rdf) {
+      throw new Error("No RDF available.");
+    }
+    return this._rdf;
   }
 
   async hasValidSignature(): Promise<boolean> {
-    if (!this.signature || !this._signedRdf) return false;
+    if (!this.signature || !this._rdf) return false;
     try {
-      return verifySignature(this._signedRdf);
+      return verifySignature(this._rdf);
     } catch (err) {
-      console.error('signature verification failed:', err);
+      console.error("signature verification failed:", err);
       return false;
     }
   }
 
+  static fromRdf(
+    rdf: string,
+    format: "trig" | "turtle" | "jsonld" = "trig"
+  ): NanopubClass {
+    const np = new NanopubClass();
+
+    const quads = parse(rdf, format);
+    np.hydrateFromQuads(quads);
+
+    np._rdf = rdf;
+
+    const signatureQuad = quads.find((q) =>
+      q.predicate.value.endsWith("hasSignature")
+    );
+
+    if (!signatureQuad) {
+      np.signature = undefined;
+    }
+
+    return np;
+  }
+
   async publish(
-    server: string = 'https://query.knowledgepixels.com/'
+    server: string = TEST_NANOPUB_REGISTRY_URL
   ): Promise<{ uri: string; server: string; response: Response }> {
     // check if signed
-    if (!this._signedRdf) {
-      if (typeof this.sign === 'function') {
+    if (!this._rdf) {
+      if (typeof this.sign === "function") {
         await this.sign();
       } else {
-        throw new Error('Nanopub is not signed and cannot be signed');
+        throw new Error("Nanopub is not signed and cannot be signed");
       }
     }
 
     const rdf = this.rdf();
 
     const res = await fetch(server, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/trig' },
+      method: "POST",
+      headers: { "Content-Type": "application/trig" },
       body: rdf,
     });
 
     if (!res.ok) {
-      const text = await res.text().catch(() => '');
+      const text = await res.text().catch(() => "");
       throw new Error(
         `Nanopub publish failed: ${res.status} ${res.statusText}\n${text}`
       );
