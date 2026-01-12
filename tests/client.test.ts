@@ -133,6 +133,14 @@ describe("NanopubClient (unit)", () => {
     );
   });
 
+  it('throws on unsupported format', async () => {
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    await expect(
+      // @ts-expect-error testing invalid format
+      client.fetchNanopub('https://example.com/nanopub', 'gibberish')
+    ).rejects.toThrow('Unsupported format');
+  });
+
   it("findNanopubsWithText yields search results", async () => {
     const fakeResponse = {
       results: {

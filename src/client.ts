@@ -25,7 +25,11 @@ export class NanopubClient {
   async fetchNanopub(
     uri: string,
     format: 'trig' | 'jsonld' = 'trig',
-  ): Promise<any> {
+  ): Promise<string | Record<string, any>> {
+    if (format !== 'trig' && format !== 'jsonld') {
+      throw new Error(`Unsupported format: ${format}`);
+    }
+
     const accept =
       format === 'trig' ? 'application/trig' : 'application/ld+json';
 
@@ -36,13 +40,7 @@ export class NanopubClient {
       );
     }
 
-    if (format === 'trig') {
-      return await res.text();
-    }
-
-    if (format === 'jsonld') {
-      return await res.json();
-    }
+    return format === 'trig' ? await res.text() : await res.json();
   }
 
   /** Raw SPARQL query */
