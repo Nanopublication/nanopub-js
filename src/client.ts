@@ -1,3 +1,5 @@
+import { SparqlBindingValue, SparqlJsonResult } from "./types/types";
+
 const ENDPOINT_UUIDS: Record<string, string> = {
   findNanopubsWithText:
     'RAWruhiSmyzgZhVRs8QY8YQPAgHzTfl7anxII1de-yaCs/fulltext-search-on-labels',
@@ -25,7 +27,7 @@ export class NanopubClient {
   async fetchNanopub(
     uri: string,
     format: 'trig' | 'jsonld' = 'trig',
-  ): Promise<string | Record<string, any>> {
+  ): Promise<string | Record<string, unknown>> {
     if (format !== 'trig' && format !== 'jsonld') {
       throw new Error(`Unsupported format: ${format}`);
     }
@@ -47,14 +49,15 @@ export class NanopubClient {
   async querySparql(
     query: string,
     returnFormat: 'json' | 'csv' = 'json',
-  ): Promise<any> {
-    const endpoints = ['https://query.knowledgepixels.com/repo/full']; // Override for SPARQL queries
+  ): Promise<Record<string, string>[] | string> {
+    const endpoints = ['https://query.knowledgepixels.com/repo/full'];
     let error;
+  
     for (const endpoint of endpoints) {
       try {
         const url = new URL(endpoint);
         url.searchParams.append('query', query);
-
+  
         const res = await fetch(url.toString(), {
           headers: {
             Accept:
@@ -63,23 +66,20 @@ export class NanopubClient {
                 : 'text/csv',
           },
         });
-
-        // if (!res.ok) throw new Error(`SPARQL query failed: ${res.status} ${res.statusText}`);
+  
         if (!res.ok) {
-          if (res.status >= 400 && res.status < 500) {
-            return []; // Return empty result for 404
-          }
-          error = new Error(
-            `SPARQL query failed: ${res.status} ${res.statusText}`,
-          );
+          if (res.status >= 400 && res.status < 500) return [];
+          error = new Error(`SPARQL query failed: ${res.status} ${res.statusText}`);
           throw error;
         }
-
+  
         if (returnFormat === 'json') {
-          const data = await res.json();
-          return data.results.bindings.map((row: any) => {
+          const data: SparqlJsonResult = await res.json();
+          return data.results.bindings.map((row) => {
             const obj: Record<string, string> = {};
-            Object.entries(row).forEach(([k, v]: any) => (obj[k] = v.value));
+            Object.entries(row).forEach(([k, v]) => {
+              obj[k] = v.value;
+            });
             return obj;
           });
         } else {
@@ -89,8 +89,10 @@ export class NanopubClient {
         console.warn(`SPARQL query failed on ${endpoint}: ${e}`);
       }
     }
+  
     throw new Error('SPARQL query failed on all nanopub endpoints');
   }
+  
 
   /** Text search */
   async *findNanopubsWithText(
@@ -180,7 +182,7 @@ export class NanopubClient {
         for (const row of data.results.bindings) {
           const parsed: Record<string, string> = {};
           for (const [k, v] of Object.entries(row)) {
-            parsed[k] = (v as any).value;
+            parsed[k] = (v as SparqlBindingValue).value;
           }
           yield parsed;
         }

@@ -47,7 +47,7 @@ export interface QueryTextOptions {
 
 export interface QueryTemplateOptions {
   template: string;
-  params?: Record<string, any>;
+  params?: Record<string, unknown>;
   limit?: number;
   offset?: number;
 }
@@ -59,3 +59,17 @@ export interface QuerySPARQLOptions {
 }
 
 export type QueryOptions = QueryTextOptions | QueryTemplateOptions | QuerySPARQLOptions;
+
+export type SparqlBindingValue = {
+  type: string;
+  value: string;
+  'xml:lang'?: string;
+  datatype?: string;
+};
+
+export type SparqlBinding = Record<string, SparqlBindingValue>;
+
+export type SparqlJsonResult = {
+  head: { vars: string[] };
+  results: { bindings: SparqlBinding[] };
+};

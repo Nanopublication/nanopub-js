@@ -1,4 +1,4 @@
-import { DataFactory, Quad, NamedNode } from "n3";
+import { DataFactory, NamedNode } from "n3";
 const { namedNode } = DataFactory;
 
 export function makeNamedGraphNode(npUri: string, suffix: string): NamedNode {
