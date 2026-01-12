@@ -60,7 +60,7 @@ export class NanopubClient {
             return []; // Return empty result for 404
           }
           error = new Error(`SPARQL query failed: ${res.status} ${res.statusText}`);
-          return error;
+          throw error;
         }
 
         if (returnFormat === 'json') {

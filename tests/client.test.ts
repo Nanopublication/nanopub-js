@@ -38,21 +38,46 @@ describe("NanopubClient (unit)", () => {
     expect(results[0]).toEqual({ s: "s", p: "p", o: "o" });
   });
 
+  it("querySparql returns empty array on 404", async () => {
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 404,
+      statusText: "Not Found",
+    });
+
+    const client = new NanopubClient();
+    const result = await client.querySparql("SELECT * WHERE {?s ?p ?o}");
+
+    expect(result).toEqual([]);
+  });
+
+  it("querySparql throws on 500", async () => {
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      statusText: "Server Error",
+    });
+
+    const client = new NanopubClient();
+    expect(client.querySparql("SELECT * WHERE {?s ?p ?o}")).rejects.toThrow(
+      /SPARQL query failed/
+    );
+  });
+
   it("fetchNanopub returns JSON-LD when format='jsonld'", async () => {
-    const jsonldData = { "@id": "s", "p": "o" };
+    const jsonldData = { "@id": "s", p: "o" };
     fetchMock.mockResolvedValueOnce({
       ok: true,
-      json: async () => jsonldData
+      json: async () => jsonldData,
     });
-  
+
     const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
     const np = await client.fetchNanopub("https://mock.org/np1", "jsonld");
-  
+
     expect(np).toEqual(jsonldData);
     expect(typeof np).toBe("object");
   });
-  
-  
+
   it("fetchNanopub returns raw TRiG text when format='trig' (default)", async () => {
     const trigData = `
       <s#assertion> {
@@ -67,16 +92,46 @@ describe("NanopubClient (unit)", () => {
     `;
     fetchMock.mockResolvedValueOnce({
       ok: true,
-      text: async () => trigData
+      text: async () => trigData,
     });
-  
+
     const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
     const np = await client.fetchNanopub("https://mock.org/np1");
-  
+
     expect(np).toBe(trigData);
     expect(typeof np).toBe("string");
   });
-  
+
+  it("fetchNanopub throws on non-OK response", async () => {
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 404,
+      statusText: "Not Found",
+    });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+
+    await expect(client.fetchNanopub("https://mock.org/np404")).rejects.toThrow(
+      /Failed to fetch nanopub/
+    );
+  });
+
+  it("fetchNanopub sends correct Accept header", async () => {
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      text: async () => "trig",
+    });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    await client.fetchNanopub("https://mock.org/np1", "trig");
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://mock.org/np1",
+      expect.objectContaining({
+        headers: { Accept: "application/trig" },
+      })
+    );
+  });
 
   it("findNanopubsWithText yields search results", async () => {
     const fakeResponse = {
@@ -126,5 +181,4 @@ describe("NanopubClient (unit)", () => {
     const retractions = await client.findRetractionsOf("uri1");
     expect(retractions).toContain("np3");
   });
-
 });
