@@ -181,4 +181,30 @@ describe("NanopubClient (unit)", () => {
     const retractions = await client.findRetractionsOf("uri1");
     expect(retractions).toContain("np3");
   });
+
+  it("_search yields nothing on empty bindings", async () => {
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ results: { bindings: [] } }),
+    });
+  
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+  
+    const results: Record<string, string>[] = [];
+    for await (const r of client.findThings("type")) results.push(r);
+  
+    expect(results).toEqual([]);
+  });
+
+  it("_search swallows fetch errors and yields nothing", async () => {
+    fetchMock.mockRejectedValueOnce(new Error("network down"));
+  
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+  
+    const results: Record<string, string>[] = [];
+    for await (const r of client.findThings("type")) results.push(r);
+  
+    expect(results).toEqual([]);
+  });
+
 });
