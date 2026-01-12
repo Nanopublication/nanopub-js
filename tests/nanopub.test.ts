@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NanopubClass, serialize, parse } from "../src/index";
 import { NamedNode, Quad, Literal } from "n3";
 import { generateKeyPairSync } from "crypto";
@@ -101,6 +101,24 @@ describe("Nanopub class", () => {
     const ok = await signed.hasValidSignature();
     expect(ok).toBeTruthy();
   });
+
+  it("hasValidSignature returns false if not signed", async () => {
+    const np = new NanopubClass({
+      assertion: assertionQuads,
+    });
+  
+    const ok = await np.hasValidSignature();
+    expect(ok).toBe(false);
+  });
+
+  it("throws when signing without profile params", async () => {
+    const np = new NanopubClass({
+      assertion: assertionQuads,
+    });
+  
+    await expect(np.sign()).rejects.toThrow(/Profile not set/);
+  });
+  
   it("publishes the nanopub", async () => {
     const TEST_ENDPOINT = "https://test.registry.knowledgepixels.com/np/";
 
@@ -113,6 +131,39 @@ describe("Nanopub class", () => {
     expect(result.response.ok).toBeTruthy();
     expect(np.signature).toBeDefined();
   }, 20000);
+
+  it("publish throws on server error", async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      statusText: "Bad Request",
+      text: async () => "invalid nanopub",
+    });
+  
+    await np.sign();
+  
+    await expect(
+      np.publish("https://mock.registry/np/")
+    ).rejects.toThrow(/Nanopub publish failed/);
+  });  
+
+  it("auto-generates provenance when none is provided", () => {
+    const np = new NanopubClass({
+      assertion: assertionQuads,
+    });
+  
+    expect(np.provenance.length).toBe(1);
+    expect(np.provenance[0].predicate.value)
+      .toContain("generatedAtTime");
+  });
+
+  it("auto-generates pubinfo when none is provided", () => {
+    const np = new NanopubClass({
+      assertion: assertionQuads,
+    });
+  
+    expect(np.pubinfo.length).toBe(1);
+  });
 
   describe("NanopubClass.fromRdf", () => {
     let signedNp: NanopubClass;
@@ -159,5 +210,14 @@ describe("Nanopub class", () => {
 
       expect(npFromUnsigned.rdf()).toBe(unsignedTrig);
     });
+    
+    it("handles invalid RDF gracefully", () => {
+      const np = NanopubClass.fromRdf("this is not rdf");
+    
+      expect(np.assertion).toEqual([]);
+      expect(np.provenance).toEqual([]);
+      expect(np.pubinfo).toEqual([]);
+    });
+    
   });
 });
