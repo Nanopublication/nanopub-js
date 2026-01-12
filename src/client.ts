@@ -1,4 +1,4 @@
-import type { Nanopub } from './types';
+import type { Nanopub } from './types/types';
 
 const ENDPOINT_UUIDS: Record<string, string> = {
   findNanopubsWithText: 'RAWruhiSmyzgZhVRs8QY8YQPAgHzTfl7anxII1de-yaCs/fulltext-search-on-labels',

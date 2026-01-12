@@ -1,6 +1,6 @@
 import { Writer, Parser, Quad } from 'n3';
 import { DEFAULT_NANOPUB_URI } from './constants';
-import { Nanopub } from './types';
+import { Nanopub } from './types/types';
 
 export function serialize(
   np: Nanopub,

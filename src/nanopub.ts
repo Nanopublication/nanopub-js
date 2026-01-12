@@ -1,10 +1,9 @@
-import { NanopubOptions, Nanopub } from "./types";
-import { Parser, Quad, DataFactory } from "n3";
+import { NanopubOptions, Nanopub } from "./types/types";
+import { Quad, DataFactory } from "n3";
 import { serialize, parse } from "./serialize";
 import type { NpProfile } from "@nanopub/sign";
 import { verifySignature, sign as signRdf } from "./sign";
-import { getNanopubSignModule } from "./wasm";
-import { makeNamedGraphNode } from "./utils";
+import { makeNamedGraphNode } from "./utils/utils";
 import { DEFAULT_NANOPUB_URI, TEST_NANOPUB_REGISTRY_URL } from "./constants";
 
 const { namedNode, quad, literal } = DataFactory;
@@ -98,9 +97,6 @@ export class NanopubClass implements Nanopub {
       };
     }
 
-    serialize(this, "trig").then((trig) => {
-      this._rdf = trig;
-    });
   }
 
   private hydrateFromQuads(quads: Quad[]): void {
@@ -154,6 +150,12 @@ export class NanopubClass implements Nanopub {
       throw new Error("No RDF available.");
     }
     return this._rdf;
+  }
+
+  async serialize(
+    format: "trig" | "turtle" = "trig"
+  ): Promise<string> {
+    return serialize(this, format);
   }
 
   async hasValidSignature(): Promise<boolean> {

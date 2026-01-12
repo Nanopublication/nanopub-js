@@ -1,9 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { NanopubClass, serialize, parse } from "../src/index";
-import { NamedNode, Quad, DefaultGraph, Literal } from "n3";
+import { NamedNode, Quad, Literal } from "n3";
 import { generateKeyPairSync } from "crypto";
-import { makeNamedGraphNode } from "../src/utils";
-import { Nanopub as WasmNanopub } from "@nanopub/sign";
+import { makeNamedGraphNode } from "../src/utils/utils";
 import { DEFAULT_NANOPUB_URI } from "../src/constants";
 
 describe("Nanopub class", () => {

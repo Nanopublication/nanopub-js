@@ -1,4 +1,4 @@
-import { getNanopubSignModule } from "./wasm";
+import { getNanopubSignModule } from "./utils/wasm";
 
 /**
  * Eagerly initialize `@nanopub/sign` for browser usage.
