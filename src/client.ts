@@ -1,31 +1,39 @@
-import type { Nanopub } from './types/types';
-
 const ENDPOINT_UUIDS: Record<string, string> = {
-  findNanopubsWithText: 'RAWruhiSmyzgZhVRs8QY8YQPAgHzTfl7anxII1de-yaCs/fulltext-search-on-labels',
-  findValidNanopubsWithText: 'RAMJaSqIk4-qgCud7Kf-ltdE3i8DVP239uQv-BiTGvwUU/fulltext-search-on-labels-all',
-  findNanopubsWithPattern: 'RAuE9jU8LLwco-iJHiNjzQgEHfx5j-XkbzlutT59cQYiU/find_nanopubs_with_pattern',
-  findValidNanopubsWithPattern: 'RAIDPTdWRrYy-TOcdEVmGi7JHwn8fBriVphmsCy3mn4r0/find_valid_nanopubs_with_pattern',
+  findNanopubsWithText:
+    'RAWruhiSmyzgZhVRs8QY8YQPAgHzTfl7anxII1de-yaCs/fulltext-search-on-labels',
+  findValidNanopubsWithText:
+    'RAMJaSqIk4-qgCud7Kf-ltdE3i8DVP239uQv-BiTGvwUU/fulltext-search-on-labels-all',
+  findNanopubsWithPattern:
+    'RAuE9jU8LLwco-iJHiNjzQgEHfx5j-XkbzlutT59cQYiU/find_nanopubs_with_pattern',
+  findValidNanopubsWithPattern:
+    'RAIDPTdWRrYy-TOcdEVmGi7JHwn8fBriVphmsCy3mn4r0/find_valid_nanopubs_with_pattern',
   findThings: 'RA99xFu2qrCrpOYc1zc7h0SYV4m6Z4OE530dguEhYeoOM/find-things',
-  findValidThings: 'RARqGauUpDMEA1o4KBSKC8AeP694qJjpbf7x7FOWHDfM8/find-valid-things',
+  findValidThings:
+    'RARqGauUpDMEA1o4KBSKC8AeP694qJjpbf7x7FOWHDfM8/find-valid-things',
 };
 
 export class NanopubClient {
   endpoints: string[];
 
   constructor(config?: { endpoints?: string[] }) {
-    this.endpoints = config?.endpoints ?? ['https://query.knowledgepixels.com/'];
+    this.endpoints = config?.endpoints ?? [
+      'https://query.knowledgepixels.com/',
+    ];
   }
 
   /** Fetch a nanopub by URI in the requested format */
-  async fetchNanopub(uri: string, format: 'trig' | 'jsonld' = 'trig'): Promise<any> {
+  async fetchNanopub(
+    uri: string,
+    format: 'trig' | 'jsonld' = 'trig',
+  ): Promise<any> {
     const accept =
-      format === 'trig'
-        ? 'application/trig'
-        : 'application/ld+json';
+      format === 'trig' ? 'application/trig' : 'application/ld+json';
 
     const res = await fetch(uri, { headers: { Accept: accept } });
     if (!res.ok) {
-      throw new Error(`Failed to fetch nanopub: ${res.status} ${res.statusText}`);
+      throw new Error(
+        `Failed to fetch nanopub: ${res.status} ${res.statusText}`,
+      );
     }
 
     if (format === 'trig') {
@@ -36,10 +44,13 @@ export class NanopubClient {
       return await res.json();
     }
   }
-  
+
   /** Raw SPARQL query */
-  async querySparql(query: string, returnFormat: 'json' | 'csv' = 'json'): Promise<any> {
-    const endpoints = ['https://query.knowledgepixels.com/repo/full'] // Override for SPARQL queries
+  async querySparql(
+    query: string,
+    returnFormat: 'json' | 'csv' = 'json',
+  ): Promise<any> {
+    const endpoints = ['https://query.knowledgepixels.com/repo/full']; // Override for SPARQL queries
     let error;
     for (const endpoint of endpoints) {
       try {
@@ -48,10 +59,11 @@ export class NanopubClient {
 
         const res = await fetch(url.toString(), {
           headers: {
-            Accept: returnFormat === 'json'
-              ? 'application/sparql-results+json'
-              : 'text/csv'
-          }
+            Accept:
+              returnFormat === 'json'
+                ? 'application/sparql-results+json'
+                : 'text/csv',
+          },
         });
 
         // if (!res.ok) throw new Error(`SPARQL query failed: ${res.status} ${res.statusText}`);
@@ -59,7 +71,9 @@ export class NanopubClient {
           if (res.status >= 400 && res.status < 500) {
             return []; // Return empty result for 404
           }
-          error = new Error(`SPARQL query failed: ${res.status} ${res.statusText}`);
+          error = new Error(
+            `SPARQL query failed: ${res.status} ${res.statusText}`,
+          );
           throw error;
         }
 
@@ -67,13 +81,12 @@ export class NanopubClient {
           const data = await res.json();
           return data.results.bindings.map((row: any) => {
             const obj: Record<string, string> = {};
-            Object.entries(row).forEach(([k, v]: any) => obj[k] = v.value);
+            Object.entries(row).forEach(([k, v]: any) => (obj[k] = v.value));
             return obj;
           });
         } else {
           return await res.text();
         }
-
       } catch (e) {
         console.warn(`SPARQL query failed on ${endpoint}: ${e}`);
       }
@@ -85,18 +98,18 @@ export class NanopubClient {
   async *findNanopubsWithText(
     text: string,
     pubkey?: string,
-    filterRetracted = true
+    filterRetracted = true,
   ) {
     if (!text) return;
 
-    const endpoint = filterRetracted
-      ? 'findValidNanopubsWithText'
-      : 'findNanopubsWithText';
+    const queryId = filterRetracted
+      ? ENDPOINT_UUIDS.findValidNanopubsWithText
+      : ENDPOINT_UUIDS.findNanopubsWithText;
 
     const params: Record<string, string> = { query: text };
     if (pubkey) params.pubkey = pubkey;
 
-    yield* this._search(endpoint, params);
+    yield* this._search(queryId, params);
   }
 
   /** Pattern search (subj, pred, obj) */
@@ -105,11 +118,11 @@ export class NanopubClient {
     pred?: string,
     obj?: string,
     pubkey?: string,
-    filterRetracted = true
+    filterRetracted = true,
   ) {
-    const endpoint = filterRetracted
-      ? 'findValidNanopubsWithPattern'
-      : 'findNanopubsWithPattern';
+    const queryId = filterRetracted
+      ? ENDPOINT_UUIDS.findValidNanopubsWithPattern
+      : ENDPOINT_UUIDS.findNanopubsWithPattern;
 
     const params: Record<string, string> = {};
     if (subj) params.subj = subj;
@@ -117,7 +130,7 @@ export class NanopubClient {
     if (obj) params.obj = obj;
     if (pubkey) params.pubkey = pubkey;
 
-    yield* this._search(endpoint, params);
+    yield* this._search(queryId, params);
   }
 
   /** Find "things" (concepts) */
@@ -125,13 +138,19 @@ export class NanopubClient {
     type: string,
     searchTerm = '*:*',
     pubkey?: string,
-    filterRetracted = true
+    filterRetracted = true,
   ) {
-    const endpoint = filterRetracted ? 'findValidThings' : 'findThings';
-    const params: Record<string, string> = { type, query: searchTerm };
+    const queryId = filterRetracted
+      ? ENDPOINT_UUIDS.findValidThings
+      : ENDPOINT_UUIDS.findThings;
+
+    const params: Record<string, string> = {
+      type,
+      query: searchTerm,
+    };
     if (pubkey) params.pubkey = pubkey;
 
-    yield* this._search(endpoint, params);
+    yield* this._search(queryId, params);
   }
 
   /** Find retractions of a nanopub URI */
@@ -140,7 +159,7 @@ export class NanopubClient {
     for await (const np of this.findNanopubsWithPattern(
       undefined,
       'http://www.nanopub.org/nschema#retracts',
-      uri
+      uri,
     )) {
       results.push(np.np);
     }
@@ -148,12 +167,9 @@ export class NanopubClient {
   }
 
   /** Internal generic search */
-  private async *_search(endpointKey: string, params: Record<string, string>) {
-    const uuidPath = ENDPOINT_UUIDS[endpointKey];
-    if (!uuidPath) throw new Error(`Unknown endpoint key ${endpointKey}`);
-
+  private async *_search(queryId: string, params: Record<string, string> = {}) {
     for (const baseUrl of this.endpoints) {
-      const url = new URL(`api/${uuidPath}`, baseUrl);
+      const url = new URL(`api/${queryId}`, baseUrl);
       Object.entries(params).forEach(([k, v]) => url.searchParams.append(k, v));
 
       try {
@@ -165,12 +181,21 @@ export class NanopubClient {
         const data = await res.json();
         for (const row of data.results.bindings) {
           const parsed: Record<string, string> = {};
-          for (const [k, v] of Object.entries(row)) parsed[k] = (v as any).value;
+          for (const [k, v] of Object.entries(row)) {
+            parsed[k] = (v as any).value;
+          }
           yield parsed;
         }
       } catch (e) {
         console.warn(`Search failed on ${url.toString()}: ${e}`);
       }
     }
+  }
+
+  async *runQueryTemplate(
+    queryId: string,
+    params: Record<string, string> = {},
+  ) {
+    yield* this._search(queryId, params);
   }
 }

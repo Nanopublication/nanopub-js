@@ -94,4 +94,75 @@ describe("NanopubClient (integration)", () => {
     );
     expect(Array.isArray(retractions)).toBe(true);
   }, 20000);
+
+  it("runQueryTemplate runs get-news-content query", async () => {
+    const client = new NanopubClient({ endpoints: [ENDPOINT] });
+
+    const queryId =
+      "RAOGCU2nQzZ0aE2iXwJ20jJtnZsjVR0pfFg0qlSxYtBIA/get-news-content";
+
+    const params = {
+      resource: "https://w3id.org/spaces/knowledgepixels",
+    };
+
+    const results: Record<string, string>[] = [];
+    for await (const row of client.runQueryTemplate(queryId, params)) {
+      results.push(row);
+      break;
+    }
+
+    expect(Array.isArray(results)).toBe(true);
+  }, 20000);
+
+  it("runQueryTemplate runs get-spaces query", async () => {
+    const client = new NanopubClient({ endpoints: [ENDPOINT] });
+
+    const queryId = "RAf0Apox1sbJRC0ZBrqS9wtYccLFJ_5VLq-u4rJy5WbnA/get-spaces";
+
+    const params = {
+      type: "https://w3id.org/kpxl/gen/terms/Organization",
+    };
+
+    const results: Record<string, string>[] = [];
+    for await (const row of client.runQueryTemplate(queryId, params)) {
+      results.push(row);
+      break;
+    }
+
+    expect(Array.isArray(results)).toBe(true);
+  }, 20000);
+
+  it("runQueryTemplate returns empty results if required params are missing", async () => {
+    const client = new NanopubClient({ endpoints: [ENDPOINT] });
+
+    const queryId =
+      "RAOGCU2nQzZ0aE2iXwJ20jJtnZsjVR0pfFg0qlSxYtBIA/get-news-content";
+
+    const results: Record<string, string>[] = [];
+    for await (const row of client.runQueryTemplate(queryId, {})) {
+      results.push(row);
+    }
+
+    expect(Array.isArray(results)).toBe(true);
+    expect(results.length).toBe(0);
+  }, 20000);
+
+  it("runQueryTemplate ignores unknown params and returns all results", async () => {
+    const client = new NanopubClient({ endpoints: [ENDPOINT] });
+
+    const queryId = "RAf0Apox1sbJRC0ZBrqS9wtYccLFJ_5VLq-u4rJy5WbnA/get-spaces";
+
+    const params = {
+      notARealParam: "https://w3id.org/kpxl/gen/terms/Organization",
+    };
+
+    const results: Record<string, string>[] = [];
+    for await (const row of client.runQueryTemplate(queryId, params)) {
+      results.push(row);
+      break;
+    }
+
+    expect(Array.isArray(results)).toBe(true);
+    expect(results.length).toBeGreaterThan(0);
+  });
 });
