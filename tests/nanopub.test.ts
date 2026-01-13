@@ -19,7 +19,7 @@ describe("Nanopub class", () => {
   const pubinfoGraph = makeNamedGraphNode(nanopubUri, "pubinfo");
 
   beforeEach(() => {
-    const { privateKey, publicKey } = generateKeyPairSync("rsa", {
+    const { privateKey } = generateKeyPairSync("rsa", {
       modulusLength: 2048,
       publicKeyEncoding: { type: "spki", format: "pem" },
       privateKeyEncoding: { type: "pkcs8", format: "pem" },

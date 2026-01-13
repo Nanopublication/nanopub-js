@@ -1,12 +1,12 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NanopubClient } from "../src/client";
+import { afterEach } from "node:test";
 
 describe("NanopubClient (unit)", () => {
-  let fetchMock: any;
+  let fetchMock;
 
   beforeEach(() => {
     fetchMock = vi.fn();
-    // @ts-ignore
     global.fetch = fetchMock;
   });
 

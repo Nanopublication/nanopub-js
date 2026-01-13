@@ -22,7 +22,7 @@ export default defineConfig({
         "*.config.{ts,js}"
       ],    },
     deps: {
-      inline: ["@nanopub/sign", "/\?url$/"], 
+      inline: ["@nanopub/sign", "/?url$/"], 
       
     },
     poolOptions: {

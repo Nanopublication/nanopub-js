@@ -1,13 +1,6 @@
-import { DataFactory } from "n3";
-import { describe, it, expect, beforeEach } from "vitest";
-import { NanopubClass } from "../src/nanopub";
+import { describe, it, expect, } from "vitest";
 import { NanopubClient } from "../src/client";
-import { NamedNode, Quad, Literal } from "n3";
-import { generateKeyPairSync } from "crypto";
-import { makeNamedGraphNode } from "../src/utils/utils";
-import { DEFAULT_NANOPUB_URI } from "../src/constants";
 
-const { namedNode, literal, quad } = DataFactory;
 const ENDPOINT = "https://query.knowledgepixels.com/";
 
 describe("NanopubClient (integration)", () => {
