@@ -11,7 +11,7 @@
     "watch": "tsc --watch",
     "start": "node dist/index.js",
     "test": "vitest",
-    "prepare": "npm run build",
+    "prepare": "yarn run build",
     "lint": "eslint ."
   },
   "devDependencies": {
