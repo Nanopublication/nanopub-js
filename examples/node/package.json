@@ -1,0 +1,12 @@
+{
+  "name": "nanopub-js-node-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "nanopub-js": "portal:../..",
+    "picocolors": "^1.1.1"
+  }
+}

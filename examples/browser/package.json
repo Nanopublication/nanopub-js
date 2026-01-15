@@ -1,0 +1,14 @@
+{
+  "name": "nanopub-js-browser-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "nanopub-js": "portal:../.."
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

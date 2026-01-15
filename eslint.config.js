@@ -10,6 +10,8 @@ export default defineConfig(
     'coverage/**',
     '.yarn/**',
     '.cache/**',
+    'examples/browser/**',
+    'examples/node/**',
   ])],
   eslint.configs.recommended,
   tseslint.configs.recommended,

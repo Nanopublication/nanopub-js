@@ -15,6 +15,7 @@ export default defineConfig({
         "node_modules/**",
         "dist/**",
         "tests/**",
+        "examples/**",
         "src/types",
         "src/utils/wasm.ts",
         "src/validate.ts", // TEMP excluding until validate is implemented

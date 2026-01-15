@@ -1,0 +1,125 @@
+:root {
+  --brand: #0b73da;
+  --brand-soft: #f3f6f9;
+  --text: #222;
+  --muted: #666;
+  --border: #ddd;
+
+  --assertion: #ffbb00;
+  --provenance: #8d3b72;
+  --pubinfo: #325981;
+
+  --radius: 6px;
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 32px;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  font-size: 12pt;
+  color: var(--text);
+  background: white;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+
+h1,
+h2,
+h3 {
+  font-family: Martian, ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+}
+
+h1 {
+  font-size: 22pt;
+}
+
+p {
+  margin: 0 0 16px 0;
+  color: var(--muted);
+}
+
+input {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 12pt;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: 16em;
+  box-sizing: border-box;
+  margin: 1em;
+  margin-right: 0.5em;
+}
+
+button {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 12pt;
+  font-weight: 700;
+  padding: 8px 16px;
+  background: var(--brand);
+  color: white;
+  border: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+button:hover {
+  background: color-mix(in srgb, var(--brand) 85%, white);
+}
+
+pre {
+  margin-top: 24px;
+  padding: 16px;
+  background: var(--brand-soft);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-family: Martian, ui-monospace, monospace;
+  font-size: 10.5pt;
+  color: #444;
+}
+
+code {
+  font-family: Martian, ui-monospace, monospace;
+  background: #00000008;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.nanopub {
+  margin-top: 24px;
+  padding: 16px;
+  background: var(--brand-soft);
+  border-radius: var(--radius);
+  font-size: 11pt;
+}
+
+.nanopub h3 {
+  margin: 0 0 12px 0;
+  font-size: 14pt;
+}
+
+.nanopub-section {
+  margin-top: 12px;
+  padding-left: 12px;
+  border-left: 6px solid var(--border);
+}
+
+a {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+a:hover {
+  color: color-mix(in srgb, var(--brand) 75%, white);
+}
