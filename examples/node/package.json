@@ -6,7 +6,7 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "nanopub-js": "portal:../..",
+    "@nanopub/nanopub-js": "^0.1.0",
     "picocolors": "^1.1.1"
   }
 }

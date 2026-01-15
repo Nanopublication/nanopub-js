@@ -5,6 +5,19 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
+"@nanopub/nanopub-js@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@nanopub/nanopub-js@npm:0.1.0"
+  dependencies:
+    "@nanopub/sign": "npm:^0.1.10"
+    "@rdfjs/data-model": "npm:^2.1.1"
+    n3: "npm:^1.26.0"
+    rdf-canonize: "npm:^4.0.1"
+    rdf-js: "npm:^4.0.2"
+  checksum: 10c0/ca9358fdd78b9b423dec36ac5e255d6b1f8288788bc991edbc6ef48ad254c22d623530161d454b98e92940cbef537fb222f22e5136f63486cd2d36bfe8079400
+  languageName: node
+  linkType: hard
+
 "@nanopub/sign@npm:^0.1.10":
   version: 0.1.10
   resolution: "@nanopub/sign@npm:0.1.10"
@@ -100,21 +113,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nanopub-js-node-example@workspace:."
   dependencies:
-    nanopub-js: "portal:../.."
+    "@nanopub/nanopub-js": "npm:^0.1.0"
     picocolors: "npm:^1.1.1"
   languageName: unknown
-  linkType: soft
-
-"nanopub-js@portal:../..::locator=nanopub-js-node-example%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "nanopub-js@portal:../..::locator=nanopub-js-node-example%40workspace%3A."
-  dependencies:
-    "@nanopub/sign": "npm:^0.1.10"
-    "@rdfjs/data-model": "npm:^2.1.1"
-    n3: "npm:^1.26.0"
-    rdf-canonize: "npm:^4.0.1"
-    rdf-js: "npm:^4.0.2"
-  languageName: node
   linkType: soft
 
 "picocolors@npm:^1.1.1":

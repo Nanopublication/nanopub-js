@@ -1,5 +1,4 @@
-import { NanopubClass } from 'nanopub-js';
-import { NanopubClient } from 'nanopub-js';
+import { NanopubClass, NanopubClient } from '@nanopub/nanopub-js';
 
 let nanopub;
 

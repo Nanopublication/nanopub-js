@@ -1,5 +1,5 @@
 import pc from 'picocolors';
-import { NanopubClass, NanopubClient } from 'nanopub-js';
+import { NanopubClass, NanopubClient } from '@nanopub/nanopub-js';
 
 async function main() {
   console.log(pc.yellow('Creating nanopub…'));

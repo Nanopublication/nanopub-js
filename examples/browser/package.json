@@ -6,7 +6,7 @@
     "dev": "vite"
   },
   "dependencies": {
-    "nanopub-js": "portal:../.."
+    "@nanopub/nanopub-js": "^0.1.0"
   },
   "devDependencies": {
     "vite": "^5.0.0"
