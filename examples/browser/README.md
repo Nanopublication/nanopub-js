@@ -8,7 +8,6 @@ This example shows how to use `nanopub-js` in a browser environment.
 cd examples/browser
 
 # Install dependencies
-
 yarn install
 # or
 npm install
