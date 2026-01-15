@@ -170,12 +170,27 @@ describe("Nanopub class", () => {
     let trigRdf: string;
 
     beforeEach(async () => {
+      const { privateKey } = generateKeyPairSync('rsa', {
+        modulusLength: 2048,
+        publicKeyEncoding: { type: 'spki', format: 'pem' },
+        privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+      });
+
+      privateKeyBase64 = privateKey
+        .replace('-----BEGIN PRIVATE KEY-----', '')
+        .replace('-----END PRIVATE KEY-----', '')
+        .replace(/\r?\n|\r/g, '');
+
       signedNp = await np.sign();
       trigRdf = signedNp.rdf();
     });
 
-    it("loads nanopub from RDF without losing graphs", () => {
-      const npFromRdf = NanopubClass.fromRdf(trigRdf);
+    it('loads nanopub from RDF without losing graphs', () => {
+      npFromRdf = NanopubClass.fromRdf(trigRdf, 'trig', {
+        name: 'Hello from nanopub-js',
+        orcid: 'https://orcid.org/0000-0000-0000-0000',
+        privateKey: privateKeyBase64,
+      });
 
       expect(npFromRdf.head.length).toBeGreaterThan(0);
       expect(npFromRdf.assertion.length).toBe(np.assertion.length);
@@ -185,23 +200,23 @@ describe("Nanopub class", () => {
       expect(npFromRdf.rdf()).toBe(trigRdf);
     });
 
-    it("can be re-signed after loading", async () => {
-      const npFromRdf = NanopubClass.fromRdf(trigRdf);
-
-      npFromRdf["_profileParams"] = {
-        privateKey: np["_profileParams"]!.privateKey,
-        orcid: np["_profileParams"]!.orcid,
-        name: np["_profileParams"]!.name,
-        email: np["_profileParams"]!.email,
-      };
-
+    it('can be signed after loading', async () => {
       const signed = await npFromRdf.sign();
       expect(signed.signature).toBeDefined();
       expect(signed.sourceUri).toBeDefined();
     });
 
-    it("works for unsigned RDF", async () => {
-      const unsignedTrig = await serialize(np, "trig");
+    it('publishes loaded nanopub', async () => {
+      const TEST_ENDPOINT = 'https://test.registry.knowledgepixels.com/np/';
+      const result = await npFromRdf.publish(TEST_ENDPOINT);
+
+      expect(result.uri).toBeDefined();
+      expect(result.server).toBe(TEST_ENDPOINT);
+      expect(result.response.ok).toBeTruthy();
+    });
+
+    it('works for unsigned RDF', async () => {
+      const unsignedTrig = await serialize(np, 'trig');
       const npFromUnsigned = NanopubClass.fromRdf(unsignedTrig);
 
       expect(npFromUnsigned.assertion.length).toBe(np.assertion.length);

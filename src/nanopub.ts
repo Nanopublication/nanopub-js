@@ -170,9 +170,10 @@ export class NanopubClass implements Nanopub {
 
   static fromRdf(
     rdf: string,
-    format: "trig" | "turtle" | "jsonld" = "trig"
+    format: "trig" | "turtle" | "jsonld" = "trig",
+    options?: NanopubOptions
   ): NanopubClass {
-    const np = new NanopubClass();
+    const np = new NanopubClass({ options });
 
     const quads = parse(rdf, format);
     np.hydrateFromQuads(quads);
