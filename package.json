@@ -1,11 +1,25 @@
 {
-  "name": "nanopub-js",
-  "version": "0.0.1",
+  "name": "@nanopub/nanopub-js",
+  "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
   "packageManager": "yarn@4.6.0",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nanopublication/nanopub-js"
+  },
+  "license": "MIT",
   "scripts": {
     "build": "vite build",
     "watch": "tsc --watch",
