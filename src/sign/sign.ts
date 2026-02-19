@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Term, Quad_Subject, Quad_Predicate, Quad_Object, Quad_Graph } from '@rdfjs/types';
 import { DataFactory, Store } from 'n3';
 import { getCryptoAdapter } from "./crypto";
 import { parse, serialize } from '../serialize';
@@ -18,7 +18,7 @@ function replaceNanopubUri(dataset: Store, oldBase: string, newBase: string): St
   const newBaseWithSlash = newBaseNoSlash + '/';
 
   for (const q of dataset) {
-    const rewrite = (term: any): any => {
+    const rewrite = (term: Term): Term => {
       if (term.termType === 'NamedNode') {
         const val = term.value;
 
@@ -39,7 +39,12 @@ function replaceNanopubUri(dataset: Store, oldBase: string, newBase: string): St
       }
       return term;
     };
-    out.addQuad(quad(rewrite(q.subject), rewrite(q.predicate), rewrite(q.object), rewrite(q.graph)));
+    out.addQuad(quad(
+      rewrite(q.subject) as Quad_Subject,
+      rewrite(q.predicate) as Quad_Predicate,
+      rewrite(q.object) as Quad_Object,
+      rewrite(q.graph) as Quad_Graph,
+    ));
   }
   return out;
 }

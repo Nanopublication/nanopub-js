@@ -46,8 +46,7 @@ export function replaceUriInDataset(
     };
 
     const subject = rewrite(q.subject) as Quad_Subject;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const predicate = rewrite(q.predicate) as any;
+    const predicate = rewrite(q.predicate) as NamedNode;
     const object = rewrite(q.object) as Quad_Object;
     const graph = rewrite(q.graph) as Quad_Graph;
 
@@ -316,8 +315,7 @@ export function rewriteNanopubUri(
     out.addQuad(
       quad(
         rewrite(q.subject) as Quad_Subject,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        rewrite(q.predicate) as any,
+        rewrite(q.predicate) as NamedNode,
         rewrite(q.object) as Quad_Object,
         rewrite(q.graph) as Quad_Graph
       )
