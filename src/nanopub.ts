@@ -8,7 +8,7 @@ import { DEFAULT_NANOPUB_URI, TEST_NANOPUB_REGISTRY_URL } from "./constants";
 
 const { namedNode, quad, literal } = DataFactory;
 
-export class NanopubClass implements Nanopub {
+export class Nanopub implements NanopubData {
   head: Quad[];
   assertion: Quad[];
   provenance: Quad[];

@@ -1,9 +1,9 @@
 import { Writer, Parser, Quad } from 'n3';
 import { DEFAULT_NANOPUB_URI } from './constants';
-import { Nanopub } from './types/types';
+import { NanopubData } from './types/types';
 
 export function serialize(
-  np: Nanopub,
+  np: NanopubData,
   format: 'trig' | 'turtle' = 'trig',
   nanopubUri: string = np.sourceUri ?? DEFAULT_NANOPUB_URI
 ): Promise<string> {
@@ -38,8 +38,7 @@ export function parse(
     const parser = new Parser({ format });
     const quads = parser.parse(input); 
     return quads;
-  } catch (err) {
-    console.error("Error parsing RDF:", err);
+  } catch {
     return [];
   }
 }
