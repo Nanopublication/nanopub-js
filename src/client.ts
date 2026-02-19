@@ -24,10 +24,12 @@ export class NanopubClient {
   }
 
   /** Fetch a nanopub by URI in the requested format */
+  async fetchNanopub(uri: string, format?: 'trig'): Promise<string>;
+  async fetchNanopub(uri: string, format: 'jsonld'): Promise<Record<string, unknown>[]>;
   async fetchNanopub(
     uri: string,
     format: 'trig' | 'jsonld' = 'trig',
-  ): Promise<string | Record<string, unknown>> {
+  ): Promise<string | Record<string, unknown>[]> {
     if (format !== 'trig' && format !== 'jsonld') {
       throw new Error(`Unsupported format: ${format}`);
     }
