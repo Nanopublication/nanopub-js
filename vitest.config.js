@@ -17,15 +17,10 @@ export default defineConfig({
         "tests/**",
         "examples/**",
         "src/types",
-        "src/utils/wasm.ts",
         "src/validate.ts", // TEMP excluding until validate is implemented
         "*/*.d.ts",
         "*.config.{ts,js}"
       ],    },
-    deps: {
-      inline: ["@nanopub/sign", "/?url$/"], 
-      
-    },
     poolOptions: {
       threads: { singleThread: true },
     },

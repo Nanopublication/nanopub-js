@@ -497,7 +497,6 @@ __metadata:
   resolution: "@nanopub/nanopub-js@workspace:."
   dependencies:
     "@eslint/js": "npm:^9.39.2"
-    "@nanopub/sign": "npm:^0.1.10"
     "@rdfjs/data-model": "npm:^2.1.1"
     "@types/n3": "npm:^1"
     "@types/node": "npm:^24.9.1"
@@ -509,7 +508,7 @@ __metadata:
     happy-dom: "npm:^20.0.11"
     n3: "npm:^1.26.0"
     prettier: "npm:^3.7.4"
-    rdf-canonize: "npm:^4.0.1"
+    rdf-canonize: "npm:^5.0.0"
     rdf-js: "npm:^4.0.2"
     typescript: "npm:^5.9.3"
     typescript-eslint: "npm:^8.53.0"
@@ -519,13 +518,6 @@ __metadata:
     vitest: "npm:^3.2.4"
   languageName: unknown
   linkType: soft
-
-"@nanopub/sign@npm:^0.1.10":
-  version: 0.1.10
-  resolution: "@nanopub/sign@npm:0.1.10"
-  checksum: 10c0/af5c5cd06938eb15e1d78f9b51b86e8c4a30841065a92c525846f5bc04226ad7ea08918c54f70ac5bd0b466eadbcee70e811a3fb4522d8b013982bb9996323bf
-  languageName: node
-  linkType: hard
 
 "@npmcli/agent@npm:^4.0.0":
   version: 4.0.0
@@ -3034,12 +3026,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rdf-canonize@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "rdf-canonize@npm:4.0.1"
+"rdf-canonize@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "rdf-canonize@npm:5.0.0"
   dependencies:
     setimmediate: "npm:^1.0.5"
-  checksum: 10c0/8f6040847c5731817cc5ad95ca16caa588fba76c94ee3b24f282c9a3054f36226560bcb33bed8a173903960af1b9937e21db6e0dc2e90caa749682fff8228250
+  checksum: 10c0/3d2811b43fe0890d15bffbbb74e62b4f890e649cd54ac989cbd11b334662012b852bdc96eda41bf620c125256965760208826895be1bbacc9f268c724f10303e
   languageName: node
   linkType: hard
 

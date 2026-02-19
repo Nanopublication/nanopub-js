@@ -20,6 +20,12 @@ export default defineConfig({
       // dependency patterns. ESM output is the primary supported format.
       formats: ["es"],
     },
+    rollupOptions: {
+      // Leave Node.js built-ins as external — the dynamic import of node.ts
+      // (fallback for Node < 18) must not be bundled for browser targets.
+      // Consumer bundlers decide how to resolve or polyfill 'crypto'.
+      external: ['crypto', 'node:crypto'],
+    },
   },
 
   resolve: {
