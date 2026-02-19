@@ -1,9 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NanopubClass, serialize, parse } from '../src/index';
-import { NamedNode, Quad, Literal } from 'n3';
+import { DataFactory, Quad } from 'n3';
 import { generateKeyPairSync } from 'crypto';
-import { makeNamedGraphNode } from '../src/utils/utils';
+import { createNanopubGraphs } from '../src/utils';
 import { DEFAULT_NANOPUB_URI } from '../src/constants';
+
+const { namedNode, quad, literal } = DataFactory;
 
 describe('Nanopub class', () => {
   let assertionQuads: Quad[];
@@ -13,10 +15,8 @@ describe('Nanopub class', () => {
   let np: NanopubClass;
 
   const nanopubUri = DEFAULT_NANOPUB_URI;
-  const npNode = makeNamedGraphNode(nanopubUri, '');
-  const assertionGraph = makeNamedGraphNode(nanopubUri, 'assertion');
-  const provGraph = makeNamedGraphNode(nanopubUri, 'provenance');
-  const pubinfoGraph = makeNamedGraphNode(nanopubUri, 'pubinfo');
+  const { npNode, assertionGraph, provenanceGraph, pubinfoGraph } 
+    = createNanopubGraphs(nanopubUri);
 
   beforeEach(() => {
     const { privateKey } = generateKeyPairSync('rsa', {
@@ -31,28 +31,31 @@ describe('Nanopub class', () => {
       .replace(/\r?\n|\r/g, '');
 
     assertionQuads = [
-      new Quad(
-        new NamedNode('http://example.org/s'),
-        new NamedNode('http://example.org/p'),
-        new NamedNode('http://example.org/o'),
+      quad(
+        namedNode('http://example.org/s'),
+        namedNode('http://example.org/p'),
+        namedNode('http://example.org/o'),
         assertionGraph,
       ),
     ];
 
     provQuads = [
-      new Quad(
+      quad(
         assertionGraph,
-        new NamedNode('http://purl.org/dc/terms/created'),
-        new Literal('2024-01-01T00:00:00Z'),
-        provGraph,
+        namedNode('http://purl.org/dc/terms/created'),
+        literal(
+          '2024-01-01T00:00:00Z',
+          namedNode('http://www.w3.org/2001/XMLSchema#dateTime'),
+        ),
+        provenanceGraph,
       ),
     ];
 
     pubinfoQuads = [
-      new Quad(
+      quad(
         npNode,
-        new NamedNode('http://purl.org/dc/terms/creator'),
-        new NamedNode('https://orcid.org/0000-0000-0000-0000'),
+        namedNode('http://purl.org/dc/terms/creator'),
+        namedNode('https://orcid.org/0000-0000-0000-0000'),
         pubinfoGraph,
       ),
     ];

@@ -7,7 +7,7 @@ import {
 } from "../src";
 import { generateKeyPairSync } from "crypto";
 import { Literal, NamedNode, Quad } from "n3";
-import { makeNamedGraphNode } from "../src/utils/utils";
+import { makeNamedGraphNode } from "../src/utils";
 
 describe("serialize()", () => {
   let assertionQuads: Quad[];
