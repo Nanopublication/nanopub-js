@@ -95,7 +95,6 @@ export class Nanopub implements NanopubData {
 
     if (options?.privateKey && options?.name && options?.orcid) {
       this.privateKey = options.privateKey;
-      // Lazily instantiate `NpProfile` in `.sign()` to avoid eager wasm imports.
       this._profileParams = {
         privateKey: options.privateKey,
         orcid: options.orcid,

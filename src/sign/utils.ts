@@ -14,7 +14,6 @@ const { namedNode, quad } = DataFactory;
 
 
 export class NpError extends Error {}
-export class TermError extends Error {}
 
 
 function isIri(term: Term): term is NamedNode {

@@ -87,11 +87,11 @@ export class NanopubClient {
         } else {
           return await res.text();
         }
-      } catch (e) {
-        console.warn(`SPARQL query failed on ${endpoint}: ${e}`);
+      } catch {
+        // try next endpoint
       }
     }
-  
+
     throw new Error('SPARQL query failed on all nanopub endpoints');
   }
   
@@ -188,8 +188,8 @@ export class NanopubClient {
           }
           yield parsed;
         }
-      } catch (e) {
-        console.warn(`Search failed on ${url.toString()}: ${e}`);
+      } catch {
+        // try next endpoint
       }
     }
   }
