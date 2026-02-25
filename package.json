@@ -2,9 +2,9 @@
   "name": "@nanopub/nanopub-js",
   "version": "0.1.0",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/node.js",
   "types": "./dist/index.d.ts",
-  "module": "./dist/index.js",
+  "module": "./dist/node.js",
   "packageManager": "yarn@4.6.0",
   "files": [
     "dist"
@@ -12,7 +12,9 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "browser": "./dist/index.js",
+      "node": "./dist/node.js",
+      "default": "./dist/node.js"
     }
   },
   "repository": {

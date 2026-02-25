@@ -20,7 +20,7 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 
 export const browserCrypto: CryptoAdapter = {
   async extractPublicKey(privateKeyBase64: string) {
-    const privateKey = await crypto.subtle.importKey(
+    const privateKey = await globalThis.crypto.subtle.importKey(
       "pkcs8",
       base64ToArrayBuffer(privateKeyBase64),
       {
@@ -34,9 +34,9 @@ export const browserCrypto: CryptoAdapter = {
     // Web Crypto has no direct "derive public from private" — export as JWK to
     // get the public components (n, e), reconstruct a public-only key, then
     // export that as SPKI.
-    const jwk = await crypto.subtle.exportKey("jwk", privateKey) as JsonWebKey;
+    const jwk = await globalThis.crypto.subtle.exportKey("jwk", privateKey) as JsonWebKey;
 
-    const publicKey = await crypto.subtle.importKey(
+    const publicKey = await globalThis.crypto.subtle.importKey(
       "jwk",
       {
         kty: jwk.kty,
@@ -54,12 +54,12 @@ export const browserCrypto: CryptoAdapter = {
       ["verify"]
     );
 
-    const spki = await crypto.subtle.exportKey("spki", publicKey);
+    const spki = await globalThis.crypto.subtle.exportKey("spki", publicKey);
     return arrayBufferToBase64(spki);
   },
 
   async sign(data, privateKeyBase64) {
-    const key = await crypto.subtle.importKey(
+    const key = await globalThis.crypto.subtle.importKey(
       "pkcs8",
       base64ToArrayBuffer(privateKeyBase64),
       {
@@ -70,7 +70,7 @@ export const browserCrypto: CryptoAdapter = {
       ["sign"]
     );
 
-    const signature = await crypto.subtle.sign(
+    const signature = await globalThis.crypto.subtle.sign(
       "RSASSA-PKCS1-v1_5",
       key,
       new TextEncoder().encode(data)
@@ -80,7 +80,7 @@ export const browserCrypto: CryptoAdapter = {
   },
 
   async verify(data, signatureBase64, publicKeyBase64) {
-    const key = await crypto.subtle.importKey(
+    const key = await globalThis.crypto.subtle.importKey(
       "spki",
       base64ToArrayBuffer(publicKeyBase64),
       {
@@ -91,7 +91,7 @@ export const browserCrypto: CryptoAdapter = {
       ["verify"]
     );
 
-    return crypto.subtle.verify(
+    return globalThis.crypto.subtle.verify(
       "RSASSA-PKCS1-v1_5",
       key,
       base64ToArrayBuffer(signatureBase64),
@@ -101,7 +101,7 @@ export const browserCrypto: CryptoAdapter = {
 
   async sha256Base64Url(data) {
     const encoded = new TextEncoder().encode(data);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", encoded);
+    const hashBuffer = await globalThis.crypto.subtle.digest("SHA-256", encoded);
     const bytes = new Uint8Array(hashBuffer);
     let binary = "";
     for (let i = 0; i < bytes.length; i++) {

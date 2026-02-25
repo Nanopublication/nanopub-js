@@ -8,22 +8,18 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ["@nanopub/sign"],
   },
-  // Build in library mode
+  // Build in library mode with separate browser and node entry points.
+  // The browser entry (index) uses Web Crypto only; the node entry imports
+  // from Node's built-in 'crypto' module which is kept external.
   build: {
     lib: {
-      // We now use single-entry index.ts when using vite build.
-      // To add multi-entry see https://vite.dev/guide/build#library-mode
-      entry: "src/index.ts",
-      name: "nanopub-js",
-      fileName: "index",
-      // Avoid UMD output: Rollup UMD does not support top-level await and some wasm
-      // dependency patterns. ESM output is the primary supported format.
+      entry: {
+        index: "src/index.ts",  // browser entry (Web Crypto, no Node crypto)
+        node: "src/node.ts",    // Node.js entry (Node crypto, kept external)
+      },
       formats: ["es"],
     },
     rollupOptions: {
-      // Leave Node.js built-ins as external — the dynamic import of node.ts
-      // (fallback for Node < 18) must not be bundled for browser targets.
-      // Consumer bundlers decide how to resolve or polyfill 'crypto'.
       external: ['crypto', 'node:crypto'],
     },
   },
@@ -35,6 +31,7 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: true,
+    setupFiles: ["./tests/setup.ts"],
 
     server: {
       deps: {

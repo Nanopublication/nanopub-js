@@ -1,8 +1,9 @@
-// Browser entry point: eagerly register the Web Crypto adapter.
-// This ensures no Node.js 'crypto' module is referenced in browser bundles.
+// Node.js entry point: eagerly register the Node.js crypto adapter.
+// Consumer bundlers that resolve the "node" export condition get this file,
+// which imports from the built-in 'crypto' module (externalized in the bundle).
 import { setCryptoAdapter } from './sign/crypto/index.js';
-import { browserCrypto } from './sign/crypto/browser.js';
-setCryptoAdapter(browserCrypto);
+import { nodeCrypto } from './sign/crypto/node.js';
+setCryptoAdapter(nodeCrypto);
 
 export * from './nanopub.js';
 export { NanopubClient } from './client.js';
