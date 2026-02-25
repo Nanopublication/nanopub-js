@@ -1,13 +1,10 @@
 import { getCryptoAdapter } from './crypto';
 import { parse } from '../serialize';
-import { DataFactory, Store } from 'n3';
+import { Store } from 'n3';
 import { normalizeDataset } from './utils';
 import { makeTrusty } from './trusty';
-
-const { namedNode } = DataFactory;
-
-const NPX = 'http://purl.org/nanopub/x/';
-const TRUSTY_BASE = 'https://w3id.org/np/';
+import { TRUSTY_BASE } from '../constants';
+import { NPX } from '../vocab';
 
 export type VerificationResult =
   | { valid: true }
@@ -17,21 +14,17 @@ export async function verifySignature(trig: string): Promise<VerificationResult>
   const quads = parse(trig, 'trig');
   const dataset = new Store(quads);
 
-  const hasSignaturePred = namedNode(`${NPX}hasSignature`);
-  const hasPublicKeyPred = namedNode(`${NPX}hasPublicKey`);
-  const hasSignatureTargetPred = namedNode(`${NPX}hasSignatureTarget`);
-
-  const sigQuad = dataset.getQuads(null, hasSignaturePred, null, null)[0];
+  const sigQuad = dataset.getQuads(null, NPX('hasSignature'), null, null)[0];
   if (!sigQuad) throw new Error('No signature found');
 
   const sigNode = sigQuad.subject;
   const signature = sigQuad.object.value;
 
-  const pubKeyQuad = dataset.getQuads(sigNode, hasPublicKeyPred, null, null)[0];
+  const pubKeyQuad = dataset.getQuads(sigNode, NPX('hasPublicKey'), null, null)[0];
   if (!pubKeyQuad) throw new Error('No public key found');
   const publicKeyBase64 = pubKeyQuad.object.value;
 
-  const targetQuad = dataset.getQuads(sigNode, hasSignatureTargetPred, null, null)[0];
+  const targetQuad = dataset.getQuads(sigNode, NPX('hasSignatureTarget'), null, null)[0];
   if (!targetQuad) throw new Error('No signature target found');
   const nanopubUri = targetQuad.object.value;
 

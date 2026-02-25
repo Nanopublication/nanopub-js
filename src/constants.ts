@@ -1,5 +1,7 @@
 export const DEFAULT_NANOPUB_URI = 'http://purl.org/nanopub/temp/np/';
 
+export const TRUSTY_BASE = 'https://w3id.org/np/';
+
 export const TEST_NANOPUB_REGISTRY_URL =
   'https://test.registry.knowledgepixels.com/np/';
 

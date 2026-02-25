@@ -3,12 +3,20 @@ import { DataFactory, Store } from 'n3';
 import { getCryptoAdapter } from "./crypto";
 import { parse, serialize } from '../serialize';
 import { replaceBnodes, normalizeDataset } from './utils';
-import { DEFAULT_NANOPUB_URI } from '../constants';
+import { DEFAULT_NANOPUB_URI, TRUSTY_BASE } from '../constants';
+import { NPX, RDF, NP } from '../vocab';
 import { makeTrusty } from './trusty';
 
 const { namedNode, literal, quad } = DataFactory;
 
-const TRUSTY_BASE = 'https://w3id.org/np/';
+function detectNanopubBaseUri(dataset: Store): string {
+  const typeQuads = dataset.getQuads(null, RDF('type'), NP('Nanopublication'), null);
+  if (typeQuads.length > 0) {
+    const uri = typeQuads[0].subject.value;
+    return uri.endsWith('/') ? uri : `${uri}/`;
+  }
+  return DEFAULT_NANOPUB_URI;
+}
 
 function replaceNanopubUri(dataset: Store, oldBase: string, newBase: string): Store {
   const out = new Store();
@@ -60,8 +68,8 @@ export async function sign(
 
   const quads = parse(trig, 'trig');
   let dataset: Store = new Store(quads);
-  const placeholder = DEFAULT_NANOPUB_URI; // "http://purl.org/nanopub/temp/np/"
-  const placeholderNoSlash = placeholder.replace(/\/$/, ''); // "http://purl.org/nanopub/temp/np"
+  const placeholder = detectNanopubBaseUri(dataset);
+  const placeholderNoSlash = placeholder.replace(/\/$/, '');
 
   dataset = replaceBnodes(dataset, placeholder);
 
