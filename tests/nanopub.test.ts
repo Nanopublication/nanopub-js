@@ -213,7 +213,6 @@ describe('Nanopub class', () => {
       expect(signed.signature).toBeDefined();
       expect(signed.sourceUri).toBeDefined();
     });
-
     it('publishes loaded nanopub', async () => {
       const TEST_ENDPOINT = 'https://test.registry.knowledgepixels.com/np/';
       const result = await npFromRdf.publish(TEST_ENDPOINT);
@@ -241,5 +240,73 @@ describe('Nanopub class', () => {
       expect(np.provenance).toEqual([]);
       expect(np.pubinfo).toEqual([]);
     });
+  });
+
+  it('re-signing with the same key is a no-op', async () => {
+    const first = await np.sign();
+    const firstUri = first.sourceUri!;
+    const firstSig = first.signature!;
+
+    const second = await np.sign();
+    expect(second.sourceUri).toBe(firstUri);
+    expect(second.signature).toBe(firstSig);
+  });
+
+  it('re-signing with a different key produces a different trusty URI', async () => {
+    const first = await np.sign();
+    const firstUri = first.sourceUri!;
+
+    const { privateKey: newPk } = generateKeyPairSync('rsa', {
+      modulusLength: 2048,
+      publicKeyEncoding: { type: 'spki', format: 'pem' },
+      privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+    });
+    const newKeyB64 = newPk
+      .replace('-----BEGIN PRIVATE KEY-----', '')
+      .replace('-----END PRIVATE KEY-----', '')
+      .replace(/\r?\n|\r/g, '');
+
+    const reloaded = NanopubClass.fromRdf(first.rdf(), 'trig', {
+      name: 'Hello from nanopub-js test',
+      orcid: 'https://orcid.org/0000-0000-0000-0000',
+      privateKey: newKeyB64,
+    });
+
+    const resigned = await reloaded.sign();
+    expect(resigned.sourceUri).not.toBe(firstUri);
+    expect(await resigned.hasValidSignature()).toBe(true);
+  });
+
+  it('signs unsigned nanopub loaded with fromRdf', async () => {
+    const unsignedTrig = await serialize(np, 'trig');
+    const npFromUnsigned = NanopubClass.fromRdf(unsignedTrig, 'trig', {
+      name: 'Hello from nanopub-js test',
+      orcid: 'https://orcid.org/0000-0000-0000-0000',
+      privateKey: np.privateKey!,
+    });
+
+    const signed = await npFromUnsigned.sign();
+    expect(signed.signature).toBeDefined();
+    expect(signed.sourceUri).toMatch(/^https:\/\/w3id\.org\/np\/RA/);
+    expect(await signed.hasValidSignature()).toBe(true);
+  });
+
+  it('signs nanopub with custom base URI', async () => {
+    const defaultTrig = await serialize(np, 'trig');
+    const customTrig = defaultTrig.replaceAll(
+      'http://purl.org/nanopub/temp/np',
+      'https://example.org/mynp',
+    );
+
+    const npCustom = NanopubClass.fromRdf(customTrig, 'trig', {
+      name: 'Hello from nanopub-js test',
+      orcid: 'https://orcid.org/0000-0000-0000-0000',
+      privateKey: np.privateKey!,
+    });
+
+    const signed = await npCustom.sign();
+    expect(signed.signature).toBeDefined();
+    expect(signed.sourceUri).toMatch(/^https:\/\/w3id\.org\/np\/RA/);
+    expect(await signed.hasValidSignature()).toBe(true);
   });
 });
