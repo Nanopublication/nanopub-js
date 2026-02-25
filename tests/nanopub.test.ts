@@ -306,7 +306,7 @@ describe('Nanopub class', () => {
 
     const signed = await npCustom.sign();
     expect(signed.signature).toBeDefined();
-    expect(signed.sourceUri).toMatch(/^https:\/\/w3id\.org\/np\/RA/);
+    expect(signed.sourceUri).toMatch(/^https:\/\/example\.org\/mynp\/RA/);
     expect(await signed.hasValidSignature()).toBe(true);
   });
 });

@@ -102,7 +102,13 @@ export async function sign(
   // Step 3: normalize WITH signature > compute trusty hash
   const normalizedForTrusty = normalizeDataset(dataset, placeholder, TRUSTY_BASE, '/');
   const artifactCode = await makeTrusty(normalizedForTrusty);
-  const trustyUri = `${TRUSTY_BASE}${artifactCode}`;
+  // Use the input's own base for the trusty URI. Remap to TRUSTY_BASE when:
+  // - input is the default temp placeholder, or
+  // - input is already a trusty URI (starts with TRUSTY_BASE) to avoid double-nesting.
+  const trustyBase = (placeholder === DEFAULT_NANOPUB_URI || placeholder.startsWith(TRUSTY_BASE))
+    ? TRUSTY_BASE
+    : placeholder;
+  const trustyUri = `${trustyBase}${artifactCode}`;
 
   // Step 4: replace placeholder URIs with trusty URI
   dataset = replaceNanopubUri(dataset, placeholder, trustyUri);
