@@ -3,11 +3,13 @@ import { Quad, DataFactory } from 'n3';
 import { serialize, parse } from './serialize';
 import { verifySignature } from './sign/verify';
 import { sign as signRdf } from './sign/sign';
+import { getCryptoAdapter } from './sign/crypto';
 
 import { createNanopubGraphs } from './utils';
 import { DEFAULT_NANOPUB_URI, TEST_NANOPUB_REGISTRY_URL } from './constants';
+import { RDF, XSD, NP, PROV } from './vocab';
 
-const { namedNode, quad, literal } = DataFactory;
+const { quad, literal } = DataFactory;
 
 export class Nanopub implements NanopubData {
   head: Quad[];
@@ -35,29 +37,16 @@ export class Nanopub implements NanopubData {
   ) {
     const { assertion = [], provenance = [], pubinfo = [], options } = params;
 
-    const RDF_TYPE = namedNode(
-      'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-    );
-
-    const NP = 'http://www.nanopub.org/nschema#';
-    const PROV = 'http://www.w3.org/ns/prov#';
-
-    const NP_NANOPUBLICATION = namedNode(`${NP}Nanopublication`);
-    const NP_HAS_ASSERTION = namedNode(`${NP}hasAssertion`);
-    const NP_HAS_PROVENANCE = namedNode(`${NP}hasProvenance`);
-    const NP_HAS_PUBINFO = namedNode(`${NP}hasPublicationInfo`);
-    const PROV_GENERATED_AT_TIME = namedNode(`${PROV}generatedAtTime`);
-
     const nanopubUri = this.sourceUri ?? DEFAULT_NANOPUB_URI;
 
     const { npNode, headGraph, assertionGraph, provenanceGraph, pubinfoGraph } =
       createNanopubGraphs(nanopubUri);
 
     this.head = [
-      quad(npNode, RDF_TYPE, NP_NANOPUBLICATION, headGraph),
-      quad(npNode, NP_HAS_ASSERTION, assertionGraph, headGraph),
-      quad(npNode, NP_HAS_PROVENANCE, provenanceGraph, headGraph),
-      quad(npNode, NP_HAS_PUBINFO, pubinfoGraph, headGraph),
+      quad(npNode, RDF('type'), NP('Nanopublication'), headGraph),
+      quad(npNode, NP('hasAssertion'), assertionGraph, headGraph),
+      quad(npNode, NP('hasProvenance'), provenanceGraph, headGraph),
+      quad(npNode, NP('hasPublicationInfo'), pubinfoGraph, headGraph),
     ];
 
     this.assertion = assertion.map((q) =>
@@ -65,9 +54,6 @@ export class Nanopub implements NanopubData {
     );
 
     const now = new Date().toISOString();
-    const XSD_DATE_TIME = namedNode(
-      'http://www.w3.org/2001/XMLSchema#dateTime',
-    );
 
     this.provenance = provenance.length
       ? provenance.map((q) =>
@@ -76,8 +62,8 @@ export class Nanopub implements NanopubData {
       : [
           quad(
             assertionGraph,
-            PROV_GENERATED_AT_TIME,
-            literal(now, XSD_DATE_TIME),
+            PROV('generatedAtTime'),
+            literal(now, XSD('dateTime')),
             provenanceGraph,
           ),
         ];
@@ -87,8 +73,8 @@ export class Nanopub implements NanopubData {
       : [
           quad(
             npNode,
-            PROV_GENERATED_AT_TIME,
-            literal(now, XSD_DATE_TIME),
+            PROV('generatedAtTime'),
+            literal(now, XSD('dateTime')),
             pubinfoGraph,
           ),
         ];
@@ -131,6 +117,18 @@ export class Nanopub implements NanopubData {
   async sign(): Promise<this> {
     if (!this._profileParams) {
       throw new Error('Profile not set. Cannot sign nanopub.');
+    }
+
+    // Short-circuit: if already signed with the same key and orcid, re-signing
+    // would produce an identical result, so skip the work.
+    if (this.signature) {
+      const adapter = await getCryptoAdapter();
+      const currentPublicKey = await adapter.extractPublicKey(this._profileParams.privateKey);
+      const existingPubKey = this.pubinfo.find(q => q.predicate.value.endsWith('hasPublicKey'))?.object.value;
+      const existingOrcid = this.pubinfo.find(q => q.predicate.value.endsWith('signedBy'))?.object.value;
+      if (existingPubKey === currentPublicKey && existingOrcid === this._profileParams.orcid) {
+        return this;
+      }
     }
 
     const trig = await serialize(this, 'trig');

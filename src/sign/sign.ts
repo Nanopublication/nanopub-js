@@ -76,12 +76,20 @@ export async function sign(
   const pubinfoGraph = namedNode(`${placeholder}pubinfo`);
   const sigNode = namedNode(`${placeholder}sig`);
 
-  dataset.addQuad(quad(sigNode, namedNode('http://purl.org/nanopub/x/hasAlgorithm'), literal('RSA'), pubinfoGraph));
-  dataset.addQuad(quad(sigNode, namedNode('http://purl.org/nanopub/x/hasPublicKey'), literal(publicKeyBase64), pubinfoGraph));
-  dataset.addQuad(quad(sigNode, namedNode('http://purl.org/nanopub/x/hasSignatureTarget'), namedNode(placeholderNoSlash), pubinfoGraph));
+  // Strip any existing signature quads so that re-signing a loaded nanopub
+  // does not leave duplicate hasPublicKey / hasSignature triples.
+  for (const pred of [NPX('hasAlgorithm'), NPX('hasPublicKey'), NPX('hasSignature'), NPX('hasSignatureTarget'), NPX('signedBy')]) {
+    for (const q of dataset.getQuads(null, pred, null, pubinfoGraph)) {
+      dataset.removeQuad(q);
+    }
+  }
+
+  dataset.addQuad(quad(sigNode, NPX('hasAlgorithm'), literal('RSA'), pubinfoGraph));
+  dataset.addQuad(quad(sigNode, NPX('hasPublicKey'), literal(publicKeyBase64), pubinfoGraph));
+  dataset.addQuad(quad(sigNode, NPX('hasSignatureTarget'), namedNode(placeholderNoSlash), pubinfoGraph));
 
   if (orcid) {
-    dataset.addQuad(quad(sigNode, namedNode('http://purl.org/nanopub/x/signedBy'), namedNode(orcid), pubinfoGraph));
+    dataset.addQuad(quad(sigNode, NPX('signedBy'), namedNode(orcid), pubinfoGraph));
   }
 
   // Step 1: normalize without signature (using placeholder URIs)
@@ -89,7 +97,7 @@ export async function sign(
   const signature = await adapter.sign(normalizedForSignature, privateKeyBase64);
 
   // Step 2: add hasSignature (still with placeholder URIs)
-  dataset.addQuad(quad(sigNode, namedNode('http://purl.org/nanopub/x/hasSignature'), literal(signature), pubinfoGraph));
+  dataset.addQuad(quad(sigNode, NPX('hasSignature'), literal(signature), pubinfoGraph));
 
   // Step 3: normalize WITH signature > compute trusty hash
   const normalizedForTrusty = normalizeDataset(dataset, placeholder, TRUSTY_BASE, '/');
