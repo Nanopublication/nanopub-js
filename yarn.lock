@@ -482,6 +482,7 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:^9.39.2"
     "@rdfjs/data-model": "npm:^2.1.1"
+    "@rdfjs/types": "npm:^2.0.1"
     "@types/n3": "npm:^1"
     "@types/node": "npm:^24.9.1"
     "@types/rdfjs__data-model": "npm:^2"
@@ -548,7 +549,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rdfjs/types@npm:*":
+"@rdfjs/types@npm:*, @rdfjs/types@npm:^2.0.1":
   version: 2.0.1
   resolution: "@rdfjs/types@npm:2.0.1"
   dependencies:

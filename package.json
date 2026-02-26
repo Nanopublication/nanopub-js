@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@rdfjs/types": "^2.0.1",
     "@types/n3": "^1",
     "@types/node": "^24.9.1",
     "@types/rdfjs__data-model": "^2",

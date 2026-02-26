@@ -20,7 +20,7 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: ['crypto', 'node:crypto'],
+      external: ['crypto', 'node:crypto', 'buffer'],
     },
   },
 
