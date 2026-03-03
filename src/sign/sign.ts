@@ -23,17 +23,17 @@ function replaceNanopubUri(dataset: Store, oldBase: string, newBase: string): St
   const oldBaseNoSlash = oldBase.replace(/\/$/, '');
   const newBaseNoSlash = newBase.replace(/\/$/, '');
   const newBaseWithSlash = newBaseNoSlash + '/';
-  
+
   for (const q of dataset) {
     const rewrite = (term: Term): Term => {
       if (term.termType === 'NamedNode') {
         const val = term.value;
-  
+
         // Exact match for top-level nanopub URI > no slash
         if (val === oldBaseWithSlash || val === oldBaseNoSlash) {
           return namedNode(newBase);
         }
-  
+
         // Anything inside (subgraphs) > keep trailing slash
         if (val.startsWith(oldBaseWithSlash)) {
           return namedNode(val.replace(oldBaseWithSlash, newBaseWithSlash));
@@ -103,17 +103,17 @@ export async function sign(
   // Step 4: replace placeholder URIs with trusty URI
   const defaultNoSlash = DEFAULT_NANOPUB_URI.replace(/\/$/, '');
   const trustyNoSlash = TRUSTY_BASE.replace(/\/$/, '');
-  
+
   const trustyBase =
     placeholderNoSlash === defaultNoSlash
       ? TRUSTY_BASE
       : placeholderNoSlash.startsWith(trustyNoSlash)
         ? TRUSTY_BASE
         : placeholderNoSlash;
-  
+
   const trustyBaseNoSlash = trustyBase.replace(/\/$/, '');
-  const trustyUri = `${trustyBaseNoSlash}/${artifactCode}`;  
-        
+  const trustyUri = `${trustyBaseNoSlash}/${artifactCode}`;
+
   dataset = replaceNanopubUri(dataset, placeholder, trustyUri);
 
   const trustyPubinfoGraph = namedNode(`${trustyUri}/pubinfo`);
