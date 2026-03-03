@@ -84,6 +84,54 @@ describe("serialize()", () => {
     const trig = await serialize(np, "trig");
     expect(trig).toContain(DEFAULT_NANOPUB_URI);
   });
+  it("uses 'this:' prefix for nanopub URI subjects", async () => {
+    const trig = await serialize(np, "trig");
+    expect(trig).toContain("@prefix this:");
+    expect(trig).toMatch(/this:\s+<[^>]+>/);
+    expect(trig).toContain("this: dc:creator");
+  });
+
+  describe("signed nanopub serialization", () => {
+    let signedTrig: string;
+    let trustyUri: string;
+
+    beforeEach(async () => {
+      await np.sign();
+      trustyUri = np.sourceUri!;
+      signedTrig = await serialize(np, "trig");
+    });
+
+    it("declares 'this:' prefix with the trusty URI", () => {
+      expect(signedTrig).toContain(`@prefix this: <${trustyUri}>`);
+    });
+
+    it("declares 'sub:' prefix with the trusty URI + slash", () => {
+      expect(signedTrig).toContain(`@prefix sub: <${trustyUri}/>`);
+    });
+
+    it("uses 'this:' shorthand for the nanopub subject (not a bare URI)", () => {
+      // N3.js may order predicates arbitrarily; check that 'this:' is used as subject
+      // and that the bare URI does not appear in subject position in the graph content
+      expect(signedTrig).toContain("this: np:hasAssertion sub:assertion");
+      expect(signedTrig).toContain("a np:Nanopublication");
+      expect(signedTrig).not.toContain(`<${trustyUri}> `);
+    });
+
+    it("uses 'sub:' shorthand for graph names", () => {
+      expect(signedTrig).toContain("sub:Head");
+      expect(signedTrig).toContain("sub:assertion");
+      expect(signedTrig).toContain("sub:provenance");
+      expect(signedTrig).toContain("sub:pubinfo");
+    });
+
+    it("trusty URI starts with https://w3id.org/np/RA", () => {
+      expect(trustyUri).toMatch(/^https:\/\/w3id\.org\/np\/RA/);
+    });
+
+    it("signed trig does not contain the temp placeholder URI", () => {
+      expect(signedTrig).not.toContain("purl.org/nanopub/temp");
+    });
+  });
 });
 
 describe("parse()", () => {
