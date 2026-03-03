@@ -12,8 +12,7 @@ const { namedNode, literal, quad } = DataFactory;
 function detectNanopubBaseUri(dataset: Store): string {
   const typeQuads = dataset.getQuads(null, RDF('type'), NP('Nanopublication'), null);
   if (typeQuads.length > 0) {
-    const uri = typeQuads[0].subject.value;
-    return uri.endsWith('/') ? uri : `${uri}/`;
+    return typeQuads[0].subject.value;
   }
   return DEFAULT_NANOPUB_URI;
 }
@@ -24,23 +23,18 @@ function replaceNanopubUri(dataset: Store, oldBase: string, newBase: string): St
   const oldBaseNoSlash = oldBase.replace(/\/$/, '');
   const newBaseNoSlash = newBase.replace(/\/$/, '');
   const newBaseWithSlash = newBaseNoSlash + '/';
-
+  
   for (const q of dataset) {
     const rewrite = (term: Term): Term => {
       if (term.termType === 'NamedNode') {
         const val = term.value;
-
-        // Exact match: "http://purl.org/nanopub/temp/np/" → "https://w3id.org/np/RAtest123/"
-        if (val === oldBaseWithSlash) {
-          return namedNode(newBaseWithSlash);
+  
+        // Exact match for top-level nanopub URI > no slash
+        if (val === oldBaseWithSlash || val === oldBaseNoSlash) {
+          return namedNode(newBase);
         }
-
-        // Exact match: "http://purl.org/nanopub/temp/np" → "https://w3id.org/np/RAtest123"
-        if (val === oldBaseNoSlash) {
-          return namedNode(newBaseNoSlash);
-        }
-
-        // Starts with namespace: "http://purl.org/nanopub/temp/np/Head" → "https://w3id.org/np/RAtest123/Head"
+  
+        // Anything inside (subgraphs) > keep trailing slash
         if (val.startsWith(oldBaseWithSlash)) {
           return namedNode(val.replace(oldBaseWithSlash, newBaseWithSlash));
         }
@@ -73,8 +67,9 @@ export async function sign(
 
   dataset = replaceBnodes(dataset, placeholder);
 
-  const pubinfoGraph = namedNode(`${placeholder}pubinfo`);
-  const sigNode = namedNode(`${placeholder}sig`);
+  const subUri = placeholder.endsWith('/') ? placeholder : `${placeholder}/`;
+  const pubinfoGraph = namedNode(`${subUri}pubinfo`);
+  const sigNode = namedNode(`${subUri}sig`);
 
   // Strip any existing signature quads so that re-signing a loaded nanopub
   // does not leave duplicate hasPublicKey / hasSignature triples.
@@ -105,12 +100,20 @@ export async function sign(
   // Use the input's own base for the trusty URI. Remap to TRUSTY_BASE when:
   // - input is the default temp placeholder, or
   // - input is already a trusty URI (starts with TRUSTY_BASE) to avoid double-nesting.
-  const trustyBase = (placeholder === DEFAULT_NANOPUB_URI || placeholder.startsWith(TRUSTY_BASE))
-    ? TRUSTY_BASE
-    : placeholder;
-  const trustyUri = `${trustyBase}${artifactCode}`;
-
   // Step 4: replace placeholder URIs with trusty URI
+  const defaultNoSlash = DEFAULT_NANOPUB_URI.replace(/\/$/, '');
+  const trustyNoSlash = TRUSTY_BASE.replace(/\/$/, '');
+  
+  const trustyBase =
+    placeholderNoSlash === defaultNoSlash
+      ? TRUSTY_BASE
+      : placeholderNoSlash.startsWith(trustyNoSlash)
+        ? TRUSTY_BASE
+        : placeholderNoSlash;
+  
+  const trustyBaseNoSlash = trustyBase.replace(/\/$/, '');
+  const trustyUri = `${trustyBaseNoSlash}/${artifactCode}`;  
+        
   dataset = replaceNanopubUri(dataset, placeholder, trustyUri);
 
   const trustyPubinfoGraph = namedNode(`${trustyUri}/pubinfo`);

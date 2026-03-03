@@ -17,9 +17,8 @@ export function createNanopubGraphs(baseUri: string) {
   const baseWithSlash = baseUri.endsWith('/') ? baseUri : `${baseUri}/`;
   
   return {
-    // Main nanopub node (without slash)
-    npNode: namedNode(baseUri.replace(/\/$/, '')),
-    
+    npNode: namedNode(baseUri),
+
     // Graph nodes (with slash separator)
     headGraph: namedNode(`${baseWithSlash}Head`),
     assertionGraph: namedNode(`${baseWithSlash}assertion`),
