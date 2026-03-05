@@ -125,7 +125,7 @@ export class Nanopub implements NanopubData {
       const adapter = await getCryptoAdapter();
       const currentPublicKey = await adapter.extractPublicKey(this._profileParams.privateKey);
       const existingPubKey = this.pubinfo.find(q => q.predicate.value.endsWith('hasPublicKey'))?.object.value;
-      const existingOrcid = this.pubinfo.find(q => q.predicate.value.endsWith('signedBy'))?.object.value;
+      const existingOrcid = this.pubinfo.find(q => q.predicate.value.endsWith('creator'))?.object.value;
       if (existingPubKey === currentPublicKey && existingOrcid === this._profileParams.orcid) {
         return this;
       }
