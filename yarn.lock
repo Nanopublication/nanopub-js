@@ -481,6 +481,7 @@ __metadata:
   resolution: "@nanopub/nanopub-js@workspace:."
   dependencies:
     "@eslint/js": "npm:^9.39.2"
+    "@nanopub/sign": "npm:^0.1.10"
     "@rdfjs/data-model": "npm:^2.1.1"
     "@rdfjs/types": "npm:^2.0.1"
     "@types/n3": "npm:^1"
@@ -503,6 +504,13 @@ __metadata:
     vitest: "npm:^3.2.4"
   languageName: unknown
   linkType: soft
+
+"@nanopub/sign@npm:^0.1.10":
+  version: 0.1.10
+  resolution: "@nanopub/sign@npm:0.1.10"
+  checksum: 10c0/af5c5cd06938eb15e1d78f9b51b86e8c4a30841065a92c525846f5bc04226ad7ea08918c54f70ac5bd0b466eadbcee70e811a3fb4522d8b013982bb9996323bf
+  languageName: node
+  linkType: hard
 
 "@npmcli/agent@npm:^4.0.0":
   version: 4.0.0

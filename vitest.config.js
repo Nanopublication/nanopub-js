@@ -8,6 +8,11 @@ export default defineConfig({
     environment: "node",
     setupFiles: ["./tests/setup.ts"],
     include: ["tests/**/*.test.ts"],
+    server: {
+      deps: {
+        inline: ["@nanopub/sign"],  // This is only required for vitest to work with nanopub-rs (wasm)
+      },
+    },
     coverage: {
       provider: "v8",
       reporter: ["text", "html"],
