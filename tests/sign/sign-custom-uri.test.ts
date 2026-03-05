@@ -1,5 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest';
-import { generateKeyPairSync } from 'crypto';
+import { describe, it, expect } from 'vitest';
 import { sign } from '../../src/sign/sign';
 import { sign as sign_rs } from '../../src/sign/sign-rs';
 
