@@ -19,8 +19,9 @@ function detectNanopubBaseUri(dataset: Store): string {
 
 function replaceNanopubUri(dataset: Store, oldBase: string, newBase: string): Store {
   const out = new Store();
-  const oldBaseWithSlash = oldBase.endsWith('/') ? oldBase : `${oldBase}/`;
-  const oldBaseNoSlash = oldBase.replace(/\/$/, '');
+  // Accept both / and # as input separators; always output with / separator.
+  const oldBaseWithSep = (oldBase.endsWith('/') || oldBase.endsWith('#')) ? oldBase : `${oldBase}/`;
+  const oldBaseNoSep = oldBase.replace(/[/#]$/, '');
   const newBaseNoSlash = newBase.replace(/\/$/, '');
   const newBaseWithSlash = newBaseNoSlash + '/';
 
@@ -29,14 +30,14 @@ function replaceNanopubUri(dataset: Store, oldBase: string, newBase: string): St
       if (term.termType === 'NamedNode') {
         const val = term.value;
 
-        // Exact match for top-level nanopub URI > no slash
-        if (val === oldBaseWithSlash || val === oldBaseNoSlash) {
+        // Exact match for top-level nanopub URI
+        if (val === oldBaseWithSep || val === oldBaseNoSep) {
           return namedNode(newBase);
         }
 
-        // Anything inside (subgraphs) > keep trailing slash
-        if (val.startsWith(oldBaseWithSlash)) {
-          return namedNode(val.replace(oldBaseWithSlash, newBaseWithSlash));
+        // Sub-resources (subgraphs, sig node, etc.) — output always uses /
+        if (val.startsWith(oldBaseWithSep)) {
+          return namedNode(newBaseWithSlash + val.slice(oldBaseWithSep.length));
         }
       }
       return term;
