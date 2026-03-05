@@ -164,21 +164,6 @@ export function replaceBnodes(
   return out;
 }
 
-function fixNormedUri(uri: string, separator: string): string {
-  const idx = uri.lastIndexOf(" ");
-  if (idx === -1) return uri;
-
-  const last = uri.slice(idx + 1);
-
-  if (uri.endsWith(` ${separator}`) || last === "") {
-    return uri.replace(new RegExp(`${separator}$`), "");
-  }
-
-  if (last.startsWith(separator)) return uri;
-
-  return `${uri.slice(0, idx)} ${separator}${last}`;
-}
-
 interface NormQuad {
   graph: string;
   subject: string;
@@ -192,14 +177,22 @@ export function normalizeDataset(
   dataset: DatasetCore,
   baseNs: string,
   normNs: string,
-  separator: string
 ): string {
   const normUri = `${normNs} `;
   const rows: NormQuad[] = [];
-  
-  // Handle both with and without trailing slash
-  const baseWithSlash = baseNs.endsWith('/') ? baseNs : `${baseNs}/`;
-  const baseWithoutSlash = baseNs.replace(/\/$/, '');
+
+  // Accept both / and # as natural separators; strip either.
+  const baseWithSep = (baseNs.endsWith('/') || baseNs.endsWith('#')) ? baseNs : `${baseNs}/`;
+  const baseNoSep = baseNs.replace(/[/#]$/, '');
+
+  // replace the artifact-code/placeholder part with a
+  // space, keeping the separator before the local name.  For a URI like base/Head the
+  // normalized form is normUri + "/" + "Head" = "https://w3id.org/np/ /Head"
+  const normalizeUri = (value: string): string => {
+    if (value === baseWithSep || value === baseNoSep) return normUri;
+    if (value.startsWith(baseWithSep)) return normUri + '/' + value.slice(baseWithSep.length);
+    return value;
+  };
 
   for (const q of dataset) {
     if (
@@ -210,38 +203,16 @@ export function normalizeDataset(
       throw new NpError("normalizeDataset requires blank nodes to be replaced first");
     }
 
-    // Graph
-    const graph =
-      q.graph.termType === "DefaultGraph"
-        ? ""
-        : fixNormedUri(q.graph.value.replace(baseWithSlash, normUri), separator);
+    const graph = q.graph.termType === "DefaultGraph" ? "" : normalizeUri(q.graph.value);
+    const subject = normalizeUri(q.subject.value);
+    const predicate = normalizeUri(q.predicate.value);
 
-    // Subject - check BOTH versions
-    let subject: string;
-    if (q.subject.value === baseWithSlash || q.subject.value === baseWithoutSlash) {
-      subject = normUri;
-    } else if (q.subject.value.startsWith(baseWithSlash)) {
-      subject = fixNormedUri(q.subject.value.replace(baseWithSlash, normUri), separator);
-    } else {
-      subject = q.subject.value;
-    }
-
-    // Predicate
-    const predicate = q.predicate.value.replace(baseWithSlash, normUri);
-
-    // Object
     let object: string;
     let datatype = "";
     let lang = "";
 
     if (isIri(q.object)) {
-      if (q.object.value === baseWithSlash || q.object.value === baseWithoutSlash) {
-        object = normUri;
-      } else if (q.object.value.startsWith(baseWithSlash)) {
-        object = fixNormedUri(q.object.value.replace(baseWithSlash, normUri), separator);
-      } else {
-        object = q.object.value;
-      }
+      object = normalizeUri(q.object.value);
     } else {
       object = q.object.value
         .replace(/\\/g, "\\\\")
