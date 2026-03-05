@@ -10,3 +10,4 @@ export const XSD = ns('http://www.w3.org/2001/XMLSchema#');
 export const NP = ns('http://www.nanopub.org/nschema#');
 export const NPX = ns('http://purl.org/nanopub/x/');
 export const PROV = ns('http://www.w3.org/ns/prov#');
+export const DCT = ns('http://purl.org/dc/terms/');
