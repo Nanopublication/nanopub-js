@@ -9,18 +9,36 @@ import { makeTrusty } from './trusty';
 
 const { namedNode, literal, quad } = DataFactory;
 
-export function detectNanopubBaseUri(dataset: Store): { baseUri: string; trustyUri?: string } {
+/**
+ * Removes "ARTIFACTCODE-PLACEHOLDER" (deprecated) and "~~~ARTIFACTCODE~~~" placeholders
+ * and ensures baseUri ends in slash.
+ */
+function expandBaseUri(baseUri: string): string {
+
+  // Deprecated (we should only use "~~~ARTIFACTCODE~~~" in the future):
+  baseUri = baseUri.replace(/ARTIFACTCODE-PLACEHOLDER[.#/]?$/, '');
+
+  baseUri = baseUri.replace(/~~~ARTIFACTCODE~~~[.#/]?$/, '');
+  return ensureTrailingSlash(baseUri);
+}
+
+export function ensureTrailingSlash(uri: string) {
+  // Ensure trailing slash if ends with an alphanumeric character, hyphen, or underscore
+  return /[A-Za-z0-9\-_]$/.test(uri) ? uri + '/' : uri
+}
+
+export function detectNanopubBaseUri(dataset: Store): { placeholder: string; trustyBase: string, existingTrustyUri?: string } {
   const typeQuads = dataset.getQuads(null, RDF('type'), NP('Nanopublication'), null);
-  if (typeQuads.length > 0) {
-    const uri = typeQuads[0].subject.value;
+  const uri = typeQuads[0]?.subject.value;
+  if (uri && ensureTrailingSlash(uri) !== DEFAULT_NANOPUB_URI) {
     // Detect whether it is already a trusty URI (RA/RB/FA + 43 base64url chars).
-    // If so, return the prefix before the artifact code as baseUri.
+    // If so, return the prefix before the artifact code as trustyBase.
     const match = uri.match(/\/(RA|RB|FA)([A-Za-z0-9_-]{43})(?=[/#]|$)/);
-    let baseUri = match ? uri.substring(0, match.index! + 1) : uri;
-    baseUri = (baseUri.endsWith('/') || baseUri.endsWith('#')) ? baseUri : `${baseUri}/`;
-    return { baseUri, trustyUri: match ? uri : undefined };
+    let placeholder = match ? uri.substring(0, match.index! + 1) : uri;
+    placeholder = ensureTrailingSlash(placeholder);
+    return { placeholder, trustyBase: expandBaseUri(placeholder), existingTrustyUri: match ? ensureTrailingSlash(uri) : undefined };
   }
-  return { baseUri: DEFAULT_NANOPUB_URI, trustyUri: undefined };
+  return { placeholder: DEFAULT_NANOPUB_URI, trustyBase: TRUSTY_BASE, existingTrustyUri: undefined };
 }
 
 function replaceNanopubUri(dataset: Store, oldBase: string, newBase: string): Store {
@@ -71,13 +89,14 @@ export async function sign(
   let dataset: Store = new Store(quads);
   // detectNanopubBaseUri always returns a baseUri ending in '/'.
   // For case C (re-signing an existing trusty nanopub), it also returns the trustyUri.
-  const { baseUri: placeholder, trustyUri: existingTrustyUri } = detectNanopubBaseUri(dataset);
+  const { placeholder, trustyBase, existingTrustyUri } = detectNanopubBaseUri(dataset);
   const placeholderNoSlash = placeholder.replace(/\/$/, '');
 
   if (existingTrustyUri) {
     // Case C: replace the existing trusty URI with the detected base prefix so
     // the rest of the signing logic can treat it like a fresh placeholder.
-    trig = trig.replace(new RegExp(existingTrustyUri, 'g'), placeholderNoSlash);
+    const existingTrustyUriNoSlash = existingTrustyUri.replace(/\/$/, '');
+    trig = trig.replace(new RegExp(existingTrustyUriNoSlash, 'g'), placeholderNoSlash);
     const replacedQuads = parse(trig, 'trig');
     dataset = new Store(replacedQuads);
   }
@@ -121,12 +140,6 @@ export async function sign(
   if (!createdExists) {
     dataset.addQuad(quad(nanopubSubjectWithSep, DCT('created'), literal(new Date().toISOString(), XSD('dateTime')), pubinfoGraph));
   }
-
-  // Case A: any purl.org/nanopub/temp/ URI (default or hash-style) → remap to TRUSTY_BASE.
-  // Case B/C: custom or already-trusty base → keep as-is.
-  const trustyBase = placeholder.startsWith('http://purl.org/nanopub/temp/')
-    ? TRUSTY_BASE
-    : placeholder;
 
   // Step 1: normalize without signature (using placeholder URIs)
   const normalizedForSignature = normalizeDataset(dataset, placeholder, trustyBase);
