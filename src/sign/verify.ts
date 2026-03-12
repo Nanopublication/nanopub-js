@@ -28,10 +28,10 @@ export async function verifySignature(trig: string): Promise<VerificationResult>
   if (!targetQuad) throw new Error('No signature target found');
   const nanopubUri = targetQuad.object.value;
 
-  const { baseUri } = detectNanopubBaseUri(dataset);
+  const { trustyBase } = detectNanopubBaseUri(dataset);
 
   // Check 1: trusty hash
-  const normalizedForHash = normalizeDataset(dataset, nanopubUri, baseUri);
+  const normalizedForHash = normalizeDataset(dataset, nanopubUri, trustyBase);
   const computedHash = await makeTrusty(normalizedForHash);
   if (!nanopubUri.endsWith(computedHash)) {
     return { valid: false, reason: 'hash_mismatch' };
@@ -39,7 +39,7 @@ export async function verifySignature(trig: string): Promise<VerificationResult>
 
   // Check 2: cryptographic signature
   dataset.removeQuad(sigQuad);
-  const normalized = normalizeDataset(dataset, nanopubUri, baseUri);
+  const normalized = normalizeDataset(dataset, nanopubUri, trustyBase);
   const adapter = await getCryptoAdapter();
   const sigValid = await adapter.verify(normalized, signature, publicKeyBase64);
   if (!sigValid) {
