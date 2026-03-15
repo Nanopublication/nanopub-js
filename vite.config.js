@@ -1,13 +1,8 @@
 import { defineConfig } from "vite";
-import wasm from "vite-plugin-wasm";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
-  // We no longer need `vite-plugin-top-level-await` as we now lazy-load `@nanopub/sign`.
-  plugins: [wasm(), dts({ rollupTypes: true })],
-  optimizeDeps: {
-    exclude: ["@nanopub/sign"],
-  },
+  plugins: [dts({ rollupTypes: true })],
   // Build in library mode with separate browser and node entry points.
   // The browser entry (index) uses Web Crypto only; the node entry imports
   // from Node's built-in 'crypto' module which is kept external.
@@ -32,17 +27,6 @@ export default defineConfig({
     environment: "node",
     globals: true,
     setupFiles: ["./tests/setup.ts"],
-
-    server: {
-      deps: {
-        optimizer: {
-          ssr: {
-            include: ["@nanopub/sign/dist/index.js"],
-            exclude: ["@nanopub/sign"],
-          },
-        },
-      },
-    },
 
     poolOptions: {
       threads: {
