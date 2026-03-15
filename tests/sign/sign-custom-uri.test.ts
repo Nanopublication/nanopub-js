@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { sign } from '../../src/sign/sign';
+import { verifySignature } from '../../src/sign/verify';
 
 const INPUT_TRIG_CUSTOM_2 = `<https://w3id.org/sciencelive/np/~~~ARTIFACTCODE~~~/Head> {
 <https://w3id.org/sciencelive/np/~~~ARTIFACTCODE~~~/> a <http://www.nanopub.org/nschema#Nanopublication>;
@@ -75,10 +76,55 @@ const FIXED_PRIVATE_KEY =
   'MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDNQEcoXXchdpTm71Tidhyr1BMJp8jYeVg7/oLbmE5WOJ0hilSH/bmivywB+HoTOr6/3tpinw0Bws2M2m/7LLnDaaeYB5RC2DoD2BKBa499yOHa3rGMGOh/viyCGOJbjFPINlMhsIzsr+wvktHw0JclfW508lHmudjzR1/6B3OPdbj6Xw292VHIRt2WdyCmPEc8/3zvzuycQ3xsURnMxRoAdFqIf5iP30pn9uqP+Ex1rUaZ4lbrU8AuNPys3fiIPDVTYgsh4alY/IcYvd5OCvn2uw4LoXd/JZb9EJuS1KYK9v/DRirCdlvSNh4hy5UE7/nNgmXDt3xYjDfzOYN/8N9hAgMBAAECggEANbec5/OOOjPOxKHelWZUGqRmVyCScBVSAmGZ3d7+oZIvjZemh/DfpLhjzCA70syNH6ozfZwiy1MweKyyogoSlBISyrcxFk2A4YCrVzPPWhw5AA9IaGIcd1JOU74vf8Y6JywQlcCfIVLpfYnvaBcvd6BcSD8jMD9ziDgl5koM9H5iVDAr/J7XTm7iRxT3keCmfwBSs1rI0HB156e/QvG8eX/XX4hqrTJsRzC9S6wwkD/KSxan+ZHqN5d5eRI/3g9AYXNRqj0Nq2GOR2m4yC4UbL3ua7gEGxueErbKIm6uzWnCZSSV5fWXAALCmgILHeMpMMTej9+nd9ha2D3gJAoAAQKBgQDPV2sXW97OaL7jnTKd6tFbPgjrZ4YdkP917XTpOkhldJmiwhCDWo5BUSeo0aihB0rYwDNpGNgyBA9BNM5lBSCWrpAT3FMWrsUX6Y5Lg9UBaY5eXATmqf29YZPrWHG5b0vuU4MB59GzMPzAnzlysxLarzPbQBvXSeCNwLXtTKukcQKBgQD9a0Yb7FMNNHQlG8lOkftGRRIBejt+KPpg4cLF57nZJ5xgYaky+aiJLzZaof2Tmo7tsB3tlHv59opA9BCjB6iJ23OXTuO1Z5nqwH/PLe3m9QUd3syRgJ9a04is/GdxcUWUFG8shIBn1Gv0AYvZPwYXLduvdU5mnfTwKJfClvCh8QKBgQCfG3Mniq1QcZrCadf0zMP5I4KOunN1btZKNXz4mGwDxtU6y3cGhVASmWc4qiKf50utRthsts74mprmK9KSPLwERVJ0myb7igPe1LAIDNNA8TJ6AF0WcK4xTJbJC6bBaMG40kb/CFioDFh4q/bWqMo4HChMAEcdDykNPiudPK+eUQKBgQCWKuIxm7mfIo0MjEme0Gx4uGcyDu+AE+JCVKVpRqZfYtSMXHK57S0Mlbh8vm8X70dw26LwbMOGXKySTs4o/VnGzw7RA4N1tH2FmSpjZ5EJAfpVN/g65GAJnz3nW+4kT/3uAKncVGwOmtaZke0AABOo2pjKgRXDQyiowzUirvTK0QKBgQDOKqcTGGphC1pIpF/SUtdya0YXNoNoPtFBG5YmWjW0X7MonCisR0ffMsbqJWD00q2rzNG9kTU6u/3lKHrFFVktFQRYj4DJcLBxowt2j/WNiUOekFFw/xFbTCq7Sb2IoYUnQQPETKkrSq1WaAJ30rQRjhbXlpTPBOXj+tUrZ/BS+w==';
 
 
+const INPUT_TRIG_PLACEHOLDER = `<https://w3id.org/sciencelive/np/ARTIFACTCODE-PLACEHOLDER/Head> {
+<https://w3id.org/sciencelive/np/ARTIFACTCODE-PLACEHOLDER/> a <http://www.nanopub.org/nschema#Nanopublication>;
+    <http://www.nanopub.org/nschema#hasAssertion> <https://w3id.org/sciencelive/np/ARTIFACTCODE-PLACEHOLDER/assertion>;
+    <http://www.nanopub.org/nschema#hasProvenance> <https://w3id.org/sciencelive/np/ARTIFACTCODE-PLACEHOLDER/provenance>;
+    <http://www.nanopub.org/nschema#hasPublicationInfo> <https://w3id.org/sciencelive/np/ARTIFACTCODE-PLACEHOLDER/pubinfo>
+}
+<https://w3id.org/sciencelive/np/ARTIFACTCODE-PLACEHOLDER/assertion> {
+<http://example.org/s> <http://example.org/p> <http://example.org/o>
+}
+<https://w3id.org/sciencelive/np/ARTIFACTCODE-PLACEHOLDER/provenance> {
+<https://w3id.org/sciencelive/np/ARTIFACTCODE-PLACEHOLDER/assertion> <http://www.w3.org/ns/prov#wasAttributedTo> <https://orcid.org/0000-9999-1234-9999>
+}
+<https://w3id.org/sciencelive/np/ARTIFACTCODE-PLACEHOLDER/pubinfo> {
+<https://w3id.org/sciencelive/np/ARTIFACTCODE-PLACEHOLDER/> <http://purl.org/dc/terms/created> "2025-01-01T00:00:00.000Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+}
+`;
+
 describe('sign() with custom URI prefix', () => {
   it('outputs a URI with the same custom URI prefix as the sub correctly', async () => {
     const { signedRdf } = await sign(INPUT_TRIG_CUSTOM_2, FIXED_PRIVATE_KEY, ORCID_CUSTOM);
 
     expect(signedRdf).toBe(EXPECTED_SIGNED_TRIG_CUSTOM_2);
+  });
+});
+
+describe('sign() with deprecated ARTIFACTCODE-PLACEHOLDER', () => {
+  it('strips placeholder and produces a trusty URI with the custom base', async () => {
+    const { sourceUri, signedRdf } = await sign(INPUT_TRIG_PLACEHOLDER, FIXED_PRIVATE_KEY, ORCID_CUSTOM);
+    expect(sourceUri).toMatch(/^https:\/\/w3id\.org\/sciencelive\/np\/RA/);
+    expect(signedRdf).not.toContain('ARTIFACTCODE-PLACEHOLDER');
+  });
+
+  it('two calls with same key produce same trusty hash', async () => {
+    const r1 = await sign(INPUT_TRIG_PLACEHOLDER, FIXED_PRIVATE_KEY, ORCID_CUSTOM);
+    const r2 = await sign(INPUT_TRIG_PLACEHOLDER, FIXED_PRIVATE_KEY, ORCID_CUSTOM);
+    expect(r1.sourceUri).toBe(r2.sourceUri);
+  });
+});
+
+describe('verifySignature() for custom URI nanopub', () => {
+  it('verifies a nanopub signed with ~~~ARTIFACTCODE~~~ placeholder', async () => {
+    const { signedRdf } = await sign(INPUT_TRIG_CUSTOM_2, FIXED_PRIVATE_KEY, ORCID_CUSTOM);
+    const result = await verifySignature(signedRdf);
+    expect(result.valid).toBe(true);
+  });
+
+  it('verifies a nanopub signed with deprecated ARTIFACTCODE-PLACEHOLDER', async () => {
+    const { signedRdf } = await sign(INPUT_TRIG_PLACEHOLDER, FIXED_PRIVATE_KEY, ORCID_CUSTOM);
+    const result = await verifySignature(signedRdf);
+    expect(result.valid).toBe(true);
   });
 });
