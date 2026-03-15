@@ -30,7 +30,7 @@ export interface ValidationResult {
   errors?: string[];
 }
 
-export interface Nanopub {
+export interface NanopubData {
   assertion: Quad[];
   provenance: Quad[];
   pubinfo: Quad[];

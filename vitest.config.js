@@ -1,11 +1,10 @@
 import { defineConfig } from "vite";
-import wasm from "vite-plugin-wasm";
 
 export default defineConfig({
-  plugins: [wasm()],
   test: {
     globals: true,
     environment: "node",
+    setupFiles: ["./tests/setup.ts"],
     include: ["tests/**/*.test.ts"],
     coverage: {
       provider: "v8",
@@ -17,15 +16,10 @@ export default defineConfig({
         "tests/**",
         "examples/**",
         "src/types",
-        "src/utils/wasm.ts",
         "src/validate.ts", // TEMP excluding until validate is implemented
         "*/*.d.ts",
         "*.config.{ts,js}"
       ],    },
-    deps: {
-      inline: ["@nanopub/sign", "/?url$/"], 
-      
-    },
     poolOptions: {
       threads: { singleThread: true },
     },

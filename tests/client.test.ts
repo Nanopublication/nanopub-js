@@ -3,7 +3,7 @@ import { NanopubClient } from "../src/client";
 import { afterEach } from "node:test";
 
 describe("NanopubClient (unit)", () => {
-  let fetchMock;
+  let fetchMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     fetchMock = vi.fn();
@@ -64,8 +64,10 @@ describe("NanopubClient (unit)", () => {
     );
   });
 
-  it("fetchNanopub returns JSON-LD when format='jsonld'", async () => {
-    const jsonldData = { "@id": "s", p: "o" };
+  it("fetchNanopub returns JSON-LD array when format='jsonld'", async () => {
+    const jsonldData = [
+      { "@id": "https://mock.org/np1", "@graph": [{ "@id": "http://example.org/s" }] },
+    ];
     fetchMock.mockResolvedValueOnce({
       ok: true,
       json: async () => jsonldData,
@@ -74,8 +76,27 @@ describe("NanopubClient (unit)", () => {
     const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
     const np = await client.fetchNanopub("https://mock.org/np1", "jsonld");
 
+    expect(Array.isArray(np)).toBe(true);
     expect(np).toEqual(jsonldData);
-    expect(typeof np).toBe("object");
+  });
+
+  it("fetchNanopub returns string when format='trig' (type narrowing)", async () => {
+    fetchMock.mockResolvedValueOnce({ ok: true, text: async () => "trig content" });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const np = await client.fetchNanopub("https://mock.org/np1", "trig");
+
+    // TypeScript should narrow this to string at compile time
+    expect(typeof np).toBe("string");
+  });
+
+  it("fetchNanopub defaults to trig (string return)", async () => {
+    fetchMock.mockResolvedValueOnce({ ok: true, text: async () => "trig content" });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const np = await client.fetchNanopub("https://mock.org/np1");
+
+    expect(typeof np).toBe("string");
   });
 
   it("fetchNanopub returns raw TRiG text when format='trig' (default)", async () => {

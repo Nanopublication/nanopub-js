@@ -1,9 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NanopubClass, serialize, parse } from '../src/index';
-import { NamedNode, Quad, Literal } from 'n3';
+import { DataFactory, Quad } from 'n3';
 import { generateKeyPairSync } from 'crypto';
-import { makeNamedGraphNode } from '../src/utils/utils';
+import { createNanopubGraphs } from '../src/utils';
 import { DEFAULT_NANOPUB_URI } from '../src/constants';
+
+const { namedNode, quad, literal } = DataFactory;
 
 describe('Nanopub class', () => {
   let assertionQuads: Quad[];
@@ -13,10 +15,8 @@ describe('Nanopub class', () => {
   let np: NanopubClass;
 
   const nanopubUri = DEFAULT_NANOPUB_URI;
-  const npNode = makeNamedGraphNode(nanopubUri, '');
-  const assertionGraph = makeNamedGraphNode(nanopubUri, 'assertion');
-  const provGraph = makeNamedGraphNode(nanopubUri, 'provenance');
-  const pubinfoGraph = makeNamedGraphNode(nanopubUri, 'pubinfo');
+  const { npNode, assertionGraph, provenanceGraph, pubinfoGraph } 
+    = createNanopubGraphs(nanopubUri);
 
   beforeEach(() => {
     const { privateKey } = generateKeyPairSync('rsa', {
@@ -31,28 +31,31 @@ describe('Nanopub class', () => {
       .replace(/\r?\n|\r/g, '');
 
     assertionQuads = [
-      new Quad(
-        new NamedNode('http://example.org/s'),
-        new NamedNode('http://example.org/p'),
-        new NamedNode('http://example.org/o'),
+      quad(
+        namedNode('http://example.org/s'),
+        namedNode('http://example.org/p'),
+        namedNode('http://example.org/o'),
         assertionGraph,
       ),
     ];
 
     provQuads = [
-      new Quad(
+      quad(
         assertionGraph,
-        new NamedNode('http://purl.org/dc/terms/created'),
-        new Literal('2024-01-01T00:00:00Z'),
-        provGraph,
+        namedNode('http://purl.org/dc/terms/created'),
+        literal(
+          '2024-01-01T00:00:00Z',
+          namedNode('http://www.w3.org/2001/XMLSchema#dateTime'),
+        ),
+        provenanceGraph,
       ),
     ];
 
     pubinfoQuads = [
-      new Quad(
+      quad(
         npNode,
-        new NamedNode('http://purl.org/dc/terms/creator'),
-        new NamedNode('https://orcid.org/0000-0000-0000-0000'),
+        namedNode('http://purl.org/dc/terms/creator'),
+        namedNode('https://orcid.org/0000-0000-0000-0000'),
         pubinfoGraph,
       ),
     ];
@@ -210,7 +213,6 @@ describe('Nanopub class', () => {
       expect(signed.signature).toBeDefined();
       expect(signed.sourceUri).toBeDefined();
     });
-
     it('publishes loaded nanopub', async () => {
       const TEST_ENDPOINT = 'https://test.registry.knowledgepixels.com/np/';
       const result = await npFromRdf.publish(TEST_ENDPOINT);
@@ -238,5 +240,73 @@ describe('Nanopub class', () => {
       expect(np.provenance).toEqual([]);
       expect(np.pubinfo).toEqual([]);
     });
+  });
+
+  it('re-signing with the same key is a no-op', async () => {
+    const first = await np.sign();
+    const firstUri = first.sourceUri!;
+    const firstSig = first.signature!;
+
+    const second = await np.sign();
+    expect(second.sourceUri).toBe(firstUri);
+    expect(second.signature).toBe(firstSig);
+  });
+
+  it('re-signing with a different key produces a different trusty URI', async () => {
+    const first = await np.sign();
+    const firstUri = first.sourceUri!;
+
+    const { privateKey: newPk } = generateKeyPairSync('rsa', {
+      modulusLength: 2048,
+      publicKeyEncoding: { type: 'spki', format: 'pem' },
+      privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+    });
+    const newKeyB64 = newPk
+      .replace('-----BEGIN PRIVATE KEY-----', '')
+      .replace('-----END PRIVATE KEY-----', '')
+      .replace(/\r?\n|\r/g, '');
+
+    const reloaded = NanopubClass.fromRdf(first.rdf(), 'trig', {
+      name: 'Hello from nanopub-js test',
+      orcid: 'https://orcid.org/0000-0000-0000-0000',
+      privateKey: newKeyB64,
+    });
+
+    const resigned = await reloaded.sign();
+    expect(resigned.sourceUri).not.toBe(firstUri);
+    expect(await resigned.hasValidSignature()).toBe(true);
+  });
+
+  it('signs unsigned nanopub loaded with fromRdf', async () => {
+    const unsignedTrig = await serialize(np, 'trig');
+    const npFromUnsigned = NanopubClass.fromRdf(unsignedTrig, 'trig', {
+      name: 'Hello from nanopub-js test',
+      orcid: 'https://orcid.org/0000-0000-0000-0000',
+      privateKey: np.privateKey!,
+    });
+
+    const signed = await npFromUnsigned.sign();
+    expect(signed.signature).toBeDefined();
+    expect(signed.sourceUri).toMatch(/^https:\/\/w3id\.org\/np\/RA/);
+    expect(await signed.hasValidSignature()).toBe(true);
+  });
+
+  it('signs nanopub with custom base URI', async () => {
+    const defaultTrig = await serialize(np, 'trig');
+    const customTrig = defaultTrig.replaceAll(
+      'http://purl.org/nanopub/temp/np',
+      'https://example.org/mynp',
+    );
+
+    const npCustom = NanopubClass.fromRdf(customTrig, 'trig', {
+      name: 'Hello from nanopub-js test',
+      orcid: 'https://orcid.org/0000-0000-0000-0000',
+      privateKey: np.privateKey!,
+    });
+
+    const signed = await npCustom.sign();
+    expect(signed.signature).toBeDefined();
+    expect(signed.sourceUri).toMatch(/^https:\/\/example\.org\/mynp\/RA/);
+    expect(await signed.hasValidSignature()).toBe(true);
   });
 });
