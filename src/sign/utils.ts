@@ -185,12 +185,29 @@ export function normalizeDataset(
   const baseWithSep = (baseNs.endsWith('/') || baseNs.endsWith('#')) ? baseNs : `${baseNs}/`;
   const baseNoSep = baseNs.replace(/[/#]$/, '');
 
-  // replace the artifact-code/placeholder part with a
-  // space, keeping the separator before the local name.  For a URI like base/Head the
-  // normalized form is normUri + "/" + "Head" = "https://w3id.org/np/ /Head"
+  // Replace the artifact-code/placeholder part with a space, keeping the
+  // separator before the local name — mirroring trusty-uri-java's
+  // `uri.replace(artifactCode, " ")`:
+  //   base/RAxx/Head  →  normUri + "/" + "Head"  =  "https://w3id.org/np/ /Head"
+  //   base/RAxx#Head  →  normUri + "#" + "Head"  =  "https://w3id.org/np/ #Head"
+  //
+  // External references to OTHER trusty nanopubs share the same base prefix
+  // but have an artifact code as their local name (e.g. http://purl.org/np/RARv1-...).
+  // These must NOT be normalized — only the current nanopub's own URIs are touched.
+  const ARTIFACT_CODE_RE = /^(RA|RB|FA)[A-Za-z0-9_-]{43}([/#]|$)/;
+  const baseHashSep = baseNoSep + '#';
   const normalizeUri = (value: string): string => {
     if (value === baseWithSep || value === baseNoSep) return normUri;
-    if (value.startsWith(baseWithSep)) return normUri + '/' + value.slice(baseWithSep.length);
+    if (value.startsWith(baseWithSep)) {
+      const local = value.slice(baseWithSep.length);
+      if (ARTIFACT_CODE_RE.test(local)) return value; // external trusty reference
+      return normUri + '/' + local;
+    }
+    if (value.startsWith(baseHashSep)) {
+      const local = value.slice(baseHashSep.length);
+      if (ARTIFACT_CODE_RE.test(local)) return value;
+      return normUri + '#' + local;
+    }
     return value;
   };
 
@@ -216,9 +233,7 @@ export function normalizeDataset(
     } else {
       object = q.object.value
         .replace(/\\/g, "\\\\")
-        .replace(/\n/g, "\\n")
-        .replace(/\r/g, "\\r")
-        .replace(/\t/g, "\\t");
+        .replace(/\n/g, "\\n");
 
       if (q.object.termType === "Literal") {
         datatype = q.object.datatype?.value ?? "";
