@@ -13,7 +13,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it, expect, beforeAll } from 'vitest';
-import { NanopubTestSuite, TestSuiteSubfolder } from '@nanopub/testsuite-connector';
+import { NanopubTestSuite, TestSuiteSubfolder } from '@nanopub/nanopub-testsuite-connector-js';
 
 import { sign } from '../../src/sign/sign';
 import { verifySignature } from '../../src/sign/verify';

@@ -481,7 +481,7 @@ __metadata:
   resolution: "@nanopub/nanopub-js@workspace:."
   dependencies:
     "@eslint/js": "npm:^9.39.2"
-    "@nanopub/testsuite-connector": "github:Nanopublication/nanopub-testsuite-connector-js"
+    "@nanopub/nanopub-testsuite-connector-js": "npm:^1.0.0"
     "@rdfjs/data-model": "npm:^2.1.1"
     "@rdfjs/types": "npm:^2.0.1"
     "@types/n3": "npm:^1"
@@ -501,16 +501,13 @@ __metadata:
     vite: "npm:^7.2.7"
     vite-plugin-dts: "npm:^4.5.4"
     vitest: "npm:^3.2.4"
-  dependenciesMeta:
-    "@nanopub/testsuite-connector":
-      built: true
   languageName: unknown
   linkType: soft
 
-"@nanopub/testsuite-connector@github:Nanopublication/nanopub-testsuite-connector-js":
+"@nanopub/nanopub-testsuite-connector-js@npm:^1.0.0":
   version: 1.0.0
-  resolution: "@nanopub/testsuite-connector@https://github.com/Nanopublication/nanopub-testsuite-connector-js.git#commit=56c4816b5f6d394e73dd0a136807b481aa520a24"
-  checksum: 10c0/39014e625d028639a2d6d3ae9bfc33936b65bb048659bc29dfab6a7b0773fc595f3359ddf565e00ee0f5adb2896b5b3361d424a8c1dfd0633dfcedbc13885447
+  resolution: "@nanopub/nanopub-testsuite-connector-js@npm:1.0.0"
+  checksum: 10c0/076c7261ce135a51d439970bac23fe2ee876b09c1ec980b41a0bf5813c594888eced54b6c54882bf390eb18f4b26af75768d997ed300a9e7128306e50fc8f55d
   languageName: node
   linkType: hard
 
