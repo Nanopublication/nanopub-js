@@ -4,7 +4,7 @@ import { getCryptoAdapter } from "./crypto";
 import { parse, serialize } from '../serialize';
 import { replaceBnodes, normalizeDataset } from './utils';
 import { DEFAULT_NANOPUB_URI, TRUSTY_BASE } from '../constants';
-import { NPX, RDF, NP, DCT, XSD } from '../vocab';
+import { NPX, RDF, NP } from '../vocab';
 import { makeTrusty } from './trusty';
 
 const { namedNode, literal, quad } = DataFactory;
@@ -27,10 +27,16 @@ export function ensureTrailingSlash(uri: string) {
   return /[A-Za-z0-9\-_]$/.test(uri) ? uri + '/' : uri
 }
 
+const TEMP_NANOPUB_PREFIX = 'http://purl.org/nanopub/temp/';
+
 export function detectNanopubBaseUri(dataset: Store): { placeholder: string; trustyBase: string, existingTrustyUri?: string } {
   const typeQuads = dataset.getQuads(null, RDF('type'), NP('Nanopublication'), null);
   const uri = typeQuads[0]?.subject.value;
   if (uri && ensureTrailingSlash(uri) !== DEFAULT_NANOPUB_URI) {
+    // Any http://purl.org/nanopub/temp/ URI is a placeholder - remap to TRUSTY_BASE.
+    if (uri.startsWith(TEMP_NANOPUB_PREFIX)) {
+      return { placeholder: ensureTrailingSlash(uri), trustyBase: TRUSTY_BASE, existingTrustyUri: undefined };
+    }
     // Detect whether it is already a trusty URI (RA/RB/FA + 43 base64url chars).
     // If so, return the prefix before the artifact code as trustyBase.
     const match = uri.match(/\/(RA|RB|FA)([A-Za-z0-9_-]{43})(?=[/#]|$)/);
@@ -103,7 +109,11 @@ export async function sign(
 
   dataset = replaceBnodes(dataset, placeholder);
 
-  const pubinfoGraph = namedNode(`${placeholder}pubinfo`);
+  // Detect the actual pubinfo graph URI from the head declaration.
+  const headGraph = namedNode(`${placeholder}Head`);
+  const pubinfoDecl = dataset.getQuads(null, NP('hasPublicationInfo'), null, headGraph)[0];
+  const pubinfoLocalName = pubinfoDecl ? pubinfoDecl.object.value.slice(placeholder.length) : 'pubinfo';
+  const pubinfoGraph = namedNode(`${placeholder}${pubinfoLocalName}`);
   const sigNode = namedNode(`${placeholder}sig`);
 
   // Strip any existing signature quads so that re-signing a loaded nanopub
@@ -119,26 +129,6 @@ export async function sign(
   dataset.addQuad(quad(sigNode, NPX('hasSignatureTarget'), namedNode(placeholderNoSlash), pubinfoGraph));
   if (orcid) {
     dataset.addQuad(quad(sigNode, NPX('signedBy'), namedNode(orcid), pubinfoGraph));
-  }
-
-  // The nanopub subject can appear with or without the trailing separator.
-  // placeholder always ends with '/' now; also check the no-sep form.
-  const nanopubSubjectWithSep = namedNode(placeholder);
-  const nanopubSubjectNoSep = namedNode(placeholderNoSlash);
-
-  const creatorExists =
-    dataset.getQuads(nanopubSubjectWithSep, DCT('creator'), null, pubinfoGraph).length > 0 ||
-    dataset.getQuads(nanopubSubjectNoSep, DCT('creator'), null, pubinfoGraph).length > 0;
-  const createdExists =
-    dataset.getQuads(nanopubSubjectWithSep, DCT('created'), null, pubinfoGraph).length > 0 ||
-    dataset.getQuads(nanopubSubjectNoSep, DCT('created'), null, pubinfoGraph).length > 0;
-
-  // Add dct:creator and dct:created if not already present (mirrors nanopub-rs behaviour).
-  if (orcid && !creatorExists) {
-    dataset.addQuad(quad(nanopubSubjectWithSep, DCT('creator'), namedNode(orcid), pubinfoGraph));
-  }
-  if (!createdExists) {
-    dataset.addQuad(quad(nanopubSubjectWithSep, DCT('created'), literal(new Date().toISOString(), XSD('dateTime')), pubinfoGraph));
   }
 
   // Step 1: normalize without signature (using placeholder URIs)
@@ -157,7 +147,7 @@ export async function sign(
 
   dataset = replaceNanopubUri(dataset, placeholder, trustyUri);
 
-  const trustyPubinfoGraph = namedNode(`${trustyUri}/pubinfo`);
+  const trustyPubinfoGraph = namedNode(`${trustyUri}/${pubinfoLocalName}`);
 
   const headQuads = [...dataset.getQuads(null, null, null, namedNode(`${trustyUri}/Head`))];
   const assertionQuads = [...dataset.getQuads(null, null, null, namedNode(`${trustyUri}/assertion`))];

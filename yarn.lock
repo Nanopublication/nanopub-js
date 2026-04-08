@@ -481,6 +481,7 @@ __metadata:
   resolution: "@nanopub/nanopub-js@workspace:."
   dependencies:
     "@eslint/js": "npm:^9.39.2"
+    "@nanopub/nanopub-testsuite-connector-js": "npm:^1.0.0"
     "@rdfjs/data-model": "npm:^2.1.1"
     "@rdfjs/types": "npm:^2.0.1"
     "@types/n3": "npm:^1"
@@ -502,6 +503,13 @@ __metadata:
     vitest: "npm:^3.2.4"
   languageName: unknown
   linkType: soft
+
+"@nanopub/nanopub-testsuite-connector-js@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@nanopub/nanopub-testsuite-connector-js@npm:1.0.0"
+  checksum: 10c0/076c7261ce135a51d439970bac23fe2ee876b09c1ec980b41a0bf5813c594888eced54b6c54882bf390eb18f4b26af75768d997ed300a9e7128306e50fc8f55d
+  languageName: node
+  linkType: hard
 
 "@npmcli/agent@npm:^4.0.0":
   version: 4.0.0

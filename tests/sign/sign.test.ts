@@ -194,14 +194,13 @@ describe('sign() with custom URI prefix', () => {
     expect(signedRdf).not.toContain('https://w3id.org/sciencelive/np/Head>');
   });
 
-  it('includes dct:creator and npx:signedBy when orcid is provided', async () => {
+  it('includes npx:signedBy when orcid is provided', async () => {
     const { signedRdf } = await sign(INPUT_TRIG_CUSTOM, FIXED_PRIVATE_KEY, ORCID_CUSTOM);
-    expect(signedRdf).toContain('dc:creator');
     expect(signedRdf).toContain('npx:signedBy');
     expect(signedRdf).toContain(ORCID_CUSTOM);
   });
 
-  it('omits dct:creator and npx:signedBy when orcid is not provided', async () => {
+  it('omits npx:signedBy when orcid is not provided', async () => {
     const { signedRdf } = await sign(INPUT_TRIG_CUSTOM, FIXED_PRIVATE_KEY);
     expect(signedRdf).not.toContain('dc:creator');
     expect(signedRdf).not.toContain('npx:signedBy');

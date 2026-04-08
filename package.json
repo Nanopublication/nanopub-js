@@ -49,6 +49,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "@nanopub/nanopub-testsuite-connector-js": "^1.0.0",
     "@rdfjs/data-model": "^2.1.1",
     "n3": "^1.26.0",
     "rdf-canonize": "^5.0.0",
