@@ -2,9 +2,9 @@ import { SparqlBindingValue, SparqlJsonResult } from "./types/types";
 
 const ENDPOINT_UUIDS: Record<string, string> = {
   findNanopubsWithText:
-    'RAWruhiSmyzgZhVRs8QY8YQPAgHzTfl7anxII1de-yaCs/fulltext-search-on-labels',
-  findValidNanopubsWithText:
     'RAMJaSqIk4-qgCud7Kf-ltdE3i8DVP239uQv-BiTGvwUU/fulltext-search-on-labels-all',
+  findValidNanopubsWithText:
+    'RAWruhiSmyzgZhVRs8QY8YQPAgHzTfl7anxII1de-yaCs/fulltext-search-on-labels',
   findNanopubsWithPattern:
     'RAuE9jU8LLwco-iJHiNjzQgEHfx5j-XkbzlutT59cQYiU/find_nanopubs_with_pattern',
   findValidNanopubsWithPattern:

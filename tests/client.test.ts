@@ -177,6 +177,33 @@ describe("NanopubClient (unit)", () => {
     expect(results[0].np).toBe("np1");
   });
 
+  it("findNanopubsWithText hits the valid-only endpoint by default", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({ results: { bindings: [] } }),
+    });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    for await (const _ of client.findNanopubsWithText("test")) { /* drain */ }
+
+    const url = fetchMock.mock.calls[0][0] as string;
+    expect(url).toContain("/fulltext-search-on-labels");
+    expect(url).not.toContain("/fulltext-search-on-labels-all");
+  });
+
+  it("findNanopubsWithText hits the include-all endpoint when filterRetracted=false", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({ results: { bindings: [] } }),
+    });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    for await (const _ of client.findNanopubsWithText("test", undefined, false)) { /* drain */ }
+
+    const url = fetchMock.mock.calls[0][0] as string;
+    expect(url).toContain("/fulltext-search-on-labels-all");
+  });
+
   it("findNanopubsWithPattern yields search results", async () => {
     const fakeResponse = { results: { bindings: [{ np: { value: "np2" } }] } };
     fetchMock.mockResolvedValue({ ok: true, json: async () => fakeResponse });
