@@ -21,8 +21,13 @@ import { verifySignature } from '../../src/sign/verify';
 let suite: NanopubTestSuite;
 let profileOrcid: string;
 
+// Pin to a specific suite commit for deterministic CI. getLatest() tracks the
+// upstream `main` HEAD, so new/changed cases there would break this build
+// unrelated to our code. Bump this SHA deliberately when adopting suite updates.
+const SUITE_COMMIT = 'cfe963044bf58385687f40bf37ac424a83687a13';
+
 beforeAll(async () => {
-  suite = await NanopubTestSuite.getLatest();
+  suite = await NanopubTestSuite.getAtCommit(SUITE_COMMIT);
 
   // Read the profile ORCID used for transform signing
   const profilePath = join(suite.root, 'transform', 'profile.yaml');
