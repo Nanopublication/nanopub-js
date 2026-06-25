@@ -82,6 +82,32 @@ function replaceNanopubUri(dataset: Store, oldBase: string, newBase: string): St
   return out;
 }
 
+/**
+ * Substitute artifact-code placeholders in custom-namespace URIs with the
+ * computed artifact code (e.g. https://example.org/ns/~~~ARTIFACTCODE~~~ →
+ * https://example.org/ns/RA...). The nanopub's own base URI is handled
+ * separately by replaceNanopubUri.
+ */
+function replaceArtifactCodePlaceholder(dataset: Store, artifactCode: string): Store {
+  const out = new Store();
+  const sub = (v: string) =>
+    v.split('~~~ARTIFACTCODE~~~').join(artifactCode).split('ARTIFACTCODE-PLACEHOLDER').join(artifactCode);
+  const rewrite = (term: Term): Term =>
+    term.termType === 'NamedNode' &&
+    (term.value.includes('~~~ARTIFACTCODE~~~') || term.value.includes('ARTIFACTCODE-PLACEHOLDER'))
+      ? namedNode(sub(term.value))
+      : term;
+  for (const q of dataset) {
+    out.addQuad(quad(
+      rewrite(q.subject) as Quad_Subject,
+      rewrite(q.predicate) as Quad_Predicate,
+      rewrite(q.object) as Quad_Object,
+      rewrite(q.graph) as Quad_Graph,
+    ));
+  }
+  return out;
+}
+
 export async function sign(
   trig: string,
   privateKeyBase64: string,
@@ -146,6 +172,7 @@ export async function sign(
   const trustyUri = `${trustyBaseNoSlash}/${artifactCode}`;
 
   dataset = replaceNanopubUri(dataset, placeholder, trustyUri);
+  dataset = replaceArtifactCodePlaceholder(dataset, artifactCode);
 
   const trustyPubinfoGraph = namedNode(`${trustyUri}/${pubinfoLocalName}`);
 

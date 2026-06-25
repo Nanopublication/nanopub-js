@@ -8,6 +8,7 @@
 * Fix swapped text-search endpoint UUIDs in NanopubClient ([ad4d3dc](https://github.com/Nanopublication/nanopub-js/commit/ad4d3dc))
 * Handle hash-separator URIs and skip external trusty refs in normalization; remove incorrect escaping from literal normalization ([b1eaf9e](https://github.com/Nanopublication/nanopub-js/commit/b1eaf9e))
 * Treat all `purl.org/nanopub/temp/` URIs as placeholders; detect pubinfo graph name dynamically from the Head declaration; stop auto-injecting `dct:creator` and `dct:created` ([49722f8](https://github.com/Nanopublication/nanopub-js/commit/49722f8))
+* Compute the correct trusty hash for `~~~ARTIFACTCODE~~~` placeholders in custom-namespace URIs, matching the reference nanopub-java implementation
 
 ## [0.1.1](https://github.com/Nanopublication/nanopub-js/compare/v0.1.0...v0.1.1) (2026-03-15)
 

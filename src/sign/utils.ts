@@ -196,6 +196,11 @@ export function normalizeDataset(
   // These must NOT be normalized — only the current nanopub's own URIs are touched.
   const ARTIFACT_CODE_RE = /^(RA|RB|FA)[A-Za-z0-9_-]{43}([/#]|$)/;
   const baseHashSep = baseNoSep + '#';
+  // When the base URI is already trusty (i.e. during verification), capture its
+  // artifact code so we can strip it from custom-namespace URIs that embed it —
+  // mirroring how the ~~~ARTIFACTCODE~~~ placeholder is stripped during signing.
+  const codeMatch = baseNoSep.match(/(RA|RB|FA)[A-Za-z0-9_-]{43}/);
+  const artifactCode = codeMatch ? codeMatch[0] : null;
   const normalizeUri = (value: string): string => {
     if (value === baseWithSep || value === baseNoSep) return normUri;
     if (value.startsWith(baseWithSep)) {
@@ -208,7 +213,14 @@ export function normalizeDataset(
       if (ARTIFACT_CODE_RE.test(local)) return value;
       return normUri + '#' + local;
     }
-    return value;
+    // URIs outside this nanopub's namespace: a custom-namespace URI may embed
+    // this nanopub's artifact code (e.g. https://example.org/ns/<code>). Strip
+    // the ~~~ARTIFACTCODE~~~ placeholder (signing) or the embedded code
+    // (verification) to a single space so it doesn't affect the hash, mirroring
+    // trusty-uri-java's `uri.replace(artifactCode, " ")`.
+    let v = value.split('~~~ARTIFACTCODE~~~').join(' ').split('ARTIFACTCODE-PLACEHOLDER').join(' ');
+    if (artifactCode) v = v.split(artifactCode).join(' ');
+    return v;
   };
 
   for (const q of dataset) {
