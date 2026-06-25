@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/Nanopublication/nanopub-js/compare/v0.1.2...v0.1.3) (2026-06-25)
+
+
+### Bug Fixes
+
+* correct repository URL casing and dependency placement ([684582e](https://github.com/Nanopublication/nanopub-js/commit/684582edd626f58cff479dfde72cb7063fbe2b17))
+
 ## [0.1.2](https://github.com/Nanopublication/nanopub-js/compare/v0.1.1...v0.1.2) (2026-06-25)
 
 
