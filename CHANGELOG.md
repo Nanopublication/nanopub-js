@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.3](https://github.com/Nanopublication/nanopub-js/compare/v0.1.2...v0.1.3) (2026-06-25)
+
+
+### Bug Fixes
+
+* compute correct trusty hash for ~~~ARTIFACTCODE~~~ placeholders in custom-namespace URIs ([5057525](https://github.com/Nanopublication/nanopub-js/commit/5057525bd2df4e03364874cb9d4d1802e2c46354))
+* input RDF in example app ([a4c0aa1](https://github.com/Nanopublication/nanopub-js/commit/a4c0aa172d407d9866ce6129f6cc588c0ad4e25e))
+* rewrite normalizeDataset ([5891916](https://github.com/Nanopublication/nanopub-js/commit/58919167eff5fe99da7533ade302b7b4ee2da540))
+* support `~~~ARTIFACTCODE~~~` placeholder for custom URI to avoid collisions with other URIs with the same custom URI prefix ([deaac70](https://github.com/Nanopublication/nanopub-js/commit/deaac700b98ae3feab8be954358ccd8cabf8f0f6))
+* use base URI as trusty base ([1e75f66](https://github.com/Nanopublication/nanopub-js/commit/1e75f667b5450ca44751f2ecc8f5d24af9b154a8))
+* use dct:creator instead of npx:signedBy for re-sign short-circuit check ([f96d793](https://github.com/Nanopublication/nanopub-js/commit/f96d7936b521c93998fc937691c632822eddab38))
+
 ## [0.1.2](https://github.com/Nanopublication/nanopub-js/compare/v0.1.1...v0.1.2) (2026-06-25)
 
 
