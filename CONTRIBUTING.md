@@ -13,6 +13,8 @@ you finalize your pull requests.
 * [Getting Started](#getting-started)
     * [Issues](#issues)
     * [Pull Requests (PRs)](#pull-requests-prs)
+* [Commit Formatting Guidelines](#commit-formatting-guidelines)
+* [Releases](#releases)
 
 ## Getting Started
 
@@ -63,3 +65,65 @@ In general, we follow the ["fork-and-pull" Git workflow](https://github.com/susa
    this repo
 5. Push changes to your fork
 6. Open a PR in this repository
+
+## Commit Formatting Guidelines
+
+This repository uses [Conventional Commits](https://www.conventionalcommits.org/). Commit messages drive automated
+versioning and changelog generation (see [Releases](#releases)), so the format matters.
+
+Each commit message should be structured as:
+
+```text
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+Common types and how they affect the next release:
+
+| Type | Use for | Version bump |
+| --- | --- | --- |
+| `feat` | A new feature | minor (`0.1.0` → `0.2.0`) |
+| `fix` | A bug fix | patch (`0.1.0` → `0.1.1`) |
+| `docs` | Documentation only | none |
+| `test` | Adding or fixing tests | none |
+| `refactor` | Code change that neither fixes a bug nor adds a feature | none |
+| `chore` | Build process, tooling, or maintenance | none |
+| `ci` | CI configuration changes | none |
+
+**Breaking changes** trigger a major bump (`0.1.0` → `1.0.0`) and are flagged either with a `!` after the type
+(`feat!: ...`) or with a `BREAKING CHANGE:` footer.
+
+Examples:
+
+```text
+feat: add detectNanopubBaseUri() to infer the nanopub base URI
+fix: strip stale signature quads on re-sign
+docs: clarify signing options in the README
+feat!: rename NanopubClass to Nanopub
+```
+
+Only `feat`, `fix`, and breaking changes produce a release. Commits that use other types (or no conventional prefix)
+are merged normally but won't appear in the changelog or trigger a version bump on their own.
+
+> [!TIP]
+> If your PR is squash-merged, the **PR title** becomes the commit message — so make sure the PR title itself follows
+> the Conventional Commits format.
+
+## Releases
+
+Releases are automated with [release-please](https://github.com/googleapis/release-please). You do not need to bump the
+version or edit `CHANGELOG.md` manually.
+
+The flow is:
+
+1. Conventional commits are merged into `main`.
+2. The release workflow opens (and keeps updating) a **"chore: release x.y.z"** pull request that bumps the version in
+   `package.json`, updates `.release-please-manifest.json`, and adds the new `CHANGELOG.md` entries.
+3. When a maintainer merges that release PR, release-please tags the commit, creates the GitHub release, and the
+   workflow publishes the package to npm.
+
+In short: write good conventional commits and the version, changelog, tag, GitHub release, and npm publish are all
+handled for you.

@@ -1,0 +1,44 @@
+name: Release
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Enable Corepack
+        if: ${{ steps.release.outputs.release_created }}
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      # Build deps with yarn (uses yarn.lock); the prepare script builds dist/.
+      - run: yarn install --immutable
+        if: ${{ steps.release.outputs.release_created }}
+
+      # OIDC trusted publishing needs npm >= 11.5; Node 22 ships npm 10.
+      - run: npm install -g npm@latest
+        if: ${{ steps.release.outputs.release_created }}
+
+      # Only the upload uses npm, so OIDC trusted publishing works (no token).
+      - run: npm publish
+        if: ${{ steps.release.outputs.release_created }}
