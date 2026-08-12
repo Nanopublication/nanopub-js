@@ -3,5 +3,14 @@
   "extends": [
     "local>ashleycaselli/renovate-config:node"
   ],
-  "automerge": false
+  "automerge": false,
+  "packageRules": [
+    {
+      "matchDepTypes": [
+        "devDependencies"
+      ],
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "deps"
+    }
+  ]
 }
