@@ -548,11 +548,11 @@ __metadata:
   linkType: hard
 
 "@rdfjs/data-model@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@rdfjs/data-model@npm:2.1.1"
+  version: 2.1.2
+  resolution: "@rdfjs/data-model@npm:2.1.2"
   bin:
     rdfjs-data-model-test: bin/test.js
-  checksum: 10c0/ed52a9b62892765f2f3b739052d6df57f3ab3057d4e2351b64224a4b741dd378857590500439ef719ad768fc978471d59173cd83be4be99efb5d5b88d39648ff
+  checksum: 10c0/e9e10821154d9a855212736458b549a67c318144be4fcdffe41b708ef6059ee4ce0b6ca5452ce39d5dd00c47d585794bd59a80c98ccfd03bb75d6b99e637c6ad
   languageName: node
   linkType: hard
 
