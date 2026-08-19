@@ -15,6 +15,10 @@ export interface NanopubOptions {
 
   privateKey?: string;
   name?: string;
+  /**
+   * IRI of the signer, typically an ORCID iD. It may also be a sub-IRI of the
+   * nanopub being signed, to self-sign an agent's own introduction.
+   */
   orcid?: string;
   email?: string;
 }
