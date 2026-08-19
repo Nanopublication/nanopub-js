@@ -14,7 +14,7 @@ import { verifySignature } from '../../src/sign/verify';
 
 const TEMP_PREFIX = 'http://purl.org/nanopub/temp/';
 const BOT = `${TEMP_PREFIX}np/my-bot`;
-const ORCID = 'https://orcid.org/0000-9999-1234-9999';
+const ORCID = 'https://orcid.org/0000-0002-1825-0097';
 
 // A key declaration introducing `sub:my-bot`, the agent that also signs it.
 const INTRO_TRIG = `\
