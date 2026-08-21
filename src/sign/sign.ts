@@ -108,6 +108,16 @@ function replaceArtifactCodePlaceholder(dataset: Store, artifactCode: string): S
   return out;
 }
 
+/**
+ * Signs a nanopub and returns it with its trusty URI applied.
+ *
+ * @param trig - The unsigned nanopub in TriG.
+ * @param privateKeyBase64 - The RSA private key, base64 of the PKCS#8 DER.
+ * @param orcid - IRI of the signer recorded as `npx:signedBy`, typically an
+ * ORCID iD. It may also be a sub-IRI of the nanopub being signed, so that an
+ * agent can self-sign its own introduction in a single step; such an IRI is
+ * resolved to the final trusty sub-IRI along with every other self-reference.
+ */
 export async function sign(
   trig: string,
   privateKeyBase64: string,
