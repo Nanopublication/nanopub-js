@@ -28,11 +28,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./tests/setup.ts"],
 
-    poolOptions: {
-      threads: {
-        singleThread: true,
-      },
-    },
+    // See vitest.config.js — `poolOptions` was removed in Vitest 4.
+    maxWorkers: 1,
   },
 
 });
