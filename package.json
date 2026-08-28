@@ -36,7 +36,6 @@
     "@types/n3": "^1",
     "@types/node": "^24.9.1",
     "@types/rdfjs__data-model": "^2",
-    "@types/sparqljs": "^3.1.12",
     "@vitest/coverage-v8": "4.1.11",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
@@ -52,9 +51,9 @@
   "dependencies": {
     "@rdfjs/data-model": "^2.1.1",
     "@rdfjs/types": "^2.0.1",
+    "@traqula/parser-sparql-1-1": "^1.2.1",
     "n3": "^1.26.0",
     "rdf-canonize": "^5.0.0",
-    "rdf-js": "^4.0.2",
-    "sparqljs": "^3.7.4"
+    "rdf-js": "^4.0.2"
   }
 }

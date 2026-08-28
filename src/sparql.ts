@@ -6,21 +6,18 @@
  * publishing a corrected version. These checks run before a nanopublication
  * carrying such a query is signed or published.
  *
- * The queries end up being executed by grlc against RDF4J, so what matters is
- * what RDF4J's parser accepts. `sparqljs` stands in for it here, with two
- * adjustments that were measured against the 1364 grlc queries published so far:
+ * The queries end up being run by grlc against RDF4J, so what this has to match
+ * is what RDF4J's parser accepts. Traqula's SPARQL 1.1 parser stands in for it,
+ * with two adjustments measured against the 1364 grlc queries published so far:
+ * the prefixes RDF4J declares for every query are pre-declared here too, and the
+ * restrictions Traqula enforces that RDF4J does not are left to the endpoint
+ * that runs the query. With those, the check agrees with RDF4J on all but two of
+ * those queries, and rejects none that RDF4J accepts.
  *
- *  - RDF4J pre-declares a handful of prefixes and applies fewer semantic checks
- *    than sparqljs does, so queries sparqljs rejects for those reasons are
- *    accepted here (see RDF4J_PREFIXES and the error handling in
- *    getSparqlSyntaxError);
- *  - sparqljs treats every JavaScript whitespace character as SPARQL whitespace,
- *    so a no-break space passes it while RDF4J reports a lexical error. That is
- *    the very failure this check exists for, so findDisallowedCharacter looks
- *    for those characters itself.
- *
- * With those two adjustments the check agrees with RDF4J on all but two of those
- * 1364 queries, rejecting none that RDF4J accepts.
+ * The characters this check mainly exists for — a no-break space, a typographic
+ * quote — are caught by Traqula's lexer, which reports the offset they sit at
+ * and leaves them alone inside comments, string literals and IRIs, where SPARQL
+ * allows them.
  */
 
 /**
@@ -132,148 +129,50 @@ const CHARACTER_NAMES: Record<number, string> = {
   0xff5d: 'FULLWIDTH RIGHT CURLY BRACKET',
 };
 
-/** The only whitespace the SPARQL grammar allows: WS ::= #x20 | #x9 | #xD | #xA */
-const SPARQL_WHITESPACE = ' \t\n\r';
+/**
+ * The advice that follows a named character: these are almost never typed by
+ * hand, and replacing them with their plain equivalents is the whole fix.
+ */
+const CHARACTER_ADVICE =
+  'Characters like this one tend to slip in when a query is copied from a word ' +
+  'processor or a web page, and replacing them with their plain equivalents ' +
+  'makes the query valid again.';
+
+/** The lexer's report of a character it could not begin a token with. */
+const LEXICAL_ERROR = /^unexpected character: ->([\s\S]+?)<- at offset: (\d+)/;
+
+/** The parser's report: a line, the line itself, a caret, then the details. */
+const PARSE_ERROR = /^Parse error(?: on line (\d+))?\n?([\s\S]*)$/;
 
 /**
- * The non-ASCII characters SPARQL allows outside literals, comments and IRIs:
- * PN_CHARS_BASE plus the two ranges and one character PN_CHARS adds. Anything
- * else non-ASCII in that position is a lexical error.
+ * Expands the `\uXXXX` and `\UXXXXXXXX` escapes of SPARQL 19.2, as the parser
+ * does before it lexes. Positions are worked out against the text it read rather
+ * than the text as written, so that they land where it says they do. Expanding
+ * an escape never removes a line break, so the line is right either way; where a
+ * query uses such an escape the column counts the expanded character rather than
+ * the six or ten that were written for it.
  */
-const SPARQL_NAME_RANGES: [number, number][] = [
-  [0x00b7, 0x00b7],
-  [0x00c0, 0x00d6],
-  [0x00d8, 0x00f6],
-  [0x00f8, 0x02ff],
-  [0x0300, 0x036f],
-  [0x0370, 0x037d],
-  [0x037f, 0x1fff],
-  [0x200c, 0x200d],
-  [0x203f, 0x2040],
-  [0x2070, 0x218f],
-  [0x2c00, 0x2fef],
-  [0x3001, 0xd7ff],
-  [0xf900, 0xfdcf],
-  [0xfdf0, 0xfffd],
-  [0x10000, 0xeffff],
-];
-
-function isSparqlNameChar(codePoint: number): boolean {
-  return SPARQL_NAME_RANGES.some(
-    ([from, to]) => codePoint >= from && codePoint <= to,
+function expandCodepointEscapes(sparql: string): string {
+  return sparql.replace(
+    /\\u([0-9a-fA-F]{4})|\\U([0-9a-fA-F]{8})/gu,
+    (match: string, short?: string, long?: string) => {
+      const codePoint = Number.parseInt(short ?? long ?? '', 16);
+      return codePoint > 0x10ffff ? match : String.fromCodePoint(codePoint);
+    },
   );
 }
 
-/** IRIREF ::= '<' ([^<>"{}|^`\]-[#x00-#x20])* '>' */
-const IRI_FORBIDDEN = '<>"{}|^`\\';
-
-/**
- * The length of the IRI that starts at `start`, or 0 where that '<' is a
- * comparison operator rather than the opening of an IRI.
- */
-function iriLength(sparql: string, start: number): number {
-  for (let i = start + 1; i < sparql.length; i++) {
-    const char = sparql[i];
-    if (char === '>') return i - start + 1;
-    if (IRI_FORBIDDEN.includes(char) || char <= ' ') return 0;
-  }
-  return 0;
-}
-
-/** A character SPARQL doesn't allow where it stands, and where it stands. */
-export interface DisallowedCharacter {
-  codePoint: number;
-  line: number;
-  column: number;
-}
-
-/**
- * Finds the first character the SPARQL grammar doesn't allow where it stands.
- *
- * Only code positions are examined: comments, string literals and IRIs may hold
- * any character, and regularly do. What is left is a character that is either
- * outside SPARQL's name characters or a whitespace character other than the four
- * the grammar allows — a no-break space, say, which reads as an ordinary space
- * to whoever wrote the query but stops the parser on the way to grlc.
- *
- * @param sparql - The query to scan.
- * @returns The first such character, or null if there is none.
- */
-export function findDisallowedCharacter(
-  sparql: string,
-): DisallowedCharacter | null {
-  let i = 0;
-  let line = 1;
-  let column = 1;
-
-  // Steps over `count` characters, keeping the line and column in step.
-  const skip = (count: number) => {
-    for (let n = 0; n < count && i < sparql.length; n++, i++) {
-      if (sparql[i] === '\n') {
-        line++;
-        column = 1;
-      } else {
-        column++;
-      }
-    }
+/** Where an offset falls, counting from line 1, column 1. */
+function positionAt(
+  text: string,
+  offset: number,
+): { line: number; column: number } {
+  const before = text.slice(0, offset);
+  const lastBreak = before.lastIndexOf('\n');
+  return {
+    line: before.split('\n').length,
+    column: offset - lastBreak,
   };
-
-  while (i < sparql.length) {
-    const char = sparql[i];
-
-    // Comment: runs to the end of the line.
-    if (char === '#') {
-      const end = sparql.indexOf('\n', i);
-      skip((end === -1 ? sparql.length : end) - i);
-      continue;
-    }
-
-    // Long string literal: runs to the matching triple quote.
-    const triple = sparql.slice(i, i + 3);
-    if (triple === "'''" || triple === '"""') {
-      let end = i + 3;
-      while (end < sparql.length && sparql.slice(end, end + 3) !== triple) {
-        end += sparql[end] === '\\' ? 2 : 1;
-      }
-      skip(Math.min(end + 3, sparql.length) - i);
-      continue;
-    }
-
-    // Short string literal: runs to the matching quote, at most to the line end.
-    if (char === "'" || char === '"') {
-      let end = i + 1;
-      while (
-        end < sparql.length &&
-        sparql[end] !== char &&
-        sparql[end] !== '\n'
-      ) {
-        end += sparql[end] === '\\' ? 2 : 1;
-      }
-      skip(Math.min(end + 1, sparql.length) - i);
-      continue;
-    }
-
-    // IRI, if this '<' opens one rather than being a comparison operator.
-    if (char === '<') {
-      const length = iriLength(sparql, i);
-      if (length) {
-        skip(length);
-        continue;
-      }
-    }
-
-    const codePoint = sparql.codePointAt(i)!;
-    const disallowedWhitespace =
-      /\s/.test(char) && !SPARQL_WHITESPACE.includes(char);
-    const disallowedName = codePoint > 0x7f && !isSparqlNameChar(codePoint);
-    if (disallowedWhitespace || disallowedName) {
-      return { codePoint, line, column };
-    }
-
-    skip(codePoint > 0xffff ? 2 : 1);
-  }
-
-  return null;
 }
 
 /**
@@ -287,68 +186,81 @@ function nameCharacter(codePoint: number): string {
 }
 
 /**
- * The advice that follows a named character: these are almost never typed by
- * hand, and replacing them with their plain equivalents is the whole fix.
+ * Describes the character the lexer stopped at. Where it is not an ASCII one it
+ * is named, since a query is more often broken by a character picked up on the
+ * way through a word processor or a web page than by a hand-written syntax
+ * error, and such a character reads as the plain one it replaced.
  */
-const CHARACTER_ADVICE =
-  'Characters like this one tend to slip in when a query is copied from a word ' +
-  'processor or a web page, and replacing them with their plain equivalents ' +
-  'makes the query valid again.';
+function describeLexicalError(
+  sparql: string,
+  character: string,
+  offset: number,
+): string {
+  const text = expandCodepointEscapes(sparql);
+  const codePoint = text.codePointAt(offset) ?? character.codePointAt(0)!;
+  const { line, column } = positionAt(text, offset);
 
-/** Reduces the parser's report to the part that says what went wrong and where. */
-function summarizeParserError(error: unknown): string {
-  const message =
-    error instanceof Error
-      ? error.message
-      : String(error ?? '(no details given)');
-  const summary = message
-    .split('\n')[0]
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(/[:,.]+$/, '');
-  const hash = (error as { hash?: { text?: string; token?: string } }).hash;
-  if (!hash) return `${summary}.`;
-  if (hash.token === 'EOF') return `${summary}: the query ends here.`;
-  return hash.text ? `${summary}: unexpected "${hash.text}".` : `${summary}.`;
-}
-
-/**
- * The code point the parser stopped at, where naming it would help: not an ASCII
- * one, whose own report already shows what is there, and not half of a surrogate
- * pair, which is all the parser reports of a character outside the basic plane.
- */
-function nonAsciiCodePointOf(error: unknown): number | null {
-  const text = (error as { hash?: { text?: string } }).hash?.text;
-  if (!text) return null;
-  const codePoint = text.codePointAt(0)!;
-  if (codePoint <= 0x7f) return null;
-  return codePoint >= 0xd800 && codePoint <= 0xdfff ? null : codePoint;
-}
-
-type SparqlParser = {
-  parse(query: string): { queryType?: string; type?: string };
-};
-let parserModule: Promise<{
-  Parser: new (options: object) => SparqlParser;
-}> | null = null;
-
-/**
- * Loads sparqljs on first use. The parser is by far the largest thing this
- * library depends on, and only nanopublications that carry a grlc query need it,
- * so it is kept out of the bundle everything else pays for.
- */
-async function getParser(): Promise<SparqlParser> {
-  parserModule ??= import('sparqljs').then(
-    (module) => module.default ?? module,
+  if (codePoint <= 0x7f) {
+    // The parser's own report already shows what an ASCII character is.
+    return (
+      'This is not valid SPARQL. The SPARQL parser reports: unexpected ' +
+      `${JSON.stringify(character)} at line ${line}, column ${column}.`
+    );
+  }
+  return (
+    `This is not valid SPARQL. The character at line ${line}, column ${column} ` +
+    `is ${nameCharacter(codePoint)}, which SPARQL doesn't allow there. ` +
+    CHARACTER_ADVICE
   );
-  const { Parser } = await parserModule;
-  return new Parser({
-    prefixes: { ...RDF4J_PREFIXES },
-    // sparqljs refuses to project a variable that is not in the GROUP BY;
-    // RDF4J accepts such queries, and some published grlc queries are of that
-    // shape, so this check is left to the endpoint that runs the query.
-    skipValidation: true,
-  });
+}
+
+/**
+ * Describes where the parser stopped. Its report carries the line, the
+ * line itself with a caret under the offending token, and then the details; only
+ * the position and a short detail are worth repeating.
+ */
+function describeParseError(line: string | undefined, rest: string): string {
+  const lines = rest.split('\n');
+  const caret = lines.findIndex((l) => /^-*\^$/.test(l));
+  const column = caret === -1 ? undefined : lines[caret].length;
+  const detail = (caret === -1 ? lines : lines.slice(caret + 1))
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  let where = 'Parse error';
+  if (line) {
+    where += ` on line ${line}`;
+    if (column) where += `, column ${column}`;
+  }
+  // The details run to the full list of tokens the parser would have accepted,
+  // which does not survive being quoted; a short one says what was expected.
+  return `This is not valid SPARQL. The SPARQL parser reports: ${where}${
+    detail && detail.length <= 120 ? `: ${detail}` : ''
+  }.`;
+}
+
+type SparqlAst = { type?: string };
+type TraqulaParser = { parse(query: string): SparqlAst };
+let parserPromise: Promise<TraqulaParser> | null = null;
+
+/**
+ * Loads the parser on first use and keeps it. It is by far the largest thing
+ * this library depends on, and only nanopublications that carry a grlc query
+ * need it, so it is kept out of the bundle everything else pays for. Building
+ * one is expensive — the grammar is recorded at construction — so the same
+ * parser serves every check.
+ */
+async function getParser(): Promise<TraqulaParser> {
+  parserPromise ??= import('@traqula/parser-sparql-1-1').then(
+    ({ Parser }) =>
+      new Parser({
+        defaultContext: { prefixes: { ...RDF4J_PREFIXES } },
+        // Without this the parser reports no line for a query it cannot parse.
+        lexerConfig: { positionTracking: 'full' },
+      }),
+  );
+  return parserPromise;
 }
 
 /**
@@ -362,46 +274,37 @@ export async function getSparqlSyntaxError(
   sparql: string | null | undefined,
 ): Promise<string | null> {
   if (sparql === null || sparql === undefined) return null;
-
-  const disallowed = findDisallowedCharacter(sparql);
-  if (disallowed) {
-    return (
-      `This is not valid SPARQL. The character at line ${disallowed.line}, ` +
-      `column ${disallowed.column} is ${nameCharacter(disallowed.codePoint)}, ` +
-      `which SPARQL doesn't allow there. ${CHARACTER_ADVICE}`
-    );
-  }
+  if (sparql.trim() === '')
+    return 'This is not valid SPARQL. It holds no query.';
 
   const parser = await getParser();
-  let parsed;
+  let parsed: SparqlAst;
   try {
     parsed = parser.parse(sparql);
   } catch (error) {
-    // sparqljs also enforces restrictions RDF4J does not — duplicate projected
-    // columns, an AS target reused by a subquery. Those are reported as plain
-    // errors, without the position a parse error carries, and queries carrying
-    // them run in the wild, so only genuine parse errors and undeclared
-    // prefixes are treated as broken here.
-    const isParseError =
-      'hash' in (error as object) ||
-      (error instanceof Error && error.message.startsWith('Unknown prefix:'));
-    if (!isParseError) return null;
+    const message = error instanceof Error ? error.message : String(error);
 
-    let description = `This is not valid SPARQL. The SPARQL parser reports: ${summarizeParserError(error)}`;
-    const codePoint = nonAsciiCodePointOf(error);
-    if (codePoint !== null) {
-      description +=
-        ` The character it stopped at is ${nameCharacter(codePoint)}, ` +
-        `which SPARQL doesn't allow there. ${CHARACTER_ADVICE}`;
+    const lexical = LEXICAL_ERROR.exec(message);
+    if (lexical)
+      return describeLexicalError(sparql, lexical[1], Number(lexical[2]));
+
+    const parse = PARSE_ERROR.exec(message);
+    if (parse) return describeParseError(parse[1], parse[2]);
+
+    if (message.startsWith('Unknown prefix:')) {
+      return `This is not valid SPARQL. The SPARQL parser reports: ${message}.`;
     }
-    return description;
+
+    // What is left are restrictions the parser enforces and RDF4J does not: a
+    // column selected twice, a variable bound twice, an AS target a subquery
+    // also binds, a projection outside the GROUP BY. Queries in those shapes are
+    // published and do run, so whether they are worth refusing is for the
+    // endpoint that runs them to say, not for the signing step.
+    return null;
   }
 
-  if (parsed.type === 'update') {
+  if (parsed.type !== 'query') {
     return 'This is a SPARQL update, not a query, and cannot be run as one.';
-  }
-  if (!parsed.queryType) {
-    return 'This is not valid SPARQL. It holds no query.';
   }
 
   return null;

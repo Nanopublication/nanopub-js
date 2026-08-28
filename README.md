@@ -106,8 +106,15 @@ await getSparqlSyntaxError(query); // the description above, or null
 await getInvalidSparql(np); // one entry per broken query the nanopub carries
 ```
 
-The SPARQL parser is loaded only when a nanopublication actually carries a grlc
-query, so it stays out of the bundle everything else pays for.
+The check has to accept what grlc's own endpoint accepts, so it uses
+[Traqula](https://github.com/comunica/traqula)'s SPARQL 1.1 parser configured to
+match RDF4J: the prefixes RDF4J declares for every query are pre-declared, and
+the restrictions Traqula enforces that RDF4J does not are left to the endpoint
+that runs the query. Measured against the 1364 grlc queries published so far, it
+agrees with RDF4J on all but two, and rejects none that RDF4J accepts.
+
+The parser is loaded only when a nanopublication actually carries a grlc query,
+so it stays out of the bundle everything else pays for.
 
 ## Using `NanopubClient`
 
