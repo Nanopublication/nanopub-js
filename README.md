@@ -74,6 +74,41 @@ const { uri, server } = await np.publish('https://test.registry.knowledgepixels.
 console.log(`Published at ${uri} on ${server}`);
 ```
 
+### grlc queries
+
+A nanopublication cannot be edited after the fact, so a grlc query whose SPARQL
+doesn't parse is broken permanently: it can never run, and the only remedy is
+publishing a corrected version. The SPARQL carried by
+`https://w3id.org/kpxl/grlc/sparql` is therefore checked before the
+nanopublication is signed, and again before it is published — before any server
+is contacted. Nanopublications published before this check existed still load
+and read as before.
+
+Where the query is broken by a character that reads as an ordinary one, which is
+the usual way it happens, the error names that character:
+
+```text
+Nanopub has invalid SPARQL and cannot be signed: Invalid SPARQL as object of
+https://w3id.org/kpxl/grlc/sparql: This is not valid SPARQL. The character at
+line 2, column 8 is U+00A0 (NO-BREAK SPACE), which SPARQL doesn't allow there.
+Characters like this one tend to slip in when a query is copied from a word
+processor or a web page, and replacing them with their plain equivalents makes
+the query valid again.
+```
+
+The same check is available on its own:
+
+```ts
+import { getSparqlSyntaxError, isValidSparql, getInvalidSparql } from '@nanopub/nanopub-js';
+
+await isValidSparql('select ?np where { ?np ?p ?o }'); // true
+await getSparqlSyntaxError(query); // the description above, or null
+await getInvalidSparql(np); // one entry per broken query the nanopub carries
+```
+
+The SPARQL parser is loaded only when a nanopublication actually carries a grlc
+query, so it stays out of the bundle everything else pays for.
+
 ## Using `NanopubClient`
 
 ```ts

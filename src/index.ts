@@ -11,6 +11,8 @@ export * from './sign/trusty.js';
 export * from './sign/verify.js';
 export * from './sign/utils.js';
 export * from './validate.js';
+export * from './sparql.js';
+export * from './grlc.js';
 export { serialize, parse } from './serialize.js';
 export * from './types/types.js';
 export * from './constants.js';

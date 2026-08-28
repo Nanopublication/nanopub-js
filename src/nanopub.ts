@@ -5,6 +5,7 @@ import { verifySignature } from './sign/verify';
 import { sign as signRdf } from './sign/sign';
 import { getCryptoAdapter } from './sign/crypto';
 
+import { getInvalidSparql } from './grlc';
 import { createNanopubGraphs } from './utils';
 import { DEFAULT_NANOPUB_URI, TEST_NANOPUB_REGISTRY_URL } from './constants';
 import { RDF, XSD, NP, PROV } from './vocab';
@@ -118,10 +119,26 @@ export class Nanopub implements NanopubData {
     this.hydrateFromQuads(quads);
   }
 
+  /**
+   * Refuses a nanopub whose grlc query doesn't parse. A nanopub cannot be edited
+   * after the fact, so such a query is broken permanently: it can never run, and
+   * the only remedy is publishing a corrected version.
+   */
+  private async checkSparql(action: 'signed' | 'published'): Promise<void> {
+    const invalid = await getInvalidSparql(this);
+    if (invalid.length) {
+      throw new Error(
+        `Nanopub has invalid SPARQL and cannot be ${action}: ${invalid[0].description}`,
+      );
+    }
+  }
+
   async sign(): Promise<this> {
     if (!this._profileParams) {
       throw new Error('Profile not set. Cannot sign nanopub.');
     }
+
+    await this.checkSparql('signed');
 
     // Short-circuit: if already signed with the same key and orcid, re-signing
     // would produce an identical result, so skip the work.
@@ -194,6 +211,10 @@ export class Nanopub implements NanopubData {
   async publish(
     server: string = TEST_NANOPUB_REGISTRY_URL,
   ): Promise<{ uri: string; server: string; response: Response }> {
+    // Refused before any server is contacted: a query published with broken
+    // SPARQL can never run, and cannot be corrected afterwards.
+    await this.checkSparql('published');
+
     // check if signed
     if (!this._rdf) {
       if (typeof this.sign === 'function') {

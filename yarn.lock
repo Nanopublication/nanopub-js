@@ -481,6 +481,7 @@ __metadata:
     "@types/n3": "npm:^1"
     "@types/node": "npm:^24.9.1"
     "@types/rdfjs__data-model": "npm:^2"
+    "@types/sparqljs": "npm:^3.1.12"
     "@vitest/coverage-v8": "npm:4.1.11"
     eslint: "npm:^9.39.2"
     eslint-config-prettier: "npm:^10.1.8"
@@ -490,6 +491,7 @@ __metadata:
     prettier: "npm:^3.7.4"
     rdf-canonize: "npm:^5.0.0"
     rdf-js: "npm:^4.0.2"
+    sparqljs: "npm:^3.7.4"
     typescript: "npm:^5.9.3"
     typescript-eslint: "npm:^8.53.0"
     vite: "npm:^7.2.7"
@@ -550,12 +552,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rdfjs/types@npm:*, @rdfjs/types@npm:^2.0.1":
+"@rdfjs/types@npm:*, @rdfjs/types@npm:>=1.0.0, @rdfjs/types@npm:^2.0.1":
   version: 2.0.1
   resolution: "@rdfjs/types@npm:2.0.1"
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/81012b02e28737e15dfc27068664bbab7b989cc2ff82e0a6a341df492d9d97210b5e462d85bfb7882aa0ef5bf84e2c5e95647fb779b67b7b1910b1837d79c500
+  languageName: node
+  linkType: hard
+
+"@rdfjs/types@npm:^1.0.0":
+  version: 1.1.2
+  resolution: "@rdfjs/types@npm:1.1.2"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/128242157d44453d1f5eac9d93cecfddb44acc4e6675751b2cccbc6c33b44492573785eb748e1841fd4a29921ba8e0412ba038824103d97c38a19f72033d9a5c
   languageName: node
   linkType: hard
 
@@ -1012,6 +1023,15 @@ __metadata:
   dependencies:
     "@rdfjs/types": "npm:*"
   checksum: 10c0/b8ecdc381f22433e545de0f512df102869ad054c488107a2806378d87fb296afd7fffcae70279c25eb15e2cf371a1486ba0ecaa3a43daeb1e4b46822ceeeb9b5
+  languageName: node
+  linkType: hard
+
+"@types/sparqljs@npm:^3.1.12":
+  version: 3.1.12
+  resolution: "@types/sparqljs@npm:3.1.12"
+  dependencies:
+    "@rdfjs/types": "npm:>=1.0.0"
+  checksum: 10c0/832bb888a99d852f194c6fc1a2160992a769b3c4291424b7e22d50b29377692168d2cbd180cc4ed5a30d0cf1effffcfc0fc9155ea6628851c231e3ed1d28b4e2
   languageName: node
   linkType: hard
 
@@ -3178,6 +3198,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rdf-data-factory@npm:^1.1.2":
+  version: 1.1.3
+  resolution: "rdf-data-factory@npm:1.1.3"
+  dependencies:
+    "@rdfjs/types": "npm:^1.0.0"
+  checksum: 10c0/b5f5db1417afd72e690c60b0eb19388b0ed519e8d732419ccee4d3a5c15fa8cfd1b16380c9692dec26245a9bbf5ce2cb07360645d60e995337c34796da0c990a
+  languageName: node
+  linkType: hard
+
 "rdf-js@npm:^4.0.2":
   version: 4.0.2
   resolution: "rdf-js@npm:4.0.2"
@@ -3498,6 +3527,17 @@ __metadata:
   version: 0.6.1
   resolution: "source-map@npm:0.6.1"
   checksum: 10c0/ab55398007c5e5532957cb0beee2368529618ac0ab372d789806f5718123cc4367d57de3904b4e6a4170eb5a0b0f41373066d02ca0735a0c4d75c7d328d3e011
+  languageName: node
+  linkType: hard
+
+"sparqljs@npm:^3.7.4":
+  version: 3.7.4
+  resolution: "sparqljs@npm:3.7.4"
+  dependencies:
+    rdf-data-factory: "npm:^1.1.2"
+  bin:
+    sparqljs: bin/sparql-to-json
+  checksum: 10c0/c24e59a9201fb3c16f7d1bea99dd9ef034f8aee3c94964fa207f444fcab2b351a4f94a2757a3f2d665e3dae85955bb53b7a12538e132cf4a8408d67a6f1d0b74
   languageName: node
   linkType: hard
 
