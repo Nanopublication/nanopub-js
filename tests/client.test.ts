@@ -59,7 +59,7 @@ describe("NanopubClient (unit)", () => {
     });
 
     const client = new NanopubClient();
-    expect(client.querySparql("SELECT * WHERE {?s ?p ?o}")).rejects.toThrow(
+    await expect(client.querySparql("SELECT * WHERE {?s ?p ?o}")).rejects.toThrow(
       /SPARQL query failed/
     );
   });

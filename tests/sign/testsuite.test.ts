@@ -6,6 +6,8 @@
  *
  * Covers:
  *  - Transform cases: sign each plain input and compare artifact code to expected
+ *  - `~~~ARTIFACTCODE~~~` substitution: the `artifactcode-1` case, which mints a
+ *    concept in a foreign namespace, pinned against the reference output
  *  - Valid TRUSTY entries: verifySignature() should pass for all
  *  - Invalid SIGNED/TRUSTY entries: verifySignature() should fail for all
  */
@@ -16,6 +18,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { NanopubTestSuite, TestSuiteSubfolder } from '@nanopub/nanopub-testsuite-connector-js';
 
 import { sign } from '../../src/sign/sign';
+import { parse } from '../../src/serialize';
 import { verifySignature } from '../../src/sign/verify';
 
 let suite: NanopubTestSuite;
@@ -48,6 +51,18 @@ function extractArtifactCode(uri: string): string {
   return uri.replace(/.*[/#]/, '');
 }
 
+/** Sorted N-Quads-ish lines, for comparing TriG documents regardless of serialization. */
+function toNquads(trig: string): string[] {
+  return parse(trig, 'trig')
+    .map(q => {
+      const object = q.object.termType === 'Literal'
+        ? `"${q.object.value}"${q.object.language ? `@${q.object.language}` : `^^<${q.object.datatype.value}>`}`
+        : `<${q.object.value}>`;
+      return `<${q.graph.value}> <${q.subject.value}> <${q.predicate.value}> ${object}`;
+    })
+    .sort();
+}
+
 // Transform cases
 describe('test suite: transform cases (sign)', () => {
   it('all transform cases produce the expected artifact code', async () => {
@@ -64,6 +79,62 @@ describe('test suite: transform cases (sign)', () => {
       expect(code, `${tc.keyName}/${tc.plain.name}`).toBe(tc.outCode);
     }
   }, 120_000);
+});
+
+// `~~~ARTIFACTCODE~~~` substitution, pinned against the reference implementation.
+//
+// `artifactcode-1` keeps the default temp nanopub URI but mints a concept in a
+// foreign namespace (`https://example.org/ns/~~~ARTIFACTCODE~~~`), so it pins
+// that the placeholder is substituted globally, not only inside the nanopub's
+// own base URI.
+describe('test suite: `~~~ARTIFACTCODE~~~` substitution (transform case)', () => {
+  const CASE_NAME = 'artifactcode-1';
+
+  function artifactCodeCase() {
+    const tc = suite.getTransformCases().find(c => c.plain.name.startsWith(`${CASE_NAME}.`));
+    expect(tc, `transform case '${CASE_NAME}' missing from suite ${SUITE_COMMIT}`).toBeDefined();
+    return tc!;
+  }
+
+  it('substitutes the placeholder in a foreign namespace with the reference artifact code', async () => {
+    const tc = artifactCodeCase();
+    const privKey = pemToBase64(suite.getSigningKey(tc.keyName).privateKey);
+
+    const { signedRdf, sourceUri } = await sign(tc.plain.readText(), privKey, profileOrcid);
+    const code = extractArtifactCode(sourceUri);
+
+    expect(code).toBe(tc.outCode);
+    expect(signedRdf).not.toMatch(/ARTIFACTCODE/);
+    expect(signedRdf).toContain(`https://example.org/ns/${code}`);
+    // The nanopub itself keeps the standard trusty base, only the concept moves.
+    expect(sourceUri).toBe(`https://w3id.org/np/${code}`);
+  }, 30_000);
+
+  it('produces the same quads as the reference signed output', async () => {
+    const tc = artifactCodeCase();
+    const privKey = pemToBase64(suite.getSigningKey(tc.keyName).privateKey);
+
+    const { signedRdf } = await sign(tc.plain.readText(), privKey, profileOrcid);
+
+    const expected = toNquads(tc.signed.readText());
+    expect(expected.length).toBeGreaterThan(0);
+    expect(toNquads(signedRdf)).toEqual(expected);
+  }, 30_000);
+
+  it('verifies the nanopub it signed', async () => {
+    const tc = artifactCodeCase();
+    const privKey = pemToBase64(suite.getSigningKey(tc.keyName).privateKey);
+
+    const { signedRdf } = await sign(tc.plain.readText(), privKey, profileOrcid);
+
+    expect(await verifySignature(signedRdf)).toEqual({ valid: true });
+  }, 30_000);
+
+  it('verifies the reference signed output', async () => {
+    const tc = artifactCodeCase();
+
+    expect(await verifySignature(tc.signed.readText())).toEqual({ valid: true });
+  }, 30_000);
 });
 
 // Signature verification: valid SIGNED entries

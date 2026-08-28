@@ -88,7 +88,7 @@ function replaceNanopubUri(dataset: Store, oldBase: string, newBase: string): St
  * https://example.org/ns/RA...). The nanopub's own base URI is handled
  * separately by replaceNanopubUri.
  */
-function replaceArtifactCodePlaceholder(dataset: Store, artifactCode: string): Store {
+export function replaceArtifactCodePlaceholder(dataset: Store, artifactCode: string): Store {
   const out = new Store();
   const sub = (v: string) =>
     v.split('~~~ARTIFACTCODE~~~').join(artifactCode).split('ARTIFACTCODE-PLACEHOLDER').join(artifactCode);
