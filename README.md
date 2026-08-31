@@ -1,5 +1,7 @@
 # nanopub-js
 
+[![Coverage Status](https://coveralls.io/repos/github/Nanopublication/nanopub-js/badge.svg?branch=main)](https://coveralls.io/github/Nanopublication/nanopub-js?branch=main)
+
 A TypeScript library for creating, signing, publishing, and querying nanopublications.
 
 ## Installation
