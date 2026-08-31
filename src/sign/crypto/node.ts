@@ -6,35 +6,32 @@ import {
   verify as cryptoVerify
 } from "crypto";
 import { CryptoAdapter } from "./types";
+import { normalizePrivateKey, normalizePublicKey } from "./keys";
+
+/** Reads a private key in any of the forms `normalizePrivateKey` accepts. */
+function loadPrivateKey(privateKey: string) {
+  return createPrivateKey({
+    key: Buffer.from(normalizePrivateKey(privateKey), "base64"),
+    format: "der",
+    type: "pkcs8",
+  });
+}
 
 export const nodeCrypto: CryptoAdapter = {
-  async extractPublicKey(privateKeyBase64: string) {
-    const privateKeyPem =
-      `-----BEGIN PRIVATE KEY-----\n` +
-      privateKeyBase64.match(/.{1,64}/g)?.join("\n") +
-      `\n-----END PRIVATE KEY-----`;
-
-    const privateKeyObj = createPrivateKey({ key: privateKeyPem, format: "pem" });
-    const publicKeyObj = createPublicKey(privateKeyObj);
+  async extractPublicKey(privateKey: string) {
+    const publicKeyObj = createPublicKey(loadPrivateKey(privateKey));
 
     const publicKeyDer = publicKeyObj.export({ format: "der", type: "spki" });
     return Buffer.from(publicKeyDer).toString("base64");
   },
 
-  async sign(data, privateKeyBase64) {
-    const privateKeyPem =
-      `-----BEGIN PRIVATE KEY-----\n` +
-      privateKeyBase64.match(/.{1,64}/g)?.join("\n") +
-      `\n-----END PRIVATE KEY-----`;
-
-    const keyObj = createPrivateKey({ key: privateKeyPem, format: "pem" });
-
-    return cryptoSign("sha256", Buffer.from(data, "utf8"), keyObj)
+  async sign(data, privateKey) {
+    return cryptoSign("sha256", Buffer.from(data, "utf8"), loadPrivateKey(privateKey))
       .toString("base64");
   },
 
-  async verify(data, signatureBase64, publicKeyBase64) {
-    const publicKeyDer = Buffer.from(publicKeyBase64, "base64");
+  async verify(data, signatureBase64, publicKey) {
+    const publicKeyDer = Buffer.from(normalizePublicKey(publicKey), "base64");
 
     const publicKeyObj = createPublicKey({
       key: publicKeyDer,

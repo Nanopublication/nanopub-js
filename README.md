@@ -74,6 +74,32 @@ const { uri, server } = await np.publish('https://test.registry.knowledgepixels.
 console.log(`Published at ${uri} on ${server}`);
 ```
 
+### Private key formats
+
+The `privateKey` given to a nanopub is accepted in any of the usual RSA
+serializations, so a key can be passed straight from wherever it was generated:
+
+- PEM armor around a PKCS#8 key (`-----BEGIN PRIVATE KEY-----`), what
+  `openssl genpkey`, Node's `export({format: 'pem', type: 'pkcs8'})` and
+  pycryptodome's `export_key('PEM', pkcs=8)` produce;
+- PEM armor around a PKCS#1 key (`-----BEGIN RSA PRIVATE KEY-----`), what
+  `openssl genrsa` produces, converted to PKCS#8 on the way in;
+- the bare base64 of the DER with no armor, with or without line breaks — the
+  form nanopub itself stores in `~/.nanopub/id_rsa` and records in a signature.
+
+Public keys are accepted the same way (`-----BEGIN PUBLIC KEY-----`,
+`-----BEGIN RSA PUBLIC KEY-----`, or bare base64). A key that cannot be used
+is reported by its format rather than as an opaque crypto error: a
+passphrase-protected key, for instance, names `openssl pkcs8 -topk8 -nocrypt`
+as the fix. The normalization is available on its own:
+
+```ts
+import { normalizePrivateKey, normalizePublicKey } from '@nanopub/nanopub-js';
+
+normalizePrivateKey(pem); // base64 of the PKCS#8 DER, single line
+normalizePublicKey(pem); // base64 of the SubjectPublicKeyInfo DER, single line
+```
+
 ### grlc queries
 
 A nanopublication cannot be edited after the fact, so a grlc query whose SPARQL
