@@ -170,6 +170,8 @@ export class NanopubClient {
 
   /** Internal generic search */
   private async *_search(queryId: string, params: Record<string, string> = {}) {
+    let lastError: Error | undefined;
+
     for (const baseUrl of this.endpoints) {
       const url = new URL(`api/${queryId}`, baseUrl);
       Object.entries(params).forEach(([k, v]) => url.searchParams.append(k, v));
@@ -178,6 +180,9 @@ export class NanopubClient {
         const res = await fetch(url.toString(), {
           headers: { Accept: 'application/sparql-results+json' },
         });
+
+        // bad query, not a bad endpoint
+        if (res.status >= 400 && res.status < 500) return;
         if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
 
         const data = await res.json();
@@ -188,10 +193,13 @@ export class NanopubClient {
           }
           yield parsed;
         }
+        return;
       } catch {
-        // try next endpoint
+        lastError = new Error(`Query failed at ${baseUrl}`);
       }
     }
+
+    throw lastError ?? new Error('No nanopub query endpoints configured');
   }
 
   async *runQueryTemplate(
