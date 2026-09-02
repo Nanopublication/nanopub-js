@@ -284,4 +284,44 @@ describe("NanopubClient (unit)", () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  it("refreshEndpoints keeps only the query services", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        results: {
+          bindings: [
+            {
+              service: { value: "https://query.a.org/" },
+              serviceType: {
+                value: "https://w3id.org/np/o/service/terms/nanopub-query-1.1",
+              },
+            },
+            {
+              service: { value: "https://registry.a.org/" },
+              serviceType: {
+                value: "https://w3id.org/np/o/service/terms/nanopub-registry-1.0",
+              },
+            },
+          ],
+        },
+      }),
+    });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const endpoints = await client.refreshEndpoints();
+
+    expect(endpoints).toEqual(["https://query.a.org/"]);
+    expect(client.endpoints).toEqual(["https://query.a.org/"]);
+  });
+
+  it("refreshEndpoints keeps the bootstrap endpoints when discovery fails", async () => {
+    fetchMock.mockRejectedValue(new Error("network down"));
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const endpoints = await client.refreshEndpoints();
+
+    expect(endpoints).toEqual(["https://mock.org/"]);
+  });
+
 });

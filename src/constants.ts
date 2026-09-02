@@ -8,5 +8,15 @@ export const TEST_NANOPUB_REGISTRY_URL =
 export const NANOPUB_REGISTRY_URLS = [
   'https://registry.petapico.org/np/',
   'https://registry.knowledgepixels.com/np/',
-  'https://registry.np.trustyuri.net/np/',
+  'https://registry.nanodash.net/np/',
 ];
+
+// bootstrap only, replaced at runtime by refreshEndpoints()
+export const NANOPUB_QUERY_URLS = [
+  'https://query.knowledgepixels.com/',
+  'https://query.petapico.org/',
+  'https://query.nanodash.net/',
+];
+
+export const QUERY_SERVICE_TYPE =
+  'https://w3id.org/np/o/service/terms/nanopub-query-1.1';

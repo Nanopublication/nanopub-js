@@ -1,4 +1,5 @@
 import { SparqlBindingValue, SparqlJsonResult } from "./types/types";
+import { NANOPUB_QUERY_URLS, QUERY_SERVICE_TYPE } from "./constants";
 
 const ENDPOINT_UUIDS: Record<string, string> = {
   findNanopubsWithText:
@@ -12,15 +13,30 @@ const ENDPOINT_UUIDS: Record<string, string> = {
   findThings: 'RA99xFu2qrCrpOYc1zc7h0SYV4m6Z4OE530dguEhYeoOM/find-things',
   findValidThings:
     'RARqGauUpDMEA1o4KBSKC8AeP694qJjpbf7x7FOWHDfM8/find-valid-things',
+  getServices: 'RAKGsIqfEKG2h1e4PwBW26vLOT_QDk26mOFZ9QK3NoLKE/get-services',
 };
 
 export class NanopubClient {
   endpoints: string[];
 
   constructor(config?: { endpoints?: string[] }) {
-    this.endpoints = config?.endpoints ?? [
-      'https://query.knowledgepixels.com/',
-    ];
+    this.endpoints = config?.endpoints ?? [...NANOPUB_QUERY_URLS];
+  }
+
+  /** Replace the endpoints with the query services currently registered. */
+  async refreshEndpoints(): Promise<string[]> {
+    const found: string[] = [];
+    try {
+      for await (const row of this._search(ENDPOINT_UUIDS.getServices)) {
+        if (row.serviceType === QUERY_SERVICE_TYPE && row.service) {
+          found.push(row.service);
+        }
+      }
+    } catch {
+      return this.endpoints;
+    }
+    if (found.length) this.endpoints = found;
+    return this.endpoints;
   }
 
   /** Fetch a nanopub by URI in the requested format */
@@ -52,7 +68,9 @@ export class NanopubClient {
     query: string,
     returnFormat: 'json' | 'csv' = 'json',
   ): Promise<Record<string, string>[] | string> {
-    const endpoints = ['https://query.knowledgepixels.com/repo/full'];
+    const endpoints = this.endpoints.map(
+      base => new URL('repo/full', base).toString(),
+    );
     let error;
   
     for (const endpoint of endpoints) {
