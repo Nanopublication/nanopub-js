@@ -8,6 +8,7 @@ setCryptoAdapter(nodeCrypto);
 export * from './nanopub.js';
 export { NanopubClient } from './client.js';
 export * from './sign/sign.js';
+export { normalizePrivateKey, normalizePublicKey } from './sign/crypto/keys.js';
 export * from './sign/trusty.js';
 export * from './sign/verify.js';
 export * from './sign/utils.js';
