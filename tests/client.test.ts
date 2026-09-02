@@ -284,6 +284,42 @@ describe("NanopubClient (unit)", () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  it("_search moves on when an endpoint times out", async () => {
+    fetchMock
+      .mockRejectedValueOnce(
+        Object.assign(new Error("timed out"), { name: "TimeoutError" }),
+      )
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          results: { bindings: [{ thing: { value: "https://example.org/a" } }] },
+        }),
+      });
+
+    const client = new NanopubClient({
+      endpoints: ["https://hangs.example/", "https://up.example/"],
+    });
+
+    const results: Record<string, string>[] = [];
+    for await (const r of client.findThings("type")) results.push(r);
+
+    expect(results).toEqual([{ thing: "https://example.org/a" }]);
+  });
+
+  it("_search passes an abort signal to fetch", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ results: { bindings: [] } }),
+    });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    for await (const _ of client.findThings("type")) { /* drain */ }
+
+    expect(fetchMock.mock.calls[0][1].signal).toBeInstanceOf(AbortSignal);
+  });
+
   it("refreshEndpoints keeps only the query services", async () => {
     fetchMock.mockResolvedValue({
       ok: true,

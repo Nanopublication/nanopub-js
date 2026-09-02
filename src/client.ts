@@ -1,5 +1,9 @@
 import { SparqlBindingValue, SparqlJsonResult } from "./types/types";
-import { NANOPUB_QUERY_URLS, QUERY_SERVICE_TYPE } from "./constants";
+import {
+  NANOPUB_QUERY_URLS,
+  QUERY_SERVICE_TYPE,
+  QUERY_TIMEOUT_MS,
+} from "./constants";
 
 const ENDPOINT_UUIDS: Record<string, string> = {
   findNanopubsWithText:
@@ -197,6 +201,7 @@ export class NanopubClient {
       try {
         const res = await fetch(url.toString(), {
           headers: { Accept: 'application/sparql-results+json' },
+          signal: AbortSignal.timeout(QUERY_TIMEOUT_MS),
         });
 
         // bad query, not a bad endpoint
