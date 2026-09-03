@@ -37,7 +37,7 @@
     "@types/node": "^24.9.1",
     "@types/rdfjs__data-model": "^2",
     "@types/sparqljs": "^3.1.12",
-    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/coverage-v8": "^5.0.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
@@ -47,7 +47,7 @@
     "typescript-eslint": "^8.53.0",
     "vite": "^7.2.7",
     "vite-plugin-dts": "^4.5.4",
-    "vitest": "^4.0.0"
+    "vitest": "^5.0.0"
   },
   "dependencies": {
     "@rdfjs/data-model": "^2.1.1",
