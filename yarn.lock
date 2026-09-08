@@ -990,12 +990,12 @@ __metadata:
   linkType: hard
 
 "@types/n3@npm:^1":
-  version: 1.26.1
-  resolution: "@types/n3@npm:1.26.1"
+  version: 1.26.3
+  resolution: "@types/n3@npm:1.26.3"
   dependencies:
     "@rdfjs/types": "npm:*"
     "@types/node": "npm:*"
-  checksum: 10c0/4797463efdf0e8425074bb0301ae1b83d7e04b39e3fc584e4e0f69e772883c6ef517983a764c7f9357bcefae42d978d1e857264ec5ecab643157d2f4f555fd17
+  checksum: 10c0/e9429afdb895de05cecb74bd83bdbf7250fd62341aae065bad47aa531c7508dcab8eca4a44c985e76c44aff4078d070f4298a543c258f76412fd607e3b07f25d
   languageName: node
   linkType: hard
 
