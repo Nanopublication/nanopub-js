@@ -112,7 +112,8 @@ export function replaceArtifactCodePlaceholder(dataset: Store, artifactCode: str
  * Signs a nanopub and returns it with its trusty URI applied.
  *
  * @param trig - The unsigned nanopub in TriG.
- * @param privateKeyBase64 - The RSA private key, base64 of the PKCS#8 DER.
+ * @param privateKey - The RSA private key, in PEM (PKCS#8 or PKCS#1) or as the
+ * bare base64 of the DER; see `normalizePrivateKey` for the accepted forms.
  * @param orcid - IRI of the signer recorded as `npx:signedBy`, typically an
  * ORCID iD. It may also be a sub-IRI of the nanopub being signed, so that an
  * agent can self-sign its own introduction in a single step; such an IRI is
@@ -120,12 +121,12 @@ export function replaceArtifactCodePlaceholder(dataset: Store, artifactCode: str
  */
 export async function sign(
   trig: string,
-  privateKeyBase64: string,
+  privateKey: string,
   orcid?: string,
 ): Promise<{ signedRdf: string; sourceUri: string; signature: string }> {
 
   const adapter = await getCryptoAdapter();
-  const publicKeyBase64 = await adapter.extractPublicKey(privateKeyBase64);
+  const publicKeyBase64 = await adapter.extractPublicKey(privateKey);
 
   const quads = parse(trig, 'trig');
   let dataset: Store = new Store(quads);
@@ -169,7 +170,7 @@ export async function sign(
 
   // Step 1: normalize without signature (using placeholder URIs)
   const normalizedForSignature = normalizeDataset(dataset, placeholder, trustyBase);
-  const signature = await adapter.sign(normalizedForSignature, privateKeyBase64);
+  const signature = await adapter.sign(normalizedForSignature, privateKey);
 
   // Step 2: add hasSignature (still with placeholder URIs)
   dataset.addQuad(quad(sigNode, NPX('hasSignature'), literal(signature), pubinfoGraph));
