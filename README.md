@@ -102,6 +102,46 @@ normalizePrivateKey(pem); // base64 of the PKCS#8 DER, single line
 normalizePublicKey(pem); // base64 of the SubjectPublicKeyInfo DER, single line
 ```
 
+### Introducing a key
+
+Before the network trusts what you publish, the key you sign with has to be
+declared in an introduction nanopublication. `createIntroNanopub` builds one:
+
+```ts
+import { createIntroNanopub } from '@nanopub/nanopub-js';
+
+const intro = await createIntroNanopub({
+  agent: 'https://orcid.org/0000-0002-1267-0234',
+  privateKey,
+  name: 'Tobias Kuhn',
+});
+
+await intro.sign();
+const { uri } = await intro.publish();
+```
+
+The agent IRI is usually an ORCID iD, but any `foaf:Agent` IRI works, a WebID
+included. The public key is derived from the private key unless you pass
+`publicKey`, and the introduction is self-signed by the key it declares.
+
+Trust is granted per key rather than per agent, so an agent that already has an
+approved key adds another by publishing a further introduction under the same
+`agent` IRI. To restate existing keys alongside a new one, pass them together:
+
+```ts
+const intro = await createIntroNanopub({
+  agent: 'https://orcid.org/0000-0002-1267-0234',
+  privateKey,
+  keys: [
+    { publicKey: existingPublicKey, keyLocation: 'https://nanodash.net/' },
+    { publicKey: newPublicKey },
+  ],
+});
+```
+
+Publishing an introduction does not by itself make the key trusted: an already
+trusted agent still has to endorse it.
+
 ### grlc queries
 
 A nanopublication cannot be edited after the fact, so a grlc query whose SPARQL
