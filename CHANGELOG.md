@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0](https://github.com/Nanopublication/nanopub-js/compare/v0.1.3...v0.2.0) (2026-09-02)
+
+
+### Features
+
+* reject grlc query nanopublications whose SPARQL doesn't parse ([54cc3f5](https://github.com/Nanopublication/nanopub-js/commit/54cc3f57c2685c1fb746558c3c005d018d2e9cd5)), closes [#41](https://github.com/Nanopublication/nanopub-js/issues/41)
+* rotate query endpoints and discover at runtime ([#53](https://github.com/Nanopublication/nanopub-js/issues/53)) ([619167b](https://github.com/Nanopublication/nanopub-js/commit/619167b1ed32251002d6f44df5b70bad72ffb482))
+
 ## [0.1.3](https://github.com/Nanopublication/nanopub-js/compare/v0.1.2...v0.1.3) (2026-06-25)
 
 

@@ -1,4 +1,9 @@
 import { SparqlBindingValue, SparqlJsonResult } from "./types/types";
+import {
+  NANOPUB_QUERY_URLS,
+  QUERY_SERVICE_TYPE,
+  QUERY_TIMEOUT_MS,
+} from "./constants";
 
 const ENDPOINT_UUIDS: Record<string, string> = {
   findNanopubsWithText:
@@ -12,15 +17,30 @@ const ENDPOINT_UUIDS: Record<string, string> = {
   findThings: 'RA99xFu2qrCrpOYc1zc7h0SYV4m6Z4OE530dguEhYeoOM/find-things',
   findValidThings:
     'RARqGauUpDMEA1o4KBSKC8AeP694qJjpbf7x7FOWHDfM8/find-valid-things',
+  getServices: 'RAKGsIqfEKG2h1e4PwBW26vLOT_QDk26mOFZ9QK3NoLKE/get-services',
 };
 
 export class NanopubClient {
   endpoints: string[];
 
   constructor(config?: { endpoints?: string[] }) {
-    this.endpoints = config?.endpoints ?? [
-      'https://query.knowledgepixels.com/',
-    ];
+    this.endpoints = config?.endpoints ?? [...NANOPUB_QUERY_URLS];
+  }
+
+  /** Replace the endpoints with the query services currently registered. */
+  async refreshEndpoints(): Promise<string[]> {
+    const found: string[] = [];
+    try {
+      for await (const row of this._search(ENDPOINT_UUIDS.getServices)) {
+        if (row.serviceType === QUERY_SERVICE_TYPE && row.service) {
+          found.push(row.service);
+        }
+      }
+    } catch {
+      return this.endpoints;
+    }
+    if (found.length) this.endpoints = found;
+    return this.endpoints;
   }
 
   /** Fetch a nanopub by URI in the requested format */
@@ -52,7 +72,9 @@ export class NanopubClient {
     query: string,
     returnFormat: 'json' | 'csv' = 'json',
   ): Promise<Record<string, string>[] | string> {
-    const endpoints = ['https://query.knowledgepixels.com/repo/full'];
+    const endpoints = this.endpoints.map(
+      base => new URL('repo/full', base).toString(),
+    );
     let error;
   
     for (const endpoint of endpoints) {
@@ -170,6 +192,8 @@ export class NanopubClient {
 
   /** Internal generic search */
   private async *_search(queryId: string, params: Record<string, string> = {}) {
+    let lastError: Error | undefined;
+
     for (const baseUrl of this.endpoints) {
       const url = new URL(`api/${queryId}`, baseUrl);
       Object.entries(params).forEach(([k, v]) => url.searchParams.append(k, v));
@@ -177,7 +201,11 @@ export class NanopubClient {
       try {
         const res = await fetch(url.toString(), {
           headers: { Accept: 'application/sparql-results+json' },
+          signal: AbortSignal.timeout(QUERY_TIMEOUT_MS),
         });
+
+        // bad query, not a bad endpoint
+        if (res.status >= 400 && res.status < 500) return;
         if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
 
         const data = await res.json();
@@ -188,10 +216,13 @@ export class NanopubClient {
           }
           yield parsed;
         }
+        return;
       } catch {
-        // try next endpoint
+        lastError = new Error(`Query failed at ${baseUrl}`);
       }
     }
+
+    throw lastError ?? new Error('No nanopub query endpoints configured');
   }
 
   async *runQueryTemplate(

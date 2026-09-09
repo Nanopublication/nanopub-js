@@ -1,4 +1,5 @@
 import { CryptoAdapter } from "./types";
+import { normalizePrivateKey, normalizePublicKey } from "./keys";
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binary = atob(base64);
@@ -19,10 +20,10 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 export const browserCrypto: CryptoAdapter = {
-  async extractPublicKey(privateKeyBase64: string) {
-    const privateKey = await globalThis.crypto.subtle.importKey(
+  async extractPublicKey(privateKey: string) {
+    const key = await globalThis.crypto.subtle.importKey(
       "pkcs8",
-      base64ToArrayBuffer(privateKeyBase64),
+      base64ToArrayBuffer(normalizePrivateKey(privateKey)),
       {
         name: "RSASSA-PKCS1-v1_5",
         hash: "SHA-256",
@@ -34,7 +35,7 @@ export const browserCrypto: CryptoAdapter = {
     // Web Crypto has no direct "derive public from private" — export as JWK to
     // get the public components (n, e), reconstruct a public-only key, then
     // export that as SPKI.
-    const jwk = await globalThis.crypto.subtle.exportKey("jwk", privateKey) as JsonWebKey;
+    const jwk = await globalThis.crypto.subtle.exportKey("jwk", key) as JsonWebKey;
 
     const publicKey = await globalThis.crypto.subtle.importKey(
       "jwk",
@@ -58,10 +59,10 @@ export const browserCrypto: CryptoAdapter = {
     return arrayBufferToBase64(spki);
   },
 
-  async sign(data, privateKeyBase64) {
+  async sign(data, privateKey) {
     const key = await globalThis.crypto.subtle.importKey(
       "pkcs8",
-      base64ToArrayBuffer(privateKeyBase64),
+      base64ToArrayBuffer(normalizePrivateKey(privateKey)),
       {
         name: "RSASSA-PKCS1-v1_5",
         hash: "SHA-256",
@@ -79,10 +80,10 @@ export const browserCrypto: CryptoAdapter = {
     return arrayBufferToBase64(signature);
   },
 
-  async verify(data, signatureBase64, publicKeyBase64) {
+  async verify(data, signatureBase64, publicKey) {
     const key = await globalThis.crypto.subtle.importKey(
       "spki",
-      base64ToArrayBuffer(publicKeyBase64),
+      base64ToArrayBuffer(normalizePublicKey(publicKey)),
       {
         name: "RSASSA-PKCS1-v1_5",
         hash: "SHA-256",

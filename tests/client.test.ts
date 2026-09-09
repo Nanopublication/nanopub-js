@@ -252,15 +252,112 @@ describe("NanopubClient (unit)", () => {
     expect(results).toEqual([]);
   });
 
-  it("_search swallows fetch errors and yields nothing", async () => {
-    fetchMock.mockRejectedValueOnce(new Error("network down"));
-  
+  it("_search throws when every endpoint is unreachable", async () => {
+    fetchMock.mockRejectedValue(new Error("network down"));
+
     const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
-  
+
+    await expect(async () => {
+      for await (const _ of client.findThings("type")) { /* drain */ }
+    }).rejects.toThrow(/Query failed/);
+  });
+
+  it("_search tries the next endpoint and yields rows only once", async () => {
+    fetchMock
+      .mockRejectedValueOnce(new Error("network down"))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          results: { bindings: [{ thing: { value: "https://example.org/a" } }] },
+        }),
+      });
+
+    const client = new NanopubClient({
+      endpoints: ["https://down.example/", "https://up.example/", "https://spare.example/"],
+    });
+
     const results: Record<string, string>[] = [];
     for await (const r of client.findThings("type")) results.push(r);
-  
-    expect(results).toEqual([]);
+
+    expect(results).toEqual([{ thing: "https://example.org/a" }]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("_search moves on when an endpoint times out", async () => {
+    fetchMock
+      .mockRejectedValueOnce(
+        Object.assign(new Error("timed out"), { name: "TimeoutError" }),
+      )
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          results: { bindings: [{ thing: { value: "https://example.org/a" } }] },
+        }),
+      });
+
+    const client = new NanopubClient({
+      endpoints: ["https://hangs.example/", "https://up.example/"],
+    });
+
+    const results: Record<string, string>[] = [];
+    for await (const r of client.findThings("type")) results.push(r);
+
+    expect(results).toEqual([{ thing: "https://example.org/a" }]);
+  });
+
+  it("_search passes an abort signal to fetch", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ results: { bindings: [] } }),
+    });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    for await (const _ of client.findThings("type")) { /* drain */ }
+
+    expect(fetchMock.mock.calls[0][1].signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it("refreshEndpoints keeps only the query services", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        results: {
+          bindings: [
+            {
+              service: { value: "https://query.a.org/" },
+              serviceType: {
+                value: "https://w3id.org/np/o/service/terms/nanopub-query-1.1",
+              },
+            },
+            {
+              service: { value: "https://registry.a.org/" },
+              serviceType: {
+                value: "https://w3id.org/np/o/service/terms/nanopub-registry-1.0",
+              },
+            },
+          ],
+        },
+      }),
+    });
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const endpoints = await client.refreshEndpoints();
+
+    expect(endpoints).toEqual(["https://query.a.org/"]);
+    expect(client.endpoints).toEqual(["https://query.a.org/"]);
+  });
+
+  it("refreshEndpoints keeps the bootstrap endpoints when discovery fails", async () => {
+    fetchMock.mockRejectedValue(new Error("network down"));
+
+    const client = new NanopubClient({ endpoints: ["https://mock.org/"] });
+    const endpoints = await client.refreshEndpoints();
+
+    expect(endpoints).toEqual(["https://mock.org/"]);
   });
 
 });
