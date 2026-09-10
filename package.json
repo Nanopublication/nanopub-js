@@ -52,7 +52,7 @@
     "@rdfjs/data-model": "^2.1.1",
     "@rdfjs/types": "^2.0.1",
     "@traqula/parser-sparql-1-1": "^1.2.1",
-    "n3": "^1.26.0",
+    "n3": "^2.0.0",
     "rdf-canonize": "^5.0.0",
     "rdf-js": "^4.0.2"
   }
