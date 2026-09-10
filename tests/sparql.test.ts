@@ -42,7 +42,7 @@ select ?a ?b where { values (?a ?b) { (ex:1 "x") (ex:2 UNDEF) } ?a ?p ?b }`;
     expect(await getSparqlSyntaxError(query)).toBeNull();
   });
 
-  it('accepts the queries sparqljs alone rejects but RDF4J runs', async () => {
+  it('accepts the queries the parser alone rejects but RDF4J runs', async () => {
     // Duplicate projected column, and an AS target the subquery also binds:
     // both are published grlc queries that run, so neither is refused here.
     const duplicateColumn = 'select ?a ?b ?a where { ?a ?p ?b }';
@@ -80,7 +80,7 @@ select ?a ?b where { values (?a ?b) { (ex:1 "x") (ex:2 UNDEF) } ?a ?p ?b }`;
     expect(error).toContain('not a query');
   });
 
-  it('names a no-break space, which the parser alone lets through', async () => {
+  it('names a no-break space, which reads as the space it replaced', async () => {
     const error = await getSparqlSyntaxError(
       'SELECT ?x\nWHERE {\u00A0?x ?y ?z }',
     );
@@ -126,5 +126,24 @@ third""" .
     const error = await getSparqlSyntaxError(query);
 
     expect(error).toContain('line 5, column 9');
+  });
+
+  it('counts the line past a codepoint escape, which the parser expands', async () => {
+    const query = `select ?x where {
+  ?x ?p "en\\u2013dash" .
+  ?x ?q \u00A0?z .
+}`;
+
+    const error = await getSparqlSyntaxError(query);
+
+    expect(error).toContain('U+00A0 (NO-BREAK SPACE)');
+    expect(error).toContain('line 3');
+  });
+
+  it('leaves an ASCII character to the parser rather than naming it', async () => {
+    const error = await getSparqlSyntaxError('selct ?x where { ?x ?p ?o }');
+
+    expect(error).toContain('The SPARQL parser reports:');
+    expect(error).not.toContain('U+');
   });
 });
