@@ -84,12 +84,12 @@ export class Nanopub implements NanopubData {
           ),
         ];
 
-    if (options?.privateKey && options?.name && options?.orcid) {
+    if (options?.privateKey && options?.orcid) {
       this.privateKey = options.privateKey;
       this._profileParams = {
         privateKey: options.privateKey,
         orcid: options.orcid,
-        name: options.name,
+        name: options.name ?? '',
         email: options.email ?? '',
       };
     }

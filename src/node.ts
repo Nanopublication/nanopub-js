@@ -12,6 +12,7 @@ export { normalizePrivateKey, normalizePublicKey } from './sign/crypto/keys.js';
 export * from './sign/trusty.js';
 export * from './sign/verify.js';
 export * from './sign/utils.js';
+export * from './intro.js';
 export * from './validate.js';
 export * from './sparql.js';
 export * from './grlc.js';
