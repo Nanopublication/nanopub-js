@@ -1203,7 +1203,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/coverage-v8@npm:^4.1.11":
+"@vitest/coverage-v8@npm:4.1.11":
   version: 4.1.11
   resolution: "@vitest/coverage-v8@npm:4.1.11"
   dependencies:
