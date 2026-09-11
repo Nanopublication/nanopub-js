@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/Nanopublication/nanopub-js/compare/v0.2.0...v0.3.0) (2026-09-10)
+
+
+### Features
+
+* build introduction nanopubs with createIntroNanopub ([#57](https://github.com/Nanopublication/nanopub-js/issues/57)) ([358cdcb](https://github.com/Nanopublication/nanopub-js/commit/358cdcb3635e4577b207eb70ad13e87a6bc23da2))
+
+
+### Bug Fixes
+
+* **sign:** accept PEM-armored and PKCS[#1](https://github.com/Nanopublication/nanopub-js/issues/1) RSA keys ([#49](https://github.com/Nanopublication/nanopub-js/issues/49)) ([0b48580](https://github.com/Nanopublication/nanopub-js/commit/0b48580635689b414db4cdfcde9df863bd7bb5f2)), closes [#45](https://github.com/Nanopublication/nanopub-js/issues/45)
+
 ## [0.2.0](https://github.com/Nanopublication/nanopub-js/compare/v0.1.3...v0.2.0) (2026-09-02)
 
 
