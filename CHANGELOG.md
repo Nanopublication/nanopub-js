@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/Nanopublication/nanopub-js/compare/v0.3.0...v0.3.1) (2026-09-12)
+
+
+### Bug Fixes
+
+* **build:** bundle Buffer in the browser entry instead of externalizing it ([2ccd691](https://github.com/Nanopublication/nanopub-js/commit/2ccd691f88276d3ac2559f14bec8591658ab0260))
+
 ## [0.3.0](https://github.com/Nanopublication/nanopub-js/compare/v0.2.0...v0.3.0) (2026-09-10)
 
 
