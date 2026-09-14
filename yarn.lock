@@ -555,12 +555,12 @@ __metadata:
   linkType: hard
 
 "@types/n3@npm:^1":
-  version: 1.26.3
-  resolution: "@types/n3@npm:1.26.3"
+  version: 1.26.4
+  resolution: "@types/n3@npm:1.26.4"
   dependencies:
     "@rdfjs/types": "npm:*"
     "@types/node": "npm:*"
-  checksum: 10c0/e9429afdb895de05cecb74bd83bdbf7250fd62341aae065bad47aa531c7508dcab8eca4a44c985e76c44aff4078d070f4298a543c258f76412fd607e3b07f25d
+  checksum: 10c0/7a8823ab7e112016d2d1f0974b3303f3530bda1be211c14c74ddf3c3f641483bdfffdcfbb8b6756b742e12976e2d9807f841e28d8cf6153ea075e90831818368
   languageName: node
   linkType: hard
 
