@@ -491,12 +491,12 @@ __metadata:
   linkType: hard
 
 "@traqula/parser-sparql-1-1@npm:^1.2.1":
-  version: 1.3.0
-  resolution: "@traqula/parser-sparql-1-1@npm:1.3.0"
+  version: 1.3.1
+  resolution: "@traqula/parser-sparql-1-1@npm:1.3.1"
   dependencies:
     "@traqula/core": "npm:^1.3.0"
     "@traqula/rules-sparql-1-1": "npm:^1.3.0"
-  checksum: 10c0/d3e1968f8acb4780916a1c301642a013a2a26a2d69097d6d7f8d4bba5d6f90b082ded4e2d6d9a5fdce2ef2775d9e938fdb2525a4e229d5ee1ab5016957628aae
+  checksum: 10c0/c8b025dd5b2ff82eea01985834fe92e1c42996870aaeaafadd09df82243fe06ab614faf0140576cc1f6cd92c643fae842972903dc427a8ed52243f13d12db7ba
   languageName: node
   linkType: hard
 
