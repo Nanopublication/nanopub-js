@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/Nanopublication/nanopub-js/compare/v0.3.1...v0.3.2) (2026-09-15)
+
+
+### Bug Fixes
+
+* raise the query timeout and restore the dts build on TypeScript 7 ([5ebca8b](https://github.com/Nanopublication/nanopub-js/commit/5ebca8b0bcc2a898be6c84e2994670f0986c1222))
+
 ## [0.3.1](https://github.com/Nanopublication/nanopub-js/compare/v0.3.0...v0.3.1) (2026-09-12)
 
 
