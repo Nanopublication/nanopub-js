@@ -102,6 +102,21 @@ normalizePrivateKey(pem); // base64 of the PKCS#8 DER, single line
 normalizePublicKey(pem); // base64 of the SubjectPublicKeyInfo DER, single line
 ```
 
+### Reading JSON-LD
+
+`parse()` and `Nanopub.fromRdf()` handle TriG, Turtle and the N-Triples family through
+n3, which does not parse JSON-LD. To read that syntax, pass a parser:
+
+```ts
+import jsonld from 'jsonld';
+
+const parser = (input: string) => jsonld.toRDF(JSON.parse(input)) as Quad[];
+
+const np = Nanopub.fromRdf(json, 'jsonld', { parser });
+```
+
+Asking for `'jsonld'` without a parser throws, rather than parsing to nothing.
+
 ### Introducing a key
 
 Before the network trusts what you publish, the key you sign with has to be

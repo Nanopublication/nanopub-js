@@ -1,6 +1,6 @@
 import { NanopubOptions, NanopubData } from './types/types';
 import { Quad, DataFactory } from 'n3';
-import { serialize, parse } from './serialize';
+import { serialize, parse, ParseFormat, ParseOptions } from './serialize';
 import { verifySignature } from './sign/verify';
 import { sign as signRdf } from './sign/sign';
 import { getCryptoAdapter } from './sign/crypto';
@@ -187,12 +187,12 @@ export class Nanopub implements NanopubData {
 
   static fromRdf(
     rdf: string,
-    format: 'trig' | 'turtle' | 'jsonld' = 'trig',
-    options?: NanopubOptions,
+    format: ParseFormat = 'trig',
+    options?: NanopubOptions & ParseOptions,
   ): Nanopub {
     const np = new Nanopub({ options });
 
-    const quads = parse(rdf, format);
+    const quads = parse(rdf, format, { parser: options?.parser });
     np.hydrateFromQuads(quads);
 
     np._rdf = rdf;
