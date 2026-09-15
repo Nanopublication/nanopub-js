@@ -24,5 +24,6 @@ export const NANOPUB_QUERY_URLS = [
 export const QUERY_SERVICE_TYPE =
   'https://w3id.org/np/o/service/terms/nanopub-query-1.1';
 
-// per-request, so a hanging instance doesn't block the next one
-export const QUERY_TIMEOUT_MS = 5000;
+// per-request, so a hanging instance doesn't block the next one.
+// Generous because the query services routinely take 5-10s on wide queries.
+export const QUERY_TIMEOUT_MS = 20000;

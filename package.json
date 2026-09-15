@@ -36,6 +36,7 @@
     "@types/n3": "^1",
     "@types/node": "^24.9.1",
     "@types/rdfjs__data-model": "^2",
+    "@typescript/typescript6": "^6.0.2",
     "@vitest/coverage-v8": "5.0.0",
     "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",

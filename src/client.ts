@@ -22,9 +22,11 @@ const ENDPOINT_UUIDS: Record<string, string> = {
 
 export class NanopubClient {
   endpoints: string[];
+  timeoutMs: number;
 
-  constructor(config?: { endpoints?: string[] }) {
+  constructor(config?: { endpoints?: string[]; timeoutMs?: number }) {
     this.endpoints = config?.endpoints ?? [...NANOPUB_QUERY_URLS];
+    this.timeoutMs = config?.timeoutMs ?? QUERY_TIMEOUT_MS;
   }
 
   /** Replace the endpoints with the query services currently registered. */
@@ -201,7 +203,7 @@ export class NanopubClient {
       try {
         const res = await fetch(url.toString(), {
           headers: { Accept: 'application/sparql-results+json' },
-          signal: AbortSignal.timeout(QUERY_TIMEOUT_MS),
+          signal: AbortSignal.timeout(this.timeoutMs),
         });
 
         // bad query, not a bad endpoint
@@ -217,8 +219,8 @@ export class NanopubClient {
           yield parsed;
         }
         return;
-      } catch {
-        lastError = new Error(`Query failed at ${baseUrl}`);
+      } catch (err) {
+        lastError = new Error(`Query failed at ${baseUrl}`, { cause: err });
       }
     }
 
