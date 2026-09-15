@@ -65,14 +65,37 @@ export async function serialize(
   });
 }
 
+/** Turns JSON-LD into quads. n3 does not parse JSON-LD, so callers supply this to read that syntax. */
+export type JSONLDParser = (input: string) => RDFJSQuad[];
+
+export type ParseFormat = 'trig' | 'turtle' | 'jsonld';
+
+export interface ParseOptions {
+  /** Required for 'jsonld'; ignored for the syntaxes n3 handles */
+  parser?: JSONLDParser;
+}
+
 export function parse(
   input: string,
-  format: 'trig' | 'turtle' | 'jsonld' = 'trig'
+  format: ParseFormat = 'trig',
+  options: ParseOptions = {},
 ): N3Quad[] {
+  // A missing parser is a caller mistake rather than bad input, so it throws instead of parsing to nothing
+  if (format === 'jsonld') {
+    if (!options.parser) {
+      throw new Error(
+        'Parsing JSON-LD needs a parser: pass one as { parser } (n3 does not parse JSON-LD).',
+      );
+    }
+    try {
+      return options.parser(input).map(toN3Quad);
+    } catch {
+      return [];
+    }
+  }
+
   try {
-    const parser = new Parser({ format });
-    const quads = parser.parse(input);
-    return quads;
+    return new Parser({ format }).parse(input);
   } catch {
     return [];
   }

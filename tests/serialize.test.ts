@@ -6,7 +6,7 @@ import {
   serialize,
 } from "../src";
 import { generateKeyPairSync } from "crypto";
-import { Literal, NamedNode, Quad } from "n3";
+import { DataFactory, Literal, NamedNode, Quad } from "n3";
 import { makeNamedGraphNode } from "../src/utils";
 
 describe("serialize()", () => {
@@ -150,5 +150,35 @@ describe("parse()", () => {
   it("returns empty array on parse error", () => {
     const quads = parse("<<< broken >>>", "trig");
     expect(quads).toEqual([]);
+  });
+
+  it("throws for JSON-LD without a parser", () => {
+    expect(() => parse('{"@id":"http://example.org/a"}', "jsonld")).toThrow(
+      /needs a parser/,
+    );
+  });
+
+  it("uses the given parser for JSON-LD", () => {
+    const { namedNode, quad } = DataFactory;
+    const parser = () => [
+      quad(
+        namedNode("http://example.org/a"),
+        namedNode("http://example.org/p"),
+        namedNode("http://example.org/o"),
+      ),
+    ];
+
+    const quads = parse('{"@id":"http://example.org/a"}', "jsonld", { parser });
+
+    expect(quads).toHaveLength(1);
+    expect(quads[0].subject.value).toBe("http://example.org/a");
+  });
+
+  it("returns empty array when the given parser fails", () => {
+    const parser = () => {
+      throw new Error("bad JSON-LD");
+    };
+
+    expect(parse("{", "jsonld", { parser })).toEqual([]);
   });
 });

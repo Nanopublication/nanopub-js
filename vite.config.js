@@ -1,5 +1,9 @@
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
+import { createRequire } from "node:module";
+
+const { dependencies } = createRequire(import.meta.url)("./package.json");
+const NODE_BUILTINS = ["crypto", "buffer", "stream", "util", "events", "string_decoder", "process"];
 
 // The browser build has to bundle Buffer, the node build keeps it external
 export default defineConfig(({ mode }) => {
@@ -17,8 +21,9 @@ export default defineConfig(({ mode }) => {
         formats: ["es"],
       },
       rollupOptions: {
+        // Node resolves dependencies itself; bundling them inlines CJS that ESM consumers cannot require
         external: node
-          ? ["crypto", "node:crypto", "buffer"]
+          ? [/^node:/, ...NODE_BUILTINS, ...Object.keys(dependencies)]
           : ["crypto", "node:crypto"],
       },
     },
