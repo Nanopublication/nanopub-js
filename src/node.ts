@@ -16,6 +16,7 @@ export * from './intro.js';
 export * from './validate.js';
 export * from './sparql.js';
 export * from './grlc.js';
+export * from './keyCheck.js';
 export { serialize, parse } from './serialize.js';
 export * from './types/types.js';
 export * from './constants.js';
