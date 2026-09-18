@@ -8,7 +8,8 @@ import { getCryptoAdapter } from './sign/crypto';
 import { getInvalidSparql } from './grlc';
 import { createNanopubGraphs } from './utils';
 import { DEFAULT_NANOPUB_URI, TEST_NANOPUB_REGISTRY_URL } from './constants';
-import { RDF, XSD, NP, PROV } from './vocab';
+import { RDF, XSD, NP, NPX, PROV } from './vocab';
+import { enforceSigningKeyCheck, KeyCheckOptions } from './keyCheck';
 
 const { quad, literal } = DataFactory;
 
@@ -133,7 +134,16 @@ export class Nanopub implements NanopubData {
     }
   }
 
-  async sign(): Promise<this> {
+  /**
+   * Signs the nanopub with the profile's key. Before signing, the key is checked against the
+   * introductions published on the network, so that a key the network cannot attribute to the
+   * signer is noticed while the nanopub can still be signed with another one.
+   *
+   * @param options - how the signing-key check is run; it warns by default
+   * @returns this nanopub, signed
+   * @throws if the SPARQL of a grlc query does not parse, or, in `strict` mode, if the key cannot be attributed
+   */
+  async sign(options: KeyCheckOptions = {}): Promise<this> {
     if (!this._profileParams) {
       throw new Error('Profile not set. Cannot sign nanopub.');
     }
@@ -152,6 +162,14 @@ export class Nanopub implements NanopubData {
       }
     }
 
+    await enforceSigningKeyCheck(
+      this._profileParams.orcid,
+      await (await getCryptoAdapter()).extractPublicKey(this._profileParams.privateKey),
+      this.assertion,
+      'signed',
+      options,
+    );
+
     const trig = await serialize(this, 'trig');
 
     const { signedRdf, sourceUri, signature } = await signRdf(
@@ -166,6 +184,16 @@ export class Nanopub implements NanopubData {
 
     this.rehydrateFromSignedRdf();
     return this;
+  }
+
+  /**
+   * Reads a value of the nanopub's signature element from its publication info.
+   *
+   * @param predicate - the local name of the `npx:` predicate, such as `signedBy` or `hasPublicKey`
+   * @returns the value, or undefined if the signature does not carry it
+   */
+  private signatureValue(predicate: 'signedBy' | 'hasPublicKey'): string | undefined {
+    return this.pubinfo.find((q) => q.predicate.value === NPX(predicate).value)?.object.value;
   }
 
   async hasValidSignature(): Promise<boolean> {
@@ -208,8 +236,18 @@ export class Nanopub implements NanopubData {
     return np;
   }
 
+  /**
+   * Publishes the nanopub, signing it first if it is not signed yet. A nanopub that is already
+   * signed has its own signature's key checked against the introductions published on the network.
+   *
+   * @param server - the registry to publish to
+   * @param options - how the signing-key check is run; it warns by default
+   * @returns the nanopub's URI, the server, and the server's response
+   * @throws if the SPARQL of a grlc query does not parse, if the server refuses the nanopub, or, in `strict` mode, if the key cannot be attributed
+   */
   async publish(
     server: string = TEST_NANOPUB_REGISTRY_URL,
+    options: KeyCheckOptions = {},
   ): Promise<{ uri: string; server: string; response: Response }> {
     // Refused before any server is contacted: a query published with broken
     // SPARQL can never run, and cannot be corrected afterwards.
@@ -218,10 +256,18 @@ export class Nanopub implements NanopubData {
     // check if signed
     if (!this._rdf) {
       if (typeof this.sign === 'function') {
-        await this.sign();
+        await this.sign(options);
       } else {
         throw new Error('Nanopub is not signed and cannot be signed');
       }
+    } else {
+      await enforceSigningKeyCheck(
+        this.signatureValue('signedBy'),
+        this.signatureValue('hasPublicKey'),
+        this.assertion,
+        'published',
+        options,
+      );
     }
 
     const rdf = this.rdf();

@@ -157,6 +157,49 @@ const intro = await createIntroNanopub({
 Publishing an introduction does not by itself make the key trusted: an already
 trusted agent still has to endorse it.
 
+### Checking the signing key
+
+A nanopublication signed with a key that no introduction declares for its signer
+is cryptographically valid: it publishes, and it verifies. What it cannot be is
+attributed. The registry has nothing tying the key to the person, so the
+nanopublication shows up under an unapproved agent, and since it cannot be
+edited afterwards, the only remedy is publishing it again under a declared key
+and retracting the first.
+
+`sign()` and `publish()` therefore ask the network about the signer and key
+first, and warn when the key cannot be attributed:
+
+| Status | Meaning |
+| --- | --- |
+| `declared` | An introduction with authority declares this key for this signer |
+| `declared_without_authority` | An introduction declares it, but one anyone could have published |
+| `key_not_declared` | The signer is introduced, but by another key |
+| `signer_not_introduced` | Nothing introduces this signer |
+| `not_checked` | The network could not be asked |
+
+```ts
+await np.sign();                           // checks, and warns with console.warn
+await np.sign({ keyCheck: 'strict' });     // refuses to sign with such a key
+await np.sign({ keyCheck: 'off' });        // does not ask the network
+await np.publish(server, {
+  onKeyCheck: (result) => showInYourUi(result.status, result.message),
+});
+```
+
+`publish()` checks a nanopublication that is already signed by its own
+signature's `npx:signedBy` and `npx:hasPublicKey`, since it may have been signed
+elsewhere; one it signs itself is checked once, by `sign()`. An introduction
+declaring the key it is signed with is not checked, since it is what makes the
+key known. The check can also be run on its own with
+`checkSigningKey(signer, publicKey)`.
+
+The check fails open: when no query endpoint answers, the result is
+`not_checked` and signing goes ahead, in strict mode too, so a service outage
+never stops anyone from signing. The introductions of a signer are fetched once
+and reused for five minutes (`clearSigningKeyCheckCache()` forgets them), so
+publishing many nanopublications asks once. It follows the same classification
+as nanopub-java's check.
+
 ### grlc queries
 
 A nanopublication cannot be edited after the fact, so a grlc query whose SPARQL
