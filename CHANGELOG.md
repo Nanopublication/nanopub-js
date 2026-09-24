@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/Nanopublication/nanopub-js/compare/v0.3.2...v0.4.0) (2026-09-24)
+
+
+### Features
+
+* **sign:** check the signing key against the network before signing and publishing ([#75](https://github.com/Nanopublication/nanopub-js/issues/75)) ([30a7a3e](https://github.com/Nanopublication/nanopub-js/commit/30a7a3e00f098221fc773aa622d4e2a3143a5f68)), closes [#73](https://github.com/Nanopublication/nanopub-js/issues/73)
+* **sign:** count an introduction only when signed by a key it declares, and return the introductions ([#84](https://github.com/Nanopublication/nanopub-js/issues/84)) ([a873bf4](https://github.com/Nanopublication/nanopub-js/commit/a873bf4ad829669ba97cfd20103ad6ea6f5d87d4))
+
 ## [0.3.2](https://github.com/Nanopublication/nanopub-js/compare/v0.3.1...v0.3.2) (2026-09-15)
 
 
