@@ -141,7 +141,9 @@ included. The public key is derived from the private key unless you pass
 
 Trust is granted per key rather than per agent, so an agent that already has an
 approved key adds another by publishing a further introduction under the same
-`agent` IRI. To restate existing keys alongside a new one, pass them together:
+`agent` IRI, signed with the key they already have and declaring it alongside
+the new one, since an introduction only counts when it is signed by one of the
+keys it declares:
 
 ```ts
 const intro = await createIntroNanopub({
@@ -171,8 +173,8 @@ first, and warn when the key cannot be attributed:
 
 | Status | Meaning |
 | --- | --- |
-| `declared` | An introduction with authority declares this key for this signer |
-| `declared_without_authority` | An introduction declares it, but one anyone could have published |
+| `declared` | An introduction declares this key for this signer and is signed by one of the keys it declares |
+| `declared_without_authority` | An introduction declares it, but none that is signed by a key it declares |
 | `key_not_declared` | The signer is introduced, but by another key |
 | `signer_not_introduced` | Nothing introduces this signer |
 | `not_checked` | The network could not be asked |
@@ -190,15 +192,15 @@ await np.publish(server, {
 signature's `npx:signedBy` and `npx:hasPublicKey`, since it may have been signed
 elsewhere; one it signs itself is checked once, by `sign()`. An introduction
 declaring the key it is signed with is not checked, since it is what makes the
-key known. The check can also be run on its own with
-`checkSigningKey(signer, publicKey)`.
+key known. The check can also be run on its own: `checkSigningKey(signer,
+publicKey)` returns the status, a message, and the introductions declaring the
+key; `hasValidIntroduction(signer, publicKey)` is the yes-or-no form.
 
 The check fails open: when no query endpoint answers, the result is
 `not_checked` and signing goes ahead, in strict mode too, so a service outage
 never stops anyone from signing. The introductions of a signer are fetched once
 and reused for five minutes (`clearSigningKeyCheckCache()` forgets them), so
-publishing many nanopublications asks once. It follows the same classification
-as nanopub-java's check.
+publishing many nanopublications asks once.
 
 ### grlc queries
 

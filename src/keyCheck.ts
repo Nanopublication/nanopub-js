@@ -6,9 +6,10 @@ import { SparqlBindingValue } from './types/types';
 /**
  * What the network says about a signer and the key they sign with.
  *
- * - `declared`: an introduction signed with authority declares this key for this signer.
- * - `declared_without_authority`: an introduction declares it, but none that carries
- *   authority, which anyone could have published.
+ * - `declared`: an introduction declares this key for this signer and is signed by one of the
+ *   keys it declares.
+ * - `declared_without_authority`: an introduction declares it, but none that is signed by a key
+ *   it declares.
  * - `key_not_declared`: the signer is introduced, but by some other key.
  * - `signer_not_introduced`: nothing on the network introduces this signer.
  * - `not_checked`: nothing is known either way, because the network could not be asked or
@@ -28,6 +29,8 @@ export interface SigningKeyCheckResult {
   acceptable: boolean;
   /** A sentence explaining the status, suitable for showing to the person signing. */
   message: string;
+  /** The introductions declaring this key for this signer, when there are any. */
+  introductions: string[];
 }
 
 /**
@@ -49,7 +52,7 @@ export interface KeyCheckOptions {
   client?: NanopubClient;
 }
 
-/** One introduction row: the signer it introduces, the key it declares, and whether it carries authority. */
+/** One declaration: the signer, the key declared, the introduction it is in, and the key that signed it. */
 export type IntroductionRow = Record<string, string>;
 
 /**
@@ -87,7 +90,7 @@ export function introductionsQuery(signer: string): string {
 prefix npx: <http://purl.org/nanopub/x/>
 prefix npa: <http://purl.org/nanopub/admin/>
 
-select ?user ?pubkey ?authoritative where {
+select ?user ?pubkey ?intronp ?introPubkey where {
   values ?user { <${signer}> }
   graph npa:graph {
     ?intronp npa:hasValidSignatureForPublicKey ?introPubkey .
@@ -98,7 +101,6 @@ select ?user ?pubkey ?authoritative where {
     ?keydeclaration npx:declaredBy ?user .
     ?keydeclaration npx:hasPublicKey ?pubkey .
   }
-  bind(?pubkey = ?introPubkey as ?authoritative)
 }`;
 }
 
@@ -115,30 +117,38 @@ export function comparableKey(publicKey: string): string {
 
 /**
  * Classifies a signer and key against the introductions the network returned for that signer.
+ * An introduction carries authority when it is signed by one of the keys it declares, so a first
+ * introduction is self-signed, and one adding a key is signed by an existing key it restates.
  *
- * @param introductions - introduction rows with `user`, `pubkey` and `authoritative` columns
+ * @param introductions - declaration rows with `user`, `pubkey`, `intronp` and `introPubkey` columns
  * @param signer - IRI of the signer
  * @param publicKey - the public key the signer signs with
- * @returns the status the rows establish
+ * @returns the status the rows establish, and the introductions declaring the key
  */
 export function classifySigningKey(
   introductions: IntroductionRow[],
   signer: string,
   publicKey: string,
-): SigningKeyStatus {
+): { status: SigningKeyStatus; introductions: string[] } {
   const key = comparableKey(publicKey);
-  let signerIsIntroduced = false;
-  let keyIsDeclared = false;
-  for (const introduction of introductions) {
-    if (introduction.user !== signer) continue;
-    signerIsIntroduced = true;
-    if (comparableKey(introduction.pubkey ?? '') !== key) continue;
-    keyIsDeclared = true;
-    if ((introduction.authoritative ?? '').toLowerCase() === 'true') return 'declared';
-  }
-  if (keyIsDeclared) return 'declared_without_authority';
-  if (signerIsIntroduced) return 'key_not_declared';
-  return 'signer_not_introduced';
+  const declarations = introductions.filter((row) => row.user === signer);
+  const declaring = declarations.filter((row) => comparableKey(row.pubkey ?? '') === key);
+  const signedByDeclaredKey = (row: IntroductionRow) =>
+    declarations.some(
+      (other) =>
+        other.intronp === row.intronp &&
+        comparableKey(other.pubkey ?? '') === comparableKey(row.introPubkey ?? ''),
+    );
+  const intros = [...new Set(declaring.map((row) => row.intronp).filter((iri): iri is string => !!iri))];
+
+  const status: SigningKeyStatus = declaring.some(signedByDeclaredKey)
+    ? 'declared'
+    : declaring.length
+      ? 'declared_without_authority'
+      : declarations.length
+        ? 'key_not_declared'
+        : 'signer_not_introduced';
+  return { status, introductions: intros };
 }
 
 /**
@@ -146,18 +156,19 @@ export function classifySigningKey(
  *
  * @param status - the status to describe
  * @param signer - IRI of the signer the status is about
+ * @param introductions - the introductions declaring the key, when there are any
  * @returns the result carrying the status, whether it is acceptable, and the explanation
  */
 export function describeSigningKeyStatus(
   status: SigningKeyStatus,
   signer: string,
+  introductions: string[] = [],
 ): SigningKeyCheckResult {
   const messages: Record<SigningKeyStatus, string> = {
-    declared: `The signing key is the one the network knows ${signer} by.`,
+    declared: `The signing key is one the network knows ${signer} by.`,
     declared_without_authority:
-      `The signing key is declared for ${signer}, but by an introduction that carries no authority, ` +
-      'which anyone could have published. Nanopublications signed with it may show as coming from ' +
-      'an unapproved agent.',
+      `The signing key is declared for ${signer}, but only by an introduction not signed with a key ` +
+      'it declares. Nanopublications signed with it may show as coming from an unapproved agent.',
     key_not_declared:
       `${signer} is introduced on the network, but by a different key than the one about to sign. ` +
       'Nanopublications signed with this key cannot be attributed, and will show as coming from an ' +
@@ -167,7 +178,7 @@ export function describeSigningKeyStatus(
       'attributed, and will show as coming from an unapproved agent. Publish an introduction first.',
     not_checked: 'The signing key was not checked against the network.',
   };
-  return { status, acceptable: STATUS_ACCEPTABLE[status], message: messages[status] };
+  return { status, acceptable: STATUS_ACCEPTABLE[status], message: messages[status], introductions };
 }
 
 /**
@@ -231,8 +242,9 @@ export async function checkSigningKey(
     };
   }
   try {
-    const introductions = await fetchIntroductions(signer, client);
-    return describeSigningKeyStatus(classifySigningKey(introductions, signer, publicKey), signer);
+    const rows = await fetchIntroductions(signer, client);
+    const { status, introductions } = classifySigningKey(rows, signer, publicKey);
+    return describeSigningKeyStatus(status, signer, introductions);
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);
     return {
@@ -240,6 +252,22 @@ export async function checkSigningKey(
       message: `Could not check the signing key against the network: ${reason}. Signing goes ahead unchecked.`,
     };
   }
+}
+
+/**
+ * Whether an introduction the network accepts declares this key for this signer.
+ *
+ * @param signer - IRI of the signer
+ * @param publicKey - the public key the signer signs with
+ * @param client - the client whose query endpoints are asked
+ * @returns true only when the status is `declared`
+ */
+export async function hasValidIntroduction(
+  signer: string | undefined,
+  publicKey: string | undefined,
+  client?: NanopubClient,
+): Promise<boolean> {
+  return (await checkSigningKey(signer, publicKey, client)).status === 'declared';
 }
 
 /** Forgets the introductions fetched so far, so the next check asks the network again. */

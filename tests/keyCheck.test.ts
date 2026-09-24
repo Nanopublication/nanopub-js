@@ -11,6 +11,7 @@ import {
   createIntroNanopub,
   declaresOwnSigningKey,
   enforceSigningKeyCheck,
+  hasValidIntroduction,
   INTRODUCTIONS_REPO,
 } from '../src/index';
 import { getCryptoAdapter } from '../src/sign/crypto';
@@ -20,7 +21,23 @@ const { namedNode, literal, quad } = DataFactory;
 const SIGNER = 'https://orcid.org/0000-0002-1825-0097';
 const KEY = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAdeclaredkey';
 const OTHER_KEY = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAotherkey';
+const NEW_KEY = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnewkey';
+const INTRO_A = 'https://w3id.org/np/RAintroA';
+const INTRO_B = 'https://w3id.org/np/RAintroB';
 const ENDPOINT = 'https://query.example.org/';
+
+/**
+ * A declaration row as the introductions query returns it, self-signed unless a signing key is given.
+ *
+ * @param pubkey - the key declared
+ * @param introPubkey - the key that signed the introduction
+ * @param intronp - the introduction
+ * @param user - the signer it is declared for
+ * @returns the row
+ */
+function declared(pubkey: string, introPubkey = pubkey, intronp = INTRO_A, user = SIGNER) {
+  return { user, pubkey, intronp, introPubkey };
+}
 
 /**
  * A SPARQL JSON response carrying the given introduction rows.
@@ -34,7 +51,7 @@ function introductionsResponse(rows: Record<string, string>[]) {
     status: 200,
     statusText: 'OK',
     json: async () => ({
-      head: { vars: ['user', 'pubkey', 'authoritative'] },
+      head: { vars: ['user', 'pubkey', 'intronp', 'introPubkey'] },
       results: {
         bindings: rows.map((row) =>
           Object.fromEntries(Object.entries(row).map(([k, v]) => [k, { type: 'literal', value: v }])),
@@ -72,49 +89,46 @@ function nanopubFor(privateKey: string): Nanopub {
 }
 
 describe('classifySigningKey', () => {
-  it('finds a key declared with authority', () => {
-    expect(
-      classifySigningKey([{ user: SIGNER, pubkey: KEY, authoritative: 'true' }], SIGNER, KEY),
-    ).toBe('declared');
+  it('finds a key declared by a self-signed introduction', () => {
+    expect(classifySigningKey([declared(KEY)], SIGNER, KEY)).toEqual({ status: 'declared', introductions: [INTRO_A] });
   });
 
-  it('prefers an authoritative declaration listed after one without authority', () => {
-    expect(
-      classifySigningKey(
-        [
-          { user: SIGNER, pubkey: KEY, authoritative: 'false' },
-          { user: SIGNER, pubkey: KEY, authoritative: 'true' },
-        ],
-        SIGNER,
-        KEY,
-      ),
-    ).toBe('declared');
+  it('finds a new key declared by an introduction signed with an existing key it restates', () => {
+    const rows = [declared(KEY), declared(KEY, KEY, INTRO_B), declared(NEW_KEY, KEY, INTRO_B)];
+    expect(classifySigningKey(rows, SIGNER, NEW_KEY)).toEqual({ status: 'declared', introductions: [INTRO_B] });
   });
 
-  it('does not accept a declaration without authority', () => {
-    expect(
-      classifySigningKey([{ user: SIGNER, pubkey: KEY, authoritative: 'false' }], SIGNER, KEY),
-    ).toBe('declared_without_authority');
+  it('does not accept a declaration in an introduction that does not declare its signing key', () => {
+    const rows = [declared(KEY), declared(NEW_KEY, KEY, INTRO_B)];
+    expect(classifySigningKey(rows, SIGNER, NEW_KEY)).toEqual({
+      status: 'declared_without_authority',
+      introductions: [INTRO_B],
+    });
+  });
+
+  it('prefers a declaration with authority listed after one without', () => {
+    const rows = [declared(KEY, OTHER_KEY, INTRO_B), declared(KEY)];
+    expect(classifySigningKey(rows, SIGNER, KEY).status).toBe('declared');
+  });
+
+  it('returns every introduction declaring the key', () => {
+    const rows = [declared(KEY), declared(KEY, KEY, INTRO_B)];
+    expect(classifySigningKey(rows, SIGNER, KEY).introductions).toEqual([INTRO_A, INTRO_B]);
   });
 
   it('notices a signer introduced by another key', () => {
-    expect(
-      classifySigningKey([{ user: SIGNER, pubkey: OTHER_KEY, authoritative: 'true' }], SIGNER, KEY),
-    ).toBe('key_not_declared');
+    expect(classifySigningKey([declared(OTHER_KEY)], SIGNER, KEY)).toEqual({ status: 'key_not_declared', introductions: [] });
   });
 
   it('notices a signer nothing introduces', () => {
-    expect(
-      classifySigningKey([{ user: 'https://orcid.org/0000-0000-0000-0001', pubkey: KEY, authoritative: 'true' }], SIGNER, KEY),
-    ).toBe('signer_not_introduced');
-    expect(classifySigningKey([], SIGNER, KEY)).toBe('signer_not_introduced');
+    const someoneElse = declared(KEY, KEY, INTRO_A, 'https://orcid.org/0000-0000-0000-0001');
+    expect(classifySigningKey([someoneElse], SIGNER, KEY).status).toBe('signer_not_introduced');
+    expect(classifySigningKey([], SIGNER, KEY).status).toBe('signer_not_introduced');
   });
 
   it('matches keys the network stores with line breaks', () => {
     const wrapped = `${KEY.slice(0, 20)}\n${KEY.slice(20)}`;
-    expect(
-      classifySigningKey([{ user: SIGNER, pubkey: wrapped, authoritative: 'true' }], SIGNER, KEY),
-    ).toBe('declared');
+    expect(classifySigningKey([declared(wrapped)], SIGNER, KEY).status).toBe('declared');
   });
 });
 
@@ -134,7 +148,7 @@ describe('checkSigningKey', () => {
   });
 
   it('asks the introductions repository about the signer only', async () => {
-    fetchMock.mockResolvedValueOnce(introductionsResponse([{ user: SIGNER, pubkey: KEY, authoritative: 'true' }]));
+    fetchMock.mockResolvedValueOnce(introductionsResponse([declared(KEY)]));
     const result = await checkSigningKey(SIGNER, KEY, client);
     expect(result).toMatchObject({ status: 'declared', acceptable: true });
     const url = new URL(fetchMock.mock.calls[0][0]);
@@ -142,8 +156,19 @@ describe('checkSigningKey', () => {
     expect(url.searchParams.get('query')).toContain(`values ?user { <${SIGNER}> }`);
   });
 
+  it('names the introductions declaring the key', async () => {
+    fetchMock.mockResolvedValueOnce(introductionsResponse([declared(KEY), declared(KEY, KEY, INTRO_B)]));
+    expect((await checkSigningKey(SIGNER, KEY, client)).introductions).toEqual([INTRO_A, INTRO_B]);
+  });
+
+  it('answers yes or no with hasValidIntroduction', async () => {
+    fetchMock.mockResolvedValue(introductionsResponse([declared(KEY)]));
+    expect(await hasValidIntroduction(SIGNER, KEY, client)).toBe(true);
+    expect(await hasValidIntroduction(SIGNER, OTHER_KEY, client)).toBe(false);
+  });
+
   it('explains a key the network cannot attribute', async () => {
-    fetchMock.mockResolvedValueOnce(introductionsResponse([{ user: SIGNER, pubkey: OTHER_KEY, authoritative: 'true' }]));
+    fetchMock.mockResolvedValueOnce(introductionsResponse([declared(OTHER_KEY)]));
     const result = await checkSigningKey(SIGNER, KEY, client);
     expect(result.status).toBe('key_not_declared');
     expect(result.acceptable).toBe(false);
@@ -153,7 +178,7 @@ describe('checkSigningKey', () => {
   it('tries the next endpoint when one fails', async () => {
     fetchMock
       .mockResolvedValueOnce({ ok: false, status: 503, statusText: 'Unavailable' })
-      .mockResolvedValueOnce(introductionsResponse([{ user: SIGNER, pubkey: KEY, authoritative: 'true' }]));
+      .mockResolvedValueOnce(introductionsResponse([declared(KEY)]));
     expect((await checkSigningKey(SIGNER, KEY, client)).status).toBe('declared');
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
@@ -166,7 +191,7 @@ describe('checkSigningKey', () => {
   });
 
   it('reuses the introductions fetched for a signer until the cache is cleared', async () => {
-    fetchMock.mockResolvedValue(introductionsResponse([{ user: SIGNER, pubkey: KEY, authoritative: 'true' }]));
+    fetchMock.mockResolvedValue(introductionsResponse([declared(KEY)]));
     await checkSigningKey(SIGNER, KEY, client);
     await checkSigningKey(SIGNER, OTHER_KEY, client);
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -178,7 +203,7 @@ describe('checkSigningKey', () => {
   it('does not cache a failed lookup', async () => {
     fetchMock.mockRejectedValueOnce(new Error('down')).mockRejectedValueOnce(new Error('down'));
     expect((await checkSigningKey(SIGNER, KEY, client)).status).toBe('not_checked');
-    fetchMock.mockResolvedValueOnce(introductionsResponse([{ user: SIGNER, pubkey: KEY, authoritative: 'true' }]));
+    fetchMock.mockResolvedValueOnce(introductionsResponse([declared(KEY)]));
     expect((await checkSigningKey(SIGNER, KEY, client)).status).toBe('declared');
   });
 
@@ -248,7 +273,7 @@ describe('enforceSigningKeyCheck', () => {
   });
 
   it('stays quiet about an attributable key', async () => {
-    fetchMock.mockResolvedValue(introductionsResponse([{ user: SIGNER, pubkey: KEY, authoritative: 'true' }]));
+    fetchMock.mockResolvedValue(introductionsResponse([declared(KEY)]));
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     await enforceSigningKeyCheck(SIGNER, KEY, [], 'signed', { keyCheck: 'strict', client });
     expect(warn).not.toHaveBeenCalled();
@@ -281,7 +306,7 @@ describe('Nanopub signing-key check', () => {
   it('signs in strict mode with a declared key', async () => {
     const privateKey = newPrivateKey();
     const publicKey = await (await getCryptoAdapter()).extractPublicKey(privateKey);
-    fetchMock.mockResolvedValue(introductionsResponse([{ user: SIGNER, pubkey: publicKey, authoritative: 'true' }]));
+    fetchMock.mockResolvedValue(introductionsResponse([declared(publicKey)]));
     const np = await nanopubFor(privateKey).sign({ keyCheck: 'strict', client });
     expect(np.signature).toBeDefined();
   });
@@ -310,7 +335,7 @@ describe('Nanopub signing-key check', () => {
     const privateKey = newPrivateKey();
     const publicKey = await (await getCryptoAdapter()).extractPublicKey(privateKey);
     fetchMock
-      .mockResolvedValueOnce(introductionsResponse([{ user: SIGNER, pubkey: publicKey, authoritative: 'true' }]))
+      .mockResolvedValueOnce(introductionsResponse([declared(publicKey)]))
       .mockResolvedValueOnce({ ok: true, status: 201, statusText: 'Created', text: async () => '' });
     const onKeyCheck = vi.fn();
     await nanopubFor(privateKey).publish('https://mock.registry/np/', { keyCheck: 'strict', onKeyCheck, client });
