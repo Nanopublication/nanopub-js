@@ -491,22 +491,22 @@ __metadata:
   linkType: hard
 
 "@traqula/parser-sparql-1-1@npm:^1.2.1":
-  version: 1.3.1
-  resolution: "@traqula/parser-sparql-1-1@npm:1.3.1"
+  version: 1.4.0
+  resolution: "@traqula/parser-sparql-1-1@npm:1.4.0"
   dependencies:
     "@traqula/core": "npm:^1.3.0"
-    "@traqula/rules-sparql-1-1": "npm:^1.3.0"
-  checksum: 10c0/c8b025dd5b2ff82eea01985834fe92e1c42996870aaeaafadd09df82243fe06ab614faf0140576cc1f6cd92c643fae842972903dc427a8ed52243f13d12db7ba
+    "@traqula/rules-sparql-1-1": "npm:^1.4.0"
+  checksum: 10c0/f4e9786fb365527635cca5385e87a33bdc7bbee7bc2e9c46f4813e83ea467a775921420f628a8e1df0a7991d2ede1a8de5ce25767d493bc85bdeb9377146fe4b
   languageName: node
   linkType: hard
 
-"@traqula/rules-sparql-1-1@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@traqula/rules-sparql-1-1@npm:1.3.0"
+"@traqula/rules-sparql-1-1@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "@traqula/rules-sparql-1-1@npm:1.4.0"
   dependencies:
     "@traqula/chevrotain": "npm:^1.1.0"
     "@traqula/core": "npm:^1.3.0"
-  checksum: 10c0/3a3c13c29697070cfd713e9e58d93a16e5eea7d6dad3f50ebcdf43833dbbf1b68682c2ad62f1008b45219428b8ce95a6639714126acf163f7d385d569e921e39
+  checksum: 10c0/a634c787dbcd156c79be2f850acb57259ffd25405c3fad72bc9d8a422b803c8c37e1b89d9498a7770611af7b9eeac968b6ba58b5aa862102a95c1d4df56ea1fc
   languageName: node
   linkType: hard
 
