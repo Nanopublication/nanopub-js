@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.0](https://github.com/Nanopublication/nanopub-js/compare/v0.4.0...v0.5.0) (2026-10-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **build:** keep dependencies external in the browser build and ship a self-contained bundle ([#103](https://github.com/Nanopublication/nanopub-js/issues/103))
+
+### Features
+
+* **build:** keep dependencies external in the browser build and ship a self-contained bundle ([#103](https://github.com/Nanopublication/nanopub-js/issues/103)) ([a52122e](https://github.com/Nanopublication/nanopub-js/commit/a52122e207175df2d4633d593641e162fdd8842b))
+
 ## [0.4.0](https://github.com/Nanopublication/nanopub-js/compare/v0.3.2...v0.4.0) (2026-09-24)
 
 
