@@ -45,7 +45,7 @@
     "@types/n3": "^1",
     "@types/node": "^24.9.1",
     "@typescript/typescript6": "^6.0.2",
-    "@vitest/coverage-v8": "5.0.2",
+    "@vitest/coverage-v8": "5.0.3",
     "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
