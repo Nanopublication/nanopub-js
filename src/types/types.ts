@@ -1,4 +1,4 @@
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 
 export interface Profile {
   id: string;

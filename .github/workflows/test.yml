@@ -37,3 +37,39 @@ jobs:
           file: ./coverage/lcov.info
           format: lcov
           fail-on-error: false
+
+  # Tests the packed package as consumers get it: Node, Vite, webpack, and
+  # browsers loading it without a bundler (see tests/package)
+  package:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tests/package
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24.21.0"
+          cache: "yarn"
+
+      - name: Build and pack
+        working-directory: .
+        run: |
+          yarn
+          yarn build
+          yarn pack -o tests/package/nanopub-js.tgz
+
+      - name: Install the packed package and test tools
+        run: npm install
+
+      - name: Install browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Run package tests
+        run: npm test

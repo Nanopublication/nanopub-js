@@ -1,4 +1,4 @@
-import type { Quad } from 'rdf-js';
+import type { Quad } from '@rdfjs/types';
 import type { NanopubData } from './types/types';
 import { KPXL_GRLC } from './vocab';
 import { getSparqlSyntaxError } from './sparql';

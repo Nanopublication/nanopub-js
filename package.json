@@ -4,7 +4,7 @@
   "type": "module",
   "main": "./dist/node.js",
   "types": "./dist/index.d.ts",
-  "module": "./dist/node.js",
+  "module": "./dist/index.js",
   "packageManager": "yarn@4.18.1",
   "files": [
     "dist"
@@ -15,6 +15,14 @@
       "browser": "./dist/index.js",
       "node": "./dist/node.js",
       "default": "./dist/node.js"
+    },
+    "./bundle": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/nanopub.bundle.js"
+    },
+    "./constants": {
+      "types": "./dist/constants.d.ts",
+      "default": "./dist/constants.js"
     }
   },
   "repository": {
@@ -23,10 +31,11 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "vite build && vite build --mode node",
+    "build": "vite build && vite build --mode bundle && vite build --mode node",
     "watch": "tsc --watch",
     "start": "node dist/index.js",
     "test": "vitest run --coverage",
+    "test:package": "yarn build && yarn pack -o tests/package/nanopub-js.tgz && cd tests/package && rm -rf node_modules/@nanopub && npm install && npm test",
     "prepare": "yarn run build",
     "lint": "eslint ."
   },
@@ -35,7 +44,6 @@
     "@nanopub/nanopub-testsuite-connector-js": "^1.0.0",
     "@types/n3": "^1",
     "@types/node": "^24.9.1",
-    "@types/rdfjs__data-model": "^2",
     "@typescript/typescript6": "^6.0.2",
     "@vitest/coverage-v8": "5.0.2",
     "eslint": "^10.0.0",
@@ -50,11 +58,8 @@
     "vitest": "^5.0.0"
   },
   "dependencies": {
-    "@rdfjs/data-model": "^2.1.1",
     "@rdfjs/types": "^2.0.1",
     "@traqula/parser-sparql-1-1": "^1.2.1",
-    "n3": "^2.0.0",
-    "rdf-canonize": "^5.0.0",
-    "rdf-js": "^4.0.2"
+    "n3": "^2.0.0"
   }
 }

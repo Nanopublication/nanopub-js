@@ -1,0 +1,22 @@
+{
+  "name": "nanopub-js-package-tests",
+  "private": true,
+  "type": "module",
+  "description": "Tests the packed @nanopub/nanopub-js in Node, Vite, webpack, and browsers without a bundler",
+  "scripts": {
+    "build": "vite build && webpack",
+    "test": "npm run check && node node.js && npm run build && playwright test",
+    "check": "publint ./nanopub-js.tgz && attw ./nanopub-js.tgz --profile esm-only --ignore-rules internal-resolution-error"
+  },
+  "dependencies": {
+    "@nanopub/nanopub-js": "file:./nanopub-js.tgz"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "0.18.5",
+    "@playwright/test": "1.64.0",
+    "publint": "0.3.25",
+    "vite": "8.3.4",
+    "webpack": "5.111.1",
+    "webpack-cli": "7.2.3"
+  }
+}

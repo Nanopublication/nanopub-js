@@ -4,6 +4,7 @@
   "packages": {
     ".": {
       "release-type": "node",
+      "bump-minor-pre-major": true,
       "changelog-path": "CHANGELOG.md"
     }
   }

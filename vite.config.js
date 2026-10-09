@@ -4,27 +4,37 @@ import { createRequire } from "node:module";
 
 const { dependencies } = createRequire(import.meta.url)("./package.json");
 const NODE_BUILTINS = ["crypto", "buffer", "stream", "util", "events", "string_decoder", "process"];
+const DEPENDENCIES = Object.keys(dependencies).map((name) => new RegExp(`^${name}(/|$)`));
 
-// The browser build has to bundle Buffer, the node build keeps it external
+// Three builds:
+// - browser (default): dependencies stay external so bundlers and CDNs that rewrite
+//   bare imports (esm.sh, jsDelivr +esm) resolve and dedupe them
+// - bundle: self-contained, for loading the file directly in a browser without a bundler
+// - node: Node crypto and dependencies external
 export default defineConfig(({ mode }) => {
   const node = mode === "node";
+  const bundle = mode === "bundle";
 
   return {
-    plugins: node ? [] : [dts({ rollupTypes: true })],
+    plugins: node || bundle ? [] : [dts({ rollupTypes: true })],
 
     build: {
-      emptyOutDir: !node,
+      emptyOutDir: !node && !bundle,
       lib: {
         entry: node
           ? { node: "src/node.ts" }
-          : { index: "src/index.ts" },
+          : bundle
+            ? { "nanopub.bundle": "src/index.ts" }
+            : { index: "src/index.ts", constants: "src/constants.ts" },
         formats: ["es"],
       },
       rollupOptions: {
         // Node resolves dependencies itself; bundling them inlines CJS that ESM consumers cannot require
         external: node
-          ? [/^node:/, ...NODE_BUILTINS, ...Object.keys(dependencies)]
-          : ["crypto", "node:crypto"],
+          ? [/^node:/, ...NODE_BUILTINS, ...DEPENDENCIES]
+          : bundle
+            ? ["crypto", "node:crypto"]
+            : ["crypto", "node:crypto", ...DEPENDENCIES],
       },
     },
 
