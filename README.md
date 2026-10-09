@@ -14,6 +14,26 @@ npm install @nanopub/nanopub-js
 yarn add @nanopub/nanopub-js
 ```
 
+### In the browser without a bundler
+
+The default browser build imports its dependencies (`n3`, `@traqula/parser-sparql-1-1`) by name, so they are resolved and shared with the rest of your app. CDNs that rewrite imports handle this for you:
+
+```html
+<script type="module">
+  import { Nanopub } from 'https://esm.sh/@nanopub/nanopub-js';
+</script>
+```
+
+To load the file directly (unpkg, jsDelivr file URL, or a copy on your own site), use the self-contained bundle, which includes its dependencies:
+
+```html
+<script type="module">
+  import { Nanopub } from 'https://unpkg.com/@nanopub/nanopub-js/dist/nanopub.bundle.js';
+</script>
+```
+
+From a bundler, the same file is available as `@nanopub/nanopub-js/bundle`.
+
 ## Usage
 
 See [`examples/`](examples/) for demo apps for browser and node usage.
