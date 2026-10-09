@@ -35,7 +35,6 @@
     "@nanopub/nanopub-testsuite-connector-js": "^1.0.0",
     "@types/n3": "^1",
     "@types/node": "^24.9.1",
-    "@types/rdfjs__data-model": "^2",
     "@typescript/typescript6": "^6.0.2",
     "@vitest/coverage-v8": "5.0.2",
     "eslint": "^10.0.0",
@@ -50,11 +49,8 @@
     "vitest": "^5.0.0"
   },
   "dependencies": {
-    "@rdfjs/data-model": "^2.1.1",
     "@rdfjs/types": "^2.0.1",
     "@traqula/parser-sparql-1-1": "^1.2.1",
-    "n3": "^2.0.0",
-    "rdf-canonize": "^5.0.0",
-    "rdf-js": "^4.0.2"
+    "n3": "^2.0.0"
   }
 }
