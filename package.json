@@ -19,6 +19,10 @@
     "./bundle": {
       "types": "./dist/index.d.ts",
       "default": "./dist/nanopub.bundle.js"
+    },
+    "./constants": {
+      "types": "./dist/constants.d.ts",
+      "default": "./dist/constants.js"
     }
   },
   "repository": {

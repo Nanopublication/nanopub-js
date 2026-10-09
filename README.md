@@ -34,6 +34,14 @@ To load the file directly (unpkg, jsDelivr file URL, or a copy on your own site)
 
 From a bundler, the same file is available as `@nanopub/nanopub-js/bundle`.
 
+### Constants only
+
+`@nanopub/nanopub-js/constants` exports the registry and query URLs, timeouts and other constants without loading the rest of the library, e.g. to read configuration before lazy-loading it:
+
+```ts
+import { NANOPUB_QUERY_URLS } from '@nanopub/nanopub-js/constants';
+```
+
 ## Usage
 
 See [`examples/`](examples/) for demo apps for browser and node usage.

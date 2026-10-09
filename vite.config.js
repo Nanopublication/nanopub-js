@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
           ? { node: "src/node.ts" }
           : bundle
             ? { "nanopub.bundle": "src/index.ts" }
-            : { index: "src/index.ts" },
+            : { index: "src/index.ts", constants: "src/constants.ts" },
         formats: ["es"],
       },
       rollupOptions: {
