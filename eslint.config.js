@@ -12,6 +12,7 @@ export default defineConfig(
     '.cache/**',
     'examples/browser/**',
     'examples/node/**',
+    'tests/package/**',
   ])],
   eslint.configs.recommended,
   tseslint.configs.recommended,

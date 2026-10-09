@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>nanopub-js: browser build with dependencies from esm.sh</title></head>
+<body>
+<!-- Resolves dependencies the way esm.sh rewrites them when it serves the package -->
+<script type="importmap">
+  {
+    "imports": {
+      "n3": "https://esm.sh/n3@2",
+      "@traqula/parser-sparql-1-1": "https://esm.sh/@traqula/parser-sparql-1-1@1"
+    }
+  }
+</script>
+<script type="module">
+  import * as lib from '../node_modules/@nanopub/nanopub-js/dist/index.js';
+  import { expose } from '../checks.js';
+
+  expose(lib);
+</script>
+</body>
+</html>

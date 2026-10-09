@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>nanopub-js: bundle without a bundler</title></head>
+<body>
+<!-- Loads the self-contained file directly, as from unpkg or a copy on a static site -->
+<script type="module">
+  import * as lib from '../node_modules/@nanopub/nanopub-js/dist/nanopub.bundle.js';
+  import * as constants from '../node_modules/@nanopub/nanopub-js/dist/constants.js';
+  import { expose } from '../checks.js';
+
+  expose(lib, constants);
+</script>
+</body>
+</html>

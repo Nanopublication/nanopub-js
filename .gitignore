@@ -4,3 +4,8 @@ node_modules
 dist
 coverage
 .idea/
+tests/package/node_modules
+tests/package/nanopub-js.tgz
+tests/package/out
+tests/package/test-results
+tests/package/playwright-report
