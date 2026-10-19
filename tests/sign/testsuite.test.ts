@@ -105,7 +105,7 @@ describe('test suite: `~~~ARTIFACTCODE~~~` substitution (transform case)', () =>
 
     expect(code).toBe(tc.outCode);
     expect(signedRdf).not.toMatch(/ARTIFACTCODE/);
-    expect(signedRdf).toContain(`https://example.org/ns/${code}`);
+    expect(parse(signedRdf, 'trig').some(q => q.subject.value === `https://example.org/ns/${code}`)).toBe(true);
     // The nanopub itself keeps the standard trusty base, only the concept moves.
     expect(sourceUri).toBe(`https://w3id.org/np/${code}`);
   }, 30_000);

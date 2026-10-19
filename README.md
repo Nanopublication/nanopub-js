@@ -104,6 +104,17 @@ const { uri, server } = await np.publish('https://test.registry.knowledgepixels.
 console.log(`Published at ${uri} on ${server}`);
 ```
 
+### Prefixes
+
+Serialized and signed nanopubs use a default set of prefixes. Add more with the `prefixes` option; `fromRdf()` also keeps the prefixes declared in its input. Only prefixes that are used are written, and `this` and `sub` cannot be changed.
+
+```ts
+const np = new NanopubClass({
+  assertion,
+  options: { privateKey, orcid, prefixes: { cito: 'http://purl.org/spar/cito/' } },
+});
+```
+
 ### Private key formats
 
 The `privateKey` given to a nanopub is accepted in any of the usual RSA
