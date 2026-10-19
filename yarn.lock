@@ -277,7 +277,7 @@ __metadata:
     eslint: "npm:^10.0.0"
     eslint-config-prettier: "npm:^10.1.8"
     eslint-plugin-prettier: "npm:^5.5.4"
-    happy-dom: "npm:^20.0.11"
+    happy-dom: "npm:^21.0.0"
     n3: "npm:^2.0.0"
     prettier: "npm:^3.7.4"
     typescript: "npm:^7.0.0"
@@ -1586,9 +1586,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"happy-dom@npm:^20.0.11":
-  version: 20.14.5
-  resolution: "happy-dom@npm:20.14.5"
+"happy-dom@npm:^21.0.0":
+  version: 21.0.3
+  resolution: "happy-dom@npm:21.0.3"
   dependencies:
     "@types/node": "npm:>=20.0.0"
     "@types/whatwg-mimetype": "npm:^3.0.2"
@@ -1597,7 +1597,7 @@ __metadata:
     entities: "npm:^7.0.1"
     whatwg-mimetype: "npm:^3.0.0"
     ws: "npm:^8.21.0"
-  checksum: 10c0/c2f82774aaa42944918e5a8bd69e34e98f87f5d3f144b44829ba53ed1f49f11ad35598e96ee3cf49fc65dbddaed57ae3760d693e60ee245de87e3af1aeadf63e
+  checksum: 10c0/1147cd9d22594d202058e042f7a0351f8ec83a6152df14d10e7935eda32fafd298077635770188a346f49ea98dc5f7a69fa1304db668dcb8d4368f1fd5fc3189
   languageName: node
   linkType: hard
 
