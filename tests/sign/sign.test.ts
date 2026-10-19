@@ -123,7 +123,7 @@ describe('sign()', () => {
 
   it('includes dct:creator and npx:signedBy when orcid is provided', async () => {
     const { signedRdf } = await sign(MINIMAL_TRIG, privateKeyBase64, ORCID);
-    expect(signedRdf).toContain('dc:creator');
+    expect(signedRdf).toContain('dct:creator');
     expect(signedRdf).toContain('npx:signedBy');
     expect(signedRdf).toContain(ORCID);
   });
@@ -202,7 +202,7 @@ describe('sign() with custom URI prefix', () => {
 
   it('omits npx:signedBy when orcid is not provided', async () => {
     const { signedRdf } = await sign(INPUT_TRIG_CUSTOM, FIXED_PRIVATE_KEY);
-    expect(signedRdf).not.toContain('dc:creator');
+    expect(signedRdf).not.toContain('dct:creator');
     expect(signedRdf).not.toContain('npx:signedBy');
   });
 

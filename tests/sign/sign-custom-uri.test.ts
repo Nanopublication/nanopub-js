@@ -35,7 +35,7 @@ const EXPECTED_SIGNED_TRIG_CUSTOM_2 = `@prefix this: <https://w3id.org/scienceli
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix prov: <http://www.w3.org/ns/prov#>.
 @prefix npx: <http://purl.org/nanopub/x/>.
-@prefix dc: <http://purl.org/dc/terms/>.
+@prefix dct: <http://purl.org/dc/terms/>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 
 sub:Head {
@@ -52,9 +52,9 @@ sub:provenance {
 sub:assertion prov:wasAttributedTo <https://orcid.org/0000-9999-1234-9999>
 }
 sub:pubinfo {
-this: dc:created "2025-01-01T00:00:00.000Z"^^xsd:dateTime;
-    dc:creator <https://orcid.org/0000-9999-1234-9999>;
-    dc:license <https://creativecommons.org/licenses/by/4.0/>;
+this: dct:created "2025-01-01T00:00:00.000Z"^^xsd:dateTime;
+    dct:creator <https://orcid.org/0000-9999-1234-9999>;
+    dct:license <https://creativecommons.org/licenses/by/4.0/>;
     npx:hasNanopubType <http://purl.org/petapico/o/hycl>;
     npx:introduces <http://purl.org/aida/This%20is%20a%20test%20to%20check%20for%20bugs.>;
     npx:wasCreatedAt <https://platform.sciencelive4all.org>;

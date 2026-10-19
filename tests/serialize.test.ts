@@ -90,7 +90,7 @@ describe("serialize()", () => {
     const trig = await serialize(np, "trig");
     expect(trig).toContain("@prefix this:");
     expect(trig).toMatch(/this:\s+<[^>]+>/);
-    expect(trig).toContain("this: dc:creator");
+    expect(trig).toContain("this: dct:creator");
   });
 
   describe("extra prefixes", () => {
