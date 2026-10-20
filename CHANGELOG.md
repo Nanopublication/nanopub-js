@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/Nanopublication/nanopub-js/compare/v0.5.0...v0.6.0) (2026-10-20)
+
+
+### Features
+
+* **serialize:** keep extra prefixes in serialized and signed nanopubs ([#110](https://github.com/Nanopublication/nanopub-js/issues/110)) ([a1c9cbd](https://github.com/Nanopublication/nanopub-js/commit/a1c9cbda5687e1d25f67a20d7177e8a7b7d71267))
+
 ## [0.5.0](https://github.com/Nanopublication/nanopub-js/compare/v0.4.0...v0.5.0) (2026-10-09)
 
 
