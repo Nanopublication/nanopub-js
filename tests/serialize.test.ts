@@ -4,6 +4,7 @@ import {
   NanopubClass as Nanopub,
   parse,
   serialize,
+  verifySignature,
 } from "../src";
 import { generateKeyPairSync } from "crypto";
 import { DataFactory, Literal, NamedNode, Quad } from "n3";
@@ -15,6 +16,7 @@ describe("serialize()", () => {
   let pubinfoQuads: Quad[];
 
   let np: Nanopub;
+  let privateKeyBase64: string;
 
   const nanopubUri = DEFAULT_NANOPUB_URI;
   const npNode = makeNamedGraphNode(nanopubUri, "");
@@ -28,7 +30,7 @@ describe("serialize()", () => {
       privateKeyEncoding: { type: "pkcs8", format: "pem" },
     });
 
-    const privateKeyBase64 = privateKey
+    privateKeyBase64 = privateKey
       .replace("-----BEGIN PRIVATE KEY-----", "")
       .replace("-----END PRIVATE KEY-----", "")
       .replace(/\r?\n|\r/g, "");
@@ -88,7 +90,63 @@ describe("serialize()", () => {
     const trig = await serialize(np, "trig");
     expect(trig).toContain("@prefix this:");
     expect(trig).toMatch(/this:\s+<[^>]+>/);
-    expect(trig).toContain("this: dc:creator");
+    expect(trig).toContain("this: dct:creator");
+  });
+
+  describe("extra prefixes", () => {
+    const EX = "http://example.org/";
+
+    it("takes prefixes from the options", () => {
+      const withPrefixes = new Nanopub({ assertion: assertionQuads, options: { prefixes: { ex: EX } } });
+      expect(withPrefixes.prefixes).toEqual({ ex: EX });
+    });
+
+    it("declares and uses them", async () => {
+      np.prefixes = { ex: EX };
+      const trig = await serialize(np, "trig");
+      expect(trig).toContain(`@prefix ex: <${EX}>`);
+      expect(trig).toContain("ex:s ex:p ex:o");
+    });
+
+    it("leaves out prefixes no term uses", async () => {
+      np.prefixes = { unused: "http://unused.example/" };
+      expect(await serialize(np, "trig")).not.toContain("@prefix unused:");
+    });
+
+    it("does not let them replace this or sub", async () => {
+      np.prefixes = { this: EX, sub: EX };
+      const trig = await serialize(np, "trig");
+      expect(trig).toContain(`@prefix this: <${DEFAULT_NANOPUB_URI}>`);
+      expect(trig).not.toContain(`@prefix sub: <${EX}>`);
+    });
+
+    it("keeps the prefixes declared in fromRdf() input", async () => {
+      np.prefixes = { ex: EX };
+      const parsed = Nanopub.fromRdf(await serialize(np, "trig"));
+      expect(parsed.prefixes.ex).toBe(EX);
+      expect(parsed.prefixes).not.toHaveProperty("this");
+    });
+
+    it("keeps them through signing, with the same trusty URI", async () => {
+      const plainUri = (await np.sign()).sourceUri;
+
+      const withPrefixes = new Nanopub({
+        assertion: assertionQuads,
+        provenance: provQuads,
+        pubinfo: pubinfoQuads,
+        options: {
+          name: "Hello from nanopub-js test",
+          orcid: "https://orcid.org/0000-0000-0000-0000",
+          privateKey: privateKeyBase64,
+          prefixes: { ex: EX },
+        },
+      });
+      await withPrefixes.sign();
+
+      expect(withPrefixes.sourceUri).toBe(plainUri);
+      expect(withPrefixes.rdf()).toContain("ex:s ex:p ex:o");
+      expect(await verifySignature(withPrefixes.rdf())).toEqual({ valid: true });
+    });
   });
 
   describe("signed nanopub serialization", () => {

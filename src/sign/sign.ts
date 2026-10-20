@@ -1,7 +1,7 @@
 import type { Term, Quad_Subject, Quad_Predicate, Quad_Object, Quad_Graph } from '@rdfjs/types';
 import { DataFactory, Store } from 'n3';
 import { getCryptoAdapter } from "./crypto";
-import { parse, serialize } from '../serialize';
+import { parse, readPrefixes, serialize } from '../serialize';
 import { replaceBnodes, normalizeDataset } from './utils';
 import { DEFAULT_NANOPUB_URI, TRUSTY_BASE } from '../constants';
 import { NPX, RDF, NP } from '../vocab';
@@ -193,7 +193,7 @@ export async function sign(
   const pubinfoQuads = [...dataset.getQuads(null, null, null, trustyPubinfoGraph)];
 
   const signedRdf = await serialize(
-    { head: headQuads, assertion: assertionQuads, provenance: provenanceQuads, pubinfo: pubinfoQuads, sourceUri: trustyUri },
+    { head: headQuads, assertion: assertionQuads, provenance: provenanceQuads, pubinfo: pubinfoQuads, sourceUri: trustyUri, prefixes: readPrefixes(trig) },
     'trig',
     trustyUri,
   );

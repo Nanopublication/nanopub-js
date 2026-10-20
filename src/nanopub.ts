@@ -1,6 +1,6 @@
 import { NanopubOptions, NanopubData } from './types/types';
 import { Quad, DataFactory } from 'n3';
-import { serialize, parse, ParseFormat, ParseOptions } from './serialize';
+import { serialize, parse, readPrefixes, ParseFormat, ParseOptions } from './serialize';
 import { verifySignature } from './sign/verify';
 import { sign as signRdf } from './sign/sign';
 import { getCryptoAdapter } from './sign/crypto';
@@ -31,6 +31,7 @@ export class Nanopub implements NanopubData {
     email?: string;
   };
   sourceUri?: string;
+  prefixes: Record<string, string>;
   private _rdf?: string;
 
   constructor(
@@ -42,6 +43,8 @@ export class Nanopub implements NanopubData {
     } = {},
   ) {
     const { assertion = [], provenance = [], pubinfo = [], options } = params;
+
+    this.prefixes = { ...options?.prefixes };
 
     const nanopubUri = this.sourceUri ?? DEFAULT_NANOPUB_URI;
 
@@ -219,6 +222,7 @@ export class Nanopub implements NanopubData {
     options?: NanopubOptions & ParseOptions,
   ): Nanopub {
     const np = new Nanopub({ options });
+    if (format !== 'jsonld') np.prefixes = { ...readPrefixes(rdf, format), ...options?.prefixes };
 
     const quads = parse(rdf, format, { parser: options?.parser });
     np.hydrateFromQuads(quads);

@@ -17,6 +17,40 @@ function rewriteTopLevel(q: RDFJSQuad, thisUri: string): N3Quad {
   return toN3Quad(q);
 }
 
+const DEFAULT_PREFIXES: Record<string, string> = {
+  np: 'http://www.nanopub.org/nschema#',
+  rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+  prov: 'http://www.w3.org/ns/prov#',
+  npx: 'http://purl.org/nanopub/x/',
+  dct: 'http://purl.org/dc/terms/',
+  xsd: 'http://www.w3.org/2001/XMLSchema#',
+};
+
+/** Prefixes declared in TriG or Turtle input, except `this` and `sub`. */
+export function readPrefixes(input: string, format: 'trig' | 'turtle' = 'trig'): Record<string, string> {
+  const prefixes: Record<string, string> = {};
+  try {
+    new Parser({ format }).parse(input, null, (name, iri) => {
+      if (name !== 'this' && name !== 'sub') prefixes[name] = iri.value;
+    });
+  } catch {
+    return {};
+  }
+  return prefixes;
+}
+
+function usedPrefixes(prefixes: Record<string, string>, quads: N3Quad[]): Record<string, string> {
+  const iris = new Set<string>();
+  for (const q of quads) {
+    for (const t of [q.subject, q.predicate, q.object, q.graph]) {
+      if (t.termType === 'NamedNode') iris.add(t.value);
+      if (t.termType === 'Literal') iris.add(t.datatype.value);
+    }
+  }
+  return Object.fromEntries(Object.entries(prefixes)
+    .filter(([name, iri]) => name !== 'this' && name !== 'sub' && [...iris].some(i => i.startsWith(iri))));
+}
+
 export async function serialize(
   np: NanopubData,
   format: 'trig' | 'turtle' = 'trig',
@@ -26,20 +60,6 @@ export async function serialize(
   const thisUri = nanopubUri;
   const subUri = thisUri.endsWith('/')  ? thisUri : thisUri + '/';
 
-  const writer = new Writer({
-    format,
-    prefixes: {
-      this: thisUri,
-      sub: subUri,
-      np: 'http://www.nanopub.org/nschema#',
-      rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-      prov: 'http://www.w3.org/ns/prov#',
-      npx: 'http://purl.org/nanopub/x/',
-      dc: 'http://purl.org/dc/terms/',
-      xsd: 'http://www.w3.org/2001/XMLSchema#',
-    },
-  });
-
   // Convert all quads to N3 and rewrite top-level subjects
   const quads: N3Quad[] = [
     ...np.head.map(q => rewriteTopLevel(q, thisUri)),
@@ -47,6 +67,16 @@ export async function serialize(
     ...np.provenance.map(q => rewriteTopLevel(q, thisUri)),
     ...np.pubinfo.map(q => rewriteTopLevel(q, thisUri)),
   ];
+
+  const writer = new Writer({
+    format,
+    prefixes: {
+      this: thisUri,
+      sub: subUri,
+      ...DEFAULT_PREFIXES,
+      ...usedPrefixes(np.prefixes ?? {}, quads),
+    },
+  });
 
   writer.addQuads(quads);
 

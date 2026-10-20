@@ -7,6 +7,8 @@ export interface Profile {
 }
 
 export interface NanopubOptions {
+  /** Extra TriG prefixes for output, on top of the defaults; `this` and `sub` cannot be set */
+  prefixes?: Record<string, string>;
   attribution?: string;
   provenance?: string;
   derivation?: string;
@@ -41,6 +43,7 @@ export interface NanopubData {
   head: Quad[];
   signature?: string;
   sourceUri?: string;
+  prefixes?: Record<string, string>;
 }
 
 export interface QueryTextOptions {
