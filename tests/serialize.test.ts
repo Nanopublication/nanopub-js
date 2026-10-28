@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import {
   DEFAULT_NANOPUB_URI,
   NanopubClass as Nanopub,
@@ -128,6 +128,9 @@ describe("serialize()", () => {
     });
 
     it("keeps them through signing, with the same trusty URI", async () => {
+      vi.useFakeTimers({ toFake: ["Date"], now: new Date("2025-01-01T00:00:00Z") });
+      onTestFinished(() => vi.useRealTimers());
+
       const plainUri = (await np.sign()).sourceUri;
 
       const withPrefixes = new Nanopub({

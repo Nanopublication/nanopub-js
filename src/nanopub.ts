@@ -8,10 +8,24 @@ import { getCryptoAdapter } from './sign/crypto';
 import { getInvalidSparql } from './grlc';
 import { createNanopubGraphs } from './utils';
 import { DEFAULT_NANOPUB_URI, TEST_NANOPUB_REGISTRY_URL } from './constants';
-import { RDF, XSD, NP, NPX, PROV } from './vocab';
+import { RDF, XSD, NP, NPX, PROV, DCT, PAV } from './vocab';
 import { enforceSigningKeyCheck, KeyCheckOptions } from './keyCheck';
 
 const { quad, literal } = DataFactory;
+
+const TIMESTAMP_PREDICATES = [DCT('created'), PROV('generatedAtTime'), PAV('createdOn')].map((p) => p.value);
+
+/** Whether the pubinfo states when the nanopub was created. */
+export function hasTimestamp(np: NanopubData): boolean {
+  const npUri = np.head.find((q) => q.object.equals(NP('Nanopublication')))?.subject.value;
+  return np.pubinfo.some(
+    (q) =>
+      q.subject.value === npUri &&
+      TIMESTAMP_PREDICATES.includes(q.predicate.value) &&
+      q.object.termType === 'Literal' &&
+      q.object.datatype.equals(XSD('dateTime')),
+  );
+}
 
 export class Nanopub implements NanopubData {
   head: Quad[];
@@ -33,6 +47,7 @@ export class Nanopub implements NanopubData {
   sourceUri?: string;
   prefixes: Record<string, string>;
   private _rdf?: string;
+  private _timestamp?: Date;
 
   constructor(
     params: {
@@ -45,6 +60,7 @@ export class Nanopub implements NanopubData {
     const { assertion = [], provenance = [], pubinfo = [], options } = params;
 
     this.prefixes = { ...options?.prefixes };
+    this._timestamp = options?.timestamp;
 
     const nanopubUri = this.sourceUri ?? DEFAULT_NANOPUB_URI;
 
@@ -62,7 +78,7 @@ export class Nanopub implements NanopubData {
       quad(q.subject, q.predicate, q.object, assertionGraph),
     );
 
-    const now = new Date().toISOString();
+    const now = (this._timestamp ?? new Date()).toISOString();
 
     this.provenance = provenance.length
       ? provenance.map((q) =>
@@ -173,6 +189,8 @@ export class Nanopub implements NanopubData {
       options,
     );
 
+    if (!hasTimestamp(this)) this.addTimestamp();
+
     const trig = await serialize(this, 'trig');
 
     const { signedRdf, sourceUri, signature } = await signRdf(
@@ -187,6 +205,15 @@ export class Nanopub implements NanopubData {
 
     this.rehydrateFromSignedRdf();
     return this;
+  }
+
+  private addTimestamp(): void {
+    const npNode = this.head.find((q) => q.object.equals(NP('Nanopublication')))?.subject;
+    const pubinfoGraph = this.head.find((q) => q.predicate.equals(NP('hasPublicationInfo')))?.object;
+    if (!npNode || !pubinfoGraph) return;
+
+    const created = (this._timestamp ?? new Date()).toISOString();
+    this.pubinfo.push(quad(npNode, DCT('created'), literal(created, XSD('dateTime')), pubinfoGraph as Quad['graph']));
   }
 
   /**
@@ -272,6 +299,9 @@ export class Nanopub implements NanopubData {
         'published',
         options,
       );
+      if (!hasTimestamp(this)) {
+        console.warn('Publishing a nanopub without a timestamp: its pubinfo has no creation time.');
+      }
     }
 
     const rdf = this.rdf();

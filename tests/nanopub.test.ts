@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { NanopubClass, serialize, parse } from '../src/index';
+import { NanopubClass, serialize, parse, hasTimestamp } from '../src/index';
+import { sign as signRdf } from '../src/sign/sign';
 import { DataFactory, Quad } from 'n3';
 import { generateKeyPairSync } from 'crypto';
 import { createNanopubGraphs } from '../src/utils';
@@ -169,6 +170,57 @@ describe('Nanopub class', () => {
     });
 
     expect(np.pubinfo.length).toBe(1);
+  });
+
+  describe('timestamp', () => {
+    const created = (n: NanopubClass) =>
+      n.pubinfo.filter((q) => q.predicate.value === 'http://purl.org/dc/terms/created');
+
+    it('adds dct:created when signing a nanopub without a timestamp', async () => {
+      await np.sign({ keyCheck: 'off' });
+
+      expect(hasTimestamp(np)).toBe(true);
+      expect(created(np)[0].subject.value).toBe(np.sourceUri);
+      expect(created(np)[0].object).toMatchObject({
+        datatype: { value: 'http://www.w3.org/2001/XMLSchema#dateTime' },
+      });
+    });
+
+    it('uses the timestamp option', async () => {
+      const timestamp = new Date('2025-06-01T12:00:00.000Z');
+      const stamped = new NanopubClass({
+        assertion: assertionQuads,
+        pubinfo: pubinfoQuads,
+        options: { orcid: 'https://orcid.org/0000-0000-0000-0000', privateKey: np.privateKey!, timestamp },
+      });
+      await stamped.sign({ keyCheck: 'off' });
+
+      expect(created(stamped)[0].object.value).toBe(timestamp.toISOString());
+    });
+
+    it('keeps an existing timestamp', async () => {
+      np.pubinfo.push(
+        quad(npNode, namedNode('http://purl.org/pav/createdOn'),
+          literal('2024-01-01T00:00:00Z', namedNode('http://www.w3.org/2001/XMLSchema#dateTime')), pubinfoGraph),
+      );
+      await np.sign({ keyCheck: 'off' });
+
+      expect(created(np)).toHaveLength(0);
+    });
+
+    it('warns when publishing a signed nanopub without a timestamp', async () => {
+      const { signedRdf } = await signRdf(await serialize(np, 'trig'), np.privateKey!);
+      const loaded = NanopubClass.fromRdf(signedRdf);
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const realFetch = global.fetch;
+      global.fetch = vi.fn().mockResolvedValue({ ok: true });
+
+      await loaded.publish('https://mock.registry/np/', { keyCheck: 'off' });
+
+      expect(warn).toHaveBeenCalledWith(expect.stringMatching(/without a timestamp/));
+      warn.mockRestore();
+      global.fetch = realFetch;
+    });
   });
 
   describe('NanopubClass.fromRdf', () => {
