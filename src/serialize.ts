@@ -90,7 +90,7 @@ export async function serialize(
   return new Promise((resolve, reject) => {
     writer.end((err, result) => {
       if (err) reject(err);
-      else resolve(result.replace(thisUriPattern, 'this:'));
+      else resolve((result ?? '').replace(thisUriPattern, 'this:'));
     });
   });
 }

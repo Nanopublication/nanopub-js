@@ -215,6 +215,7 @@ function decodeKey(key: string, kind: 'private' | 'public'): Uint8Array {
     throw new Error(
       `Could not parse the RSA ${kind} key: its base64 body could not be decoded ` +
         `(${(error as Error).message}). Provide ${forms}.`,
+      { cause: error },
     );
   }
 }
