@@ -43,7 +43,7 @@
     "@eslint/js": "^10.0.0",
     "@nanopub/nanopub-testsuite-connector-js": "^1.0.0",
     "@types/n3": "^1",
-    "@types/node": "^24.9.1",
+    "@types/node": "^26.0.0",
     "@typescript/typescript6": "^6.0.2",
     "@vitest/coverage-v8": "5.0.5",
     "eslint": "^10.0.0",
