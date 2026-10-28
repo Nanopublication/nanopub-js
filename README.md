@@ -178,6 +178,9 @@ The agent IRI is usually an ORCID iD, but any `foaf:Agent` IRI works, a WebID
 included. The public key is derived from the private key unless you pass
 `publicKey`, and the introduction is self-signed by the key it declares.
 
+For software, pass `agentType` (`'SoftwareAgent'`, `'Bot'` or `'SoftwareTool'`)
+to type the agent with the matching `npx:` class.
+
 Trust is granted per key rather than per agent, so an agent that already has an
 approved key adds another by publishing a further introduction under the same
 `agent` IRI, signed with the key they already have and declaring it alongside

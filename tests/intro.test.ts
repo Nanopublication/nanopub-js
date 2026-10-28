@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createIntroNanopub, serialize } from '../src/index';
 import { generateKeyPairSync } from 'crypto';
-import { NPX, FOAF, DCT, PROV } from '../src/vocab';
+import { NPX, FOAF, DCT, PROV, RDF } from '../src/vocab';
 
 const AGENT = 'https://orcid.org/0000-0002-1267-0234';
 
@@ -107,6 +107,18 @@ describe('createIntroNanopub', () => {
         (q) => q.predicate.value === FOAF('name').value,
       ),
     ).toBe(false);
+  });
+
+  it('types the agent as software when asked, and not otherwise', async () => {
+    const isType = (q: { predicate: { value: string } }) => q.predicate.value === RDF('type').value;
+
+    const bot = await createIntroNanopub({ agent: AGENT, privateKey, agentType: 'Bot' });
+    const typeQuad = bot.assertion.find(isType);
+    expect(typeQuad?.subject.value).toBe(AGENT);
+    expect(typeQuad?.object.value).toBe(NPX('Bot').value);
+
+    const person = await createIntroNanopub({ agent: AGENT, privateKey });
+    expect(person.assertion.some(isType)).toBe(false);
   });
 
   it('declares several keys under distinct subjects', async () => {
