@@ -3,7 +3,7 @@ import { Nanopub } from './nanopub';
 import { getCryptoAdapter } from './sign/crypto';
 import { createNanopubGraphs } from './utils';
 import { DEFAULT_NANOPUB_URI, CC0_LICENSE } from './constants';
-import { DCT, FOAF, NPX, PROV, RDFS } from './vocab';
+import { DCT, FOAF, NPX, PROV, RDF, RDFS } from './vocab';
 
 const { namedNode, literal, quad } = DataFactory;
 
@@ -28,8 +28,12 @@ export interface IntroNanopubOptions {
   keyLocation?: string;
   /** `foaf:name` of the agent, which registries use to label the account */
   name?: string;
+  /** Types the agent as software: `npx:Bot` and `npx:SoftwareTool` are both kinds of `npx:SoftwareAgent` */
+  agentType?: SoftwareAgentType;
   license?: string;
 }
+
+export type SoftwareAgentType = 'SoftwareAgent' | 'Bot' | 'SoftwareTool';
 
 function keyDeclarationNode(index: number, total: number) {
   const suffix = total > 1 ? `keyDeclaration${index + 1}` : 'keyDeclaration';
@@ -40,7 +44,7 @@ function keyDeclarationNode(index: number, total: number) {
 export async function createIntroNanopub(
   options: IntroNanopubOptions,
 ): Promise<Nanopub> {
-  const { agent, privateKey, name, license = CC0_LICENSE } = options;
+  const { agent, privateKey, name, agentType, license = CC0_LICENSE } = options;
 
   if (!agent) throw new Error('An agent IRI is required to introduce a key.');
   if (!privateKey) throw new Error('A private key is required to sign an introduction.');
@@ -66,6 +70,10 @@ export async function createIntroNanopub(
 
   if (name) {
     assertion.push(quad(agentNode, FOAF('name'), literal(name)));
+  }
+
+  if (agentType) {
+    assertion.push(quad(agentNode, RDF('type'), NPX(agentType)));
   }
 
   declarations.forEach((declaration, index) => {
