@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/Nanopublication/nanopub-js/compare/v0.6.0...v0.6.1) (2026-10-28)
+
+
+### Bug Fixes
+
+* run typescript-eslint on TypeScript 6 and fix lint and type errors ([136da48](https://github.com/Nanopublication/nanopub-js/commit/136da481bd6bdbea081a59d989e7eabb98c4e3a4))
+
 ## [0.6.0](https://github.com/Nanopublication/nanopub-js/compare/v0.5.0...v0.6.0) (2026-10-20)
 
 
