@@ -13,4 +13,5 @@ export const PROV = ns('http://www.w3.org/ns/prov#');
 export const RDFS = ns('http://www.w3.org/2000/01/rdf-schema#');
 export const FOAF = ns('http://xmlns.com/foaf/0.1/');
 export const DCT = ns('http://purl.org/dc/terms/');
+export const PAV = ns('http://purl.org/pav/');
 export const KPXL_GRLC = ns('https://w3id.org/kpxl/grlc/');

@@ -12,6 +12,7 @@ export interface NanopubOptions {
   attribution?: string;
   provenance?: string;
   derivation?: string;
+  /** Creation time, added to the pubinfo when signing if it has none; defaults to now */
   timestamp?: Date;
   server?: string;
 
