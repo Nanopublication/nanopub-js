@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.0](https://github.com/Nanopublication/nanopub-js/compare/v0.6.0...v0.7.0) (2026-11-09)
+
+
+### Features
+
+* **intro:** type the agent as a software agent, bot or tool ([#121](https://github.com/Nanopublication/nanopub-js/issues/121)) ([dcf86d3](https://github.com/Nanopublication/nanopub-js/commit/dcf86d35c54b034d4986bd8e656a61cbd56cc569))
+* **sign:** add dct:created when signing a nanopub without a timestamp ([#120](https://github.com/Nanopublication/nanopub-js/issues/120)) ([328c4a1](https://github.com/Nanopublication/nanopub-js/commit/328c4a1dccd4266c07f6d17a0abcc4c719c9f02d))
+
+
+### Bug Fixes
+
+* run typescript-eslint on TypeScript 6 and fix lint and type errors ([136da48](https://github.com/Nanopublication/nanopub-js/commit/136da481bd6bdbea081a59d989e7eabb98c4e3a4))
+
 ## [0.6.0](https://github.com/Nanopublication/nanopub-js/compare/v0.5.0...v0.6.0) (2026-10-20)
 
 
