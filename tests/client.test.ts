@@ -38,21 +38,35 @@ describe("NanopubClient (unit)", () => {
     expect(results[0]).toEqual({ s: "s", p: "p", o: "o" });
   });
 
-  it("querySparql returns empty array on 404", async () => {
+  it("querySparql throws the endpoint's message on a malformed query", async () => {
     fetchMock.mockResolvedValueOnce({
       ok: false,
-      status: 404,
-      statusText: "Not Found",
+      status: 400,
+      statusText: "Bad Request",
+      text: async () => 'MALFORMED QUERY: Encountered "<EOF>" at line 1, column 17.\nWas expecting one of:',
     });
 
-    const client = new NanopubClient();
-    const result = await client.querySparql("SELECT * WHERE {?s ?p ?o}");
+    const client = new NanopubClient({ endpoints: ["https://a.org/", "https://b.org/"] });
 
-    expect(result).toEqual([]);
+    await expect(client.querySparql("SELECT ?s WHERE {")).rejects.toThrow(
+      'SPARQL query rejected: MALFORMED QUERY: Encountered "<EOF>" at line 1, column 17.'
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("querySparql tries the next endpoint on a 404", async () => {
+    fetchMock
+      .mockResolvedValueOnce({ ok: false, status: 404, statusText: "Not Found" })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ head: { vars: [] }, results: { bindings: [] } }) });
+
+    const client = new NanopubClient({ endpoints: ["https://a.org/", "https://b.org/"] });
+
+    await expect(client.querySparql("SELECT * WHERE {?s ?p ?o}")).resolves.toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it("querySparql throws on 500", async () => {
-    fetchMock.mockResolvedValueOnce({
+    fetchMock.mockResolvedValue({
       ok: false,
       status: 500,
       statusText: "Server Error",

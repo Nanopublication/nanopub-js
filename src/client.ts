@@ -77,14 +77,15 @@ export class NanopubClient {
     const endpoints = this.endpoints.map(
       base => new URL('repo/full', base).toString(),
     );
-    let error;
-  
+    let lastError: unknown;
+
     for (const endpoint of endpoints) {
+      const url = new URL(endpoint);
+      url.searchParams.append('query', query);
+
+      let res: Response;
       try {
-        const url = new URL(endpoint);
-        url.searchParams.append('query', query);
-  
-        const res = await fetch(url.toString(), {
+        res = await fetch(url.toString(), {
           headers: {
             Accept:
               returnFormat === 'json'
@@ -92,13 +93,23 @@ export class NanopubClient {
                 : 'text/csv',
           },
         });
-  
-        if (!res.ok) {
-          if (res.status >= 400 && res.status < 500) return [];
-          error = new Error(`SPARQL query failed: ${res.status} ${res.statusText}`);
-          throw error;
-        }
-  
+      } catch (err) {
+        lastError = err;
+        continue;
+      }
+
+      // a malformed query fails the same way on every endpoint
+      if (res.status === 400) {
+        const detail = (await res.text().catch(() => '')).split('\n')[0].trim();
+        throw new Error(`SPARQL query rejected: ${detail || res.statusText}`);
+      }
+
+      if (!res.ok) {
+        lastError = new Error(`SPARQL query failed: ${res.status} ${res.statusText}`);
+        continue;
+      }
+
+      try {
         if (returnFormat === 'json') {
           const data: SparqlJsonResult = await res.json();
           return data.results.bindings.map((row) => {
@@ -111,12 +122,12 @@ export class NanopubClient {
         } else {
           return await res.text();
         }
-      } catch {
-        // try next endpoint
+      } catch (err) {
+        lastError = err;
       }
     }
 
-    throw new Error('SPARQL query failed on all nanopub endpoints');
+    throw new Error('SPARQL query failed on all nanopub endpoints', { cause: lastError });
   }
   
 
