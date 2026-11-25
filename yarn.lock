@@ -544,32 +544,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@traqula/core@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@traqula/core@npm:1.3.0"
+"@traqula/core@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@traqula/core@npm:1.5.0"
   dependencies:
     "@traqula/chevrotain": "npm:^1.1.0"
-  checksum: 10c0/6cb697b8e52d3d40959ef3607aed02956e2114e36eed83bd10e3ac19d1d2e49b3d8302782d73f67ba7ad107269c808fe05e814f389816ce4b97ebc9196676d8d
+  checksum: 10c0/3dfa338b1954ad7bab0dfac98921a00a153b0b8fd31f58760d0835243d6339565bd3578c9dc352cb1a47bcda5c6189a36807bdf187721ae8024fcc3d111df91b
   languageName: node
   linkType: hard
 
 "@traqula/parser-sparql-1-1@npm:^1.2.1":
-  version: 1.4.0
-  resolution: "@traqula/parser-sparql-1-1@npm:1.4.0"
+  version: 1.5.0
+  resolution: "@traqula/parser-sparql-1-1@npm:1.5.0"
   dependencies:
-    "@traqula/core": "npm:^1.3.0"
-    "@traqula/rules-sparql-1-1": "npm:^1.4.0"
-  checksum: 10c0/f4e9786fb365527635cca5385e87a33bdc7bbee7bc2e9c46f4813e83ea467a775921420f628a8e1df0a7991d2ede1a8de5ce25767d493bc85bdeb9377146fe4b
+    "@traqula/core": "npm:^1.5.0"
+    "@traqula/rules-sparql-1-1": "npm:^1.5.0"
+  checksum: 10c0/addb5ffb966dc05d0d925ab0ffac5732819a133befc69a657d3973a31e689726c018704905e4e461d29321beb51b2d8d14a377c1bccbbd8b770d1df0b6e11243
   languageName: node
   linkType: hard
 
-"@traqula/rules-sparql-1-1@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "@traqula/rules-sparql-1-1@npm:1.4.0"
+"@traqula/rules-sparql-1-1@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@traqula/rules-sparql-1-1@npm:1.5.0"
   dependencies:
     "@traqula/chevrotain": "npm:^1.1.0"
-    "@traqula/core": "npm:^1.3.0"
-  checksum: 10c0/a634c787dbcd156c79be2f850acb57259ffd25405c3fad72bc9d8a422b803c8c37e1b89d9498a7770611af7b9eeac968b6ba58b5aa862102a95c1d4df56ea1fc
+    "@traqula/core": "npm:^1.5.0"
+  checksum: 10c0/2d53469b50e074768d8a032a360601086949a3d3248eb34c6c996cd934bdfc1e20c6c5e960364a636241377b92ee378d0ee81743744b4fdbeb60010d254da57a
   languageName: node
   linkType: hard
 
